@@ -3224,10 +3224,14 @@ blockquote footer cite:before {
   background-size: cover;
 }
 #footer-wrap {
-  position: relative;
-  padding: 2rem 1rem;
+  position: absolute;
+  padding: 1.2rem 1rem 1.4rem;
   color: var(--light-grey);
   text-align: center;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 10;
 }
 #footer-wrap a {
   color: var(--light-grey);
