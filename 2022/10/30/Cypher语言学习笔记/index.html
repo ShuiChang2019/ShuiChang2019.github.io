@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <link rel="icon" href="https://gcore.jsdelivr.net/gh/ShuiChang2019/PicPic/img/favicon.png">
   
-  <title>谜之清醒梦测试笔记 | 好吃</title>
+  <title>Cypher语言学习笔记 | 好吃</title>
   <meta name="author" content="ShuiChang" />
   <meta http-equiv="Cache-Control" content="no-transform" />
   <meta http-equiv="Cache-Control" content="no-siteapp" />
@@ -14,22 +14,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <meta name="format-detection" content="telphone=no, email=no" />
   
-    <meta name="keywords" content="做梦" />
+    <meta name="keywords" content="图数据库学习和应用" />
   
-  <meta name="description" content="尝试练习做清醒梦。通过Stephen LaBerge &amp; Howard Rheingold所著《Exploring the World of Lucid Dreaming》学习怎么做这个梦。 WILDS(Wake-Initiated Lucid Dreams)方法​	对于WILDS最常用的方法是：在陷入睡眠时注意着眼前的“睡梦前的景色”（Attention to Hypnagogic Im">
+  <meta name="description" content="Cypher语言学习基本Cypher感觉很像SQL+SPARQL的组合，故当了解了SQL和SPARQL后，就只用记住Cypher的一些特色的东西了，但Cypher特色的东西也不少。 节点、关系和模式Cypher提供了一个很直观的方式匹配图中的节点和关系。()代表节点；[]代表关系 当需要查询一个一跳路径时 1MATCH (n)-[r]-(m) RETURN * 从n到m，关系为r。 将节点和关系的">
 <meta property="og:type" content="article">
-<meta property="og:title" content="谜之清醒梦测试笔记">
-<meta property="og:url" content="https://shuichang2019.github.io/2021/09/20/%E8%B0%9C%E4%B9%8B%E6%B8%85%E9%86%92%E6%A2%A6%E6%B5%8B%E8%AF%95%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:title" content="Cypher语言学习笔记">
+<meta property="og:url" content="https://shuichang2019.github.io/2022/10/30/Cypher%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index.html">
 <meta property="og:site_name" content="好吃">
-<meta property="og:description" content="尝试练习做清醒梦。通过Stephen LaBerge &amp; Howard Rheingold所著《Exploring the World of Lucid Dreaming》学习怎么做这个梦。 WILDS(Wake-Initiated Lucid Dreams)方法​	对于WILDS最常用的方法是：在陷入睡眠时注意着眼前的“睡梦前的景色”（Attention to Hypnagogic Im">
+<meta property="og:description" content="Cypher语言学习基本Cypher感觉很像SQL+SPARQL的组合，故当了解了SQL和SPARQL后，就只用记住Cypher的一些特色的东西了，但Cypher特色的东西也不少。 节点、关系和模式Cypher提供了一个很直观的方式匹配图中的节点和关系。()代表节点；[]代表关系 当需要查询一个一跳路径时 1MATCH (n)-[r]-(m) RETURN * 从n到m，关系为r。 将节点和关系的">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://shuichang2019.github.io/2021/09/20/%E8%B0%9C%E4%B9%8B%E6%B8%85%E9%86%92%E6%A2%A6%E6%B5%8B%E8%AF%95%E7%AC%94%E8%AE%B0/https:/gcore.jsdelivr.net/gh/ShuiChang2019/PicPic@master/bkg/art1.jpg">
-<meta property="article:published_time" content="2021-09-20T15:49:12.000Z">
-<meta property="article:modified_time" content="2022-10-30T13:37:00.782Z">
+<meta property="og:image" content="https://shuichang2019.github.io/2022/10/30/Cypher%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/https:/gcore.jsdelivr.net/gh/ShuiChang2019/PicPic@master/bkg/art1.jpg">
+<meta property="article:published_time" content="2022-10-30T15:48:31.000Z">
+<meta property="article:modified_time" content="2022-10-30T15:49:01.531Z">
 <meta property="article:author" content="ShuiChang">
-<meta property="article:tag" content="做梦">
+<meta property="article:tag" content="图数据库学习和应用">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://shuichang2019.github.io/2021/09/20/%E8%B0%9C%E4%B9%8B%E6%B8%85%E9%86%92%E6%A2%A6%E6%B5%8B%E8%AF%95%E7%AC%94%E8%AE%B0/https:/gcore.jsdelivr.net/gh/ShuiChang2019/PicPic@master/bkg/art1.jpg">
+<meta name="twitter:image" content="https://shuichang2019.github.io/2022/10/30/Cypher%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/https:/gcore.jsdelivr.net/gh/ShuiChang2019/PicPic@master/bkg/art1.jpg">
   
   <!-- 站点验证相关 -->
   
@@ -169,15 +169,15 @@
 
             <article itemscope itemtype="https://schema.org/Article">
     
-    <link itemprop="mainEntityOfPage" href="https://shuichang2019.github.io/2021/09/20/%E8%B0%9C%E4%B9%8B%E6%B8%85%E9%86%92%E6%A2%A6%E6%B5%8B%E8%AF%95%E7%AC%94%E8%AE%B0/">
+    <link itemprop="mainEntityOfPage" href="https://shuichang2019.github.io/2022/10/30/Cypher%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
     <div class="kratos-hentry kratos-post-inner clearfix">
         <header class="kratos-entry-header">
             
-                <h1 class="kratos-entry-title text-center" itemprop="name headline">谜之清醒梦测试笔记</h1>
+                <h1 class="kratos-entry-title text-center" itemprop="name headline">Cypher语言学习笔记</h1>
             
             
             <ul class="kratos-post-meta text-center">
-                <li><time datetime="2021-09-20T15:49:12.000Z" itemprop="datePublished"><i class="fa fa-calendar"></i> 2021-09-20</time></li>
+                <li><time datetime="2022-10-30T15:48:31.000Z" itemprop="datePublished"><i class="fa fa-calendar"></i> 2022-10-30</time></li>
                 <li itemprop="author" itemscope itemtype="https://schema.org/Person">
                     <i class="fa fa-user"></i> 作者 <span itemprop="name">ShuiChang</span>
                 </li>
@@ -185,7 +185,7 @@
                     <i class="fa fa-edit"></i> 
                     
                     
-                        593
+                        ~2.90K
                     
                     字
                 </li>
@@ -196,19 +196,83 @@
             
             <div id="expire-alert" class="alert alert-warning hidden" role="alert">
                 <div class="icon"><i class="fa fa-warning"></i></div>
-                <div class="text"><p>本文最后编辑于 <time datetime="1667137020782"></time> 前，其中的内容可能需要更新。</p></div>
+                <div class="text"><p>本文最后编辑于 <time datetime="1667144941531"></time> 前，其中的内容可能需要更新。</p></div>
             </div>
             
             
             
             <hr />
-            <div itemprop="articleBody"><p>尝试练习做清醒梦。通过Stephen LaBerge &amp; Howard Rheingold所著《Exploring the World of Lucid Dreaming》学习怎么做这个梦。</p>
-<h2 id="WILDS-Wake-Initiated-Lucid-Dreams-方法"><a href="#WILDS-Wake-Initiated-Lucid-Dreams-方法" class="headerlink" title="WILDS(Wake-Initiated Lucid Dreams)方法"></a>WILDS(Wake-Initiated Lucid Dreams)方法</h2><p>​	对于WILDS最常用的方法是：<strong>在陷入睡眠时注意着眼前的“睡梦前的景色”</strong>（Attention to Hypnagogic Imagery）。一开始可能是一些简单的图象、闪光或几何图案，之后便会变得更为复杂。</p>
-<p>​	完成以上的方法，可以通过：</p>
-<p>​	<strong>1.彻底放松</strong>——闭上眼睛，放松所有肌肉和精神的紧张感，直到精神如同西湖一般平静。若无法彻底放松，可通过”渐进式放松练习”(progressive relaxation exercise)或”61点放松练习”(61-point relaxation exercise)来更深层次地放松。</p>
-<p>​	<strong>2.观察眼前出现的图象</strong>——慢慢集中注意力到“眼前”的图象上。观察地细一些，但是不要尝试盯住它们不放。仅仅观察即可，不需要尝试做什么动作。眼前的景象会从简单到复杂。</p>
-<p>​	<strong>3.入梦</strong>——当眼前的象变得逐渐生动，成为场景时，可以让自己被动地沉浸在梦的世界中。不能主动进入梦的景象，要尝试对这些想象无感，让与梦自然的交互将自己拉入梦中。<strong>不能太沉浸于梦而丧失注意力，不能忘了自己是在做梦。</strong></p>
-</div>
+            <div itemprop="articleBody"><h1 id="Cypher语言学习"><a href="#Cypher语言学习" class="headerlink" title="Cypher语言学习"></a>Cypher语言学习</h1><h2 id="基本"><a href="#基本" class="headerlink" title="基本"></a>基本</h2><p>Cypher感觉很像SQL+SPARQL的组合，故当了解了SQL和SPARQL后，就只用记住Cypher的一些特色的东西了，但Cypher特色的东西也不少。</p>
+<h3 id="节点、关系和模式"><a href="#节点、关系和模式" class="headerlink" title="节点、关系和模式"></a><strong>节点、关系和模式</strong></h3><p>Cypher提供了一个很直观的方式匹配图中的节点和关系。()代表节点；[]代表关系</p>
+<p>当需要查询一个一跳路径时</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (n)-[r]-(m) RETURN *</span><br></pre></td></tr></table></figure>
+<p>从n到m，关系为r。</p>
+<p>将节点和关系的语法组合在一起可以表达模式。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(keanu:Person &#123;name: &quot;Keanu Reeves&quot;&#125;)-[role:ACTED_IN &#123;roles: [&quot;Neo&quot;]&#125;]-&gt;(matrix:Movie &#123;title: &quot;The Matrix&quot;&#125;)</span><br></pre></td></tr></table></figure>
+
+<h3 id="运算符"><a href="#运算符" class="headerlink" title="运算符"></a><strong>运算符</strong></h3><p>存在数学运算符、比较运算符、布尔运算符（AND、OR、XOR和NOT）、字符串运算符（连接字符串为+；正则表达式的匹配运算符为&#x3D;~）、列表运算符（连接用+，检查是否存在元素用IN）<br><br></p>
+<p>在比较值的时候，可以用&#x3D;号或者&lt;&gt;号来比较两个值的相等或不相等关系。</p>
+<p>比较运算可以被任意链接在一起，如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (n) WHERE 1 &lt; n.value &lt; 10 RETURN n</span><br></pre></td></tr></table></figure>
+
+<h3 id="模式"><a href="#模式" class="headerlink" title="模式"></a><strong>模式</strong></h3><p>模式可以描述期望看到的数据形状。</p>
+<p>最简单的模式是节点。以圆括号表示，如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(a)</span><br></pre></td></tr></table></figure>
+
+<p>可描述多个节点的联系。Cypher使用箭头来表达两节点之间的关系。如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">(a)--&gt;(b)</span><br><span class="line">(a)--&gt;(b)&lt;--(c)</span><br><span class="line">(a)--&gt;()&lt;--(c)</span><br><span class="line">(a:User)--&gt;(b)</span><br><span class="line">(a:User:Admin)--&gt;(b)</span><br></pre></td></tr></table></figure>
+
+<p>可指定属性。属性在模式中使用位于大括号里的键值对来表达。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(a &#123;name: &#x27;a&#x27;, property: &#x27;b&#x27;&#125;)</span><br><span class="line">(a)-[&#123;property: &#x27;c&#x27;&#125;]-&gt;(b)</span><br></pre></td></tr></table></figure>
+<p><br><br><br><br><strong>描述关系</strong>：可以通过箭头描述关系，如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(a)--&gt;(b)</span><br></pre></td></tr></table></figure>
+<p>如若不关心关系的方向，则可省略箭头的头部。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(a)--(b)</span><br></pre></td></tr></table></figure>
+<p>可以给关系赋一个变量名用于后续引用。如下面的例子是将关系赋值<em>r</em>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(a)-[r]-&gt;(b)</span><br></pre></td></tr></table></figure>
+<p>就像节点可以有标签，关系可以有类型（type）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(a)-[r:RELATION_TYPE]-&gt;(b)</span><br></pre></td></tr></table></figure>
+<p>节点可以有多个标签，但是关系只能有一个类型。但如果所描述的关系可以是一个类型集合的任何一个类型，就可以直接把这些类型都列入模式，以竖线分隔。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(a)-[r:RELATION_TYPE1|RELATION_TYPE2]-&gt;(b)</span><br></pre></td></tr></table></figure>
+<p>可以通过指定关系长度的模式描述关系，这种长度也可以是范围</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">(a)-[*2]-&gt;(b) //两跳</span><br><span class="line">(a)-[*1..3]-&gt;(b) //一到三跳</span><br><span class="line">(a)-[*1..]-&gt;(b) //大于一跳</span><br><span class="line">(a)-[*..3]-&gt;(b) //小于三跳</span><br><span class="line">(a)-[*]-&gt;(b) //任意长度</span><br></pre></td></tr></table></figure>
+<p>如：查询印度丝鰺和食蟹豆齿鳗之间、通过两跳的关系</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (n:`鱼`&#123;name:&#x27;印度丝鰺&#x27;&#125;)-[*2]-(m:`鱼`&#123;name:&#x27;食蟹豆齿鳗&#x27;&#125;) RETURN *</span><br></pre></td></tr></table></figure>
+
+<h3 id="列表"><a href="#列表" class="headerlink" title="列表"></a><strong>列表</strong></h3><p>Cypher支持列表操作，如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">return [x in [1,2,3] | x/2] //对一个列表做除以二的操作</span><br></pre></td></tr></table></figure>
+
+<h3 id="正则表达式"><a href="#正则表达式" class="headerlink" title="正则表达式"></a><strong>正则表达式</strong></h3><p>Cypher支持正则表达式。通过“&#x3D;~”符号可以做到。</p>
+<p>这个例子是匹配所有名字中包含“蛇”的鱼。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (n:`鱼`) WHERE n.name =~ &#x27;.+蛇.+&#x27; RETURN *</span><br></pre></td></tr></table></figure>
+
+<h3 id="CREATE-MERGE-SET-DELETE-REMOVE"><a href="#CREATE-MERGE-SET-DELETE-REMOVE" class="headerlink" title="CREATE MERGE SET DELETE REMOVE"></a><strong>CREATE MERGE SET DELETE REMOVE</strong></h3><p>CREATE可以创建新节点。</p>
+<p>这个例子是建立一个鱼实体，有一个属性为“name”，“name”的值叫“ShuiChang2019”。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CREATE (n:鱼 &#123; name:&#x27;ShuiChang2019&#x27; &#125;) RETURN n</span><br></pre></td></tr></table></figure>
+<p>建立一个关系。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CREATE (n:`鱼` &#123; name:&#x27;ShuiChang2019&#x27; &#125;)-[:`分布`]-&gt;(m:`区域`&#123;name:&#x27;西太平洋&#x27;&#125;) RETURN *</span><br></pre></td></tr></table></figure>
+
+<p>MERGE查看搜的东西在不在，若不在就加个新东西</p>
+<p>例子是加个“name”属性为“家里”的区域节点。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MERGE (n:`区域`&#123;name:&#x27;家里&#x27;&#125;) RETURN *</span><br></pre></td></tr></table></figure>
+
+<p>SET用于添加新属性。</p>
+<p>例子是给ShuiChang2019节点加个属性</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (n:`鱼`&#123;name:&#x27;ShuiChang2019&#x27;&#125;) SET n.bio_kingdom_cn=&#x27;植物界&#x27; RETURN *</span><br></pre></td></tr></table></figure>
+
+<p>DELETE用于删除节点和关系；REMOVE用于删除标签和属性。</p>
+<p>把刚才加的东西删掉，首先删除刚才添加的植物界标签。因为是标签所以用REMOVE。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (n:`鱼`&#123;name:&#x27;ShuiChang2019&#x27;&#125;) REMOVE n.bio_kingdom_cn RETURN *</span><br></pre></td></tr></table></figure>
+<p>把加的地点和节点全部删掉，因为是节点，所以用DELETE。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (n:`鱼`&#123;name:&#x27;ShuiChang2019&#x27;&#125;) DELETE n RETURN *</span><br></pre></td></tr></table></figure>
+<p>这个时候会报错，因为在删除节点前需要删除节点所有的关系。所以直接删除节点及其关系。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (n:`鱼`&#123;name:&#x27;ShuiChang2019&#x27;&#125;)-[r]-&gt;(m) DELETE n,r RETURN *</span><br></pre></td></tr></table></figure>
+<p>这个时候就可以删除“家里”节点了，因为和它联系的全部关系已经删完了。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MERGE (n:`区域`&#123;name:&#x27;家里&#x27;&#125;) RETURN *</span><br></pre></td></tr></table></figure>
+
+<h2 id="感觉会用到很多次的操作"><a href="#感觉会用到很多次的操作" class="headerlink" title="感觉会用到很多次的操作"></a>感觉会用到很多次的操作</h2><h3 id="shortestPath"><a href="#shortestPath" class="headerlink" title="shortestPath"></a>shortestPath</h3><p>shortestPath函数可用于查找两个节点之间的最短路径。 </p>
+<p>查找两种鱼的最短关系路径并返回这条路径</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH p=shortestPath((n:`鱼`&#123;name:&#x27;北太平洋无鬚鳕&#x27;&#125;)-[*]-(m:`鱼`&#123;name:&#x27;金枪鱼&#x27;&#125;)) RETURN p</span><br></pre></td></tr></table></figure></div>
         </div>
         
             <div class="kratos-copyright text-center clearfix">
@@ -261,7 +325,7 @@
     <script type="text/javascript">
         $(()=>{
             new QRCode("wechat-qr", {
-                text: "https://shuichang2019.github.io/2021/09/20/%E8%B0%9C%E4%B9%8B%E6%B8%85%E9%86%92%E6%A2%A6%E6%B5%8B%E8%AF%95%E7%AC%94%E8%AE%B0/",
+                text: "https://shuichang2019.github.io/2022/10/30/Cypher%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/",
                 width: 150,
                 height: 150,
                 correctLevel : QRCode.CorrectLevel.H
@@ -273,10 +337,10 @@
             const qzoneBase     = "https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?";
             const facebookBase  = "https://www.facebook.com/sharer/sharer.php?";
             const twitterBase   = "https://twitter.com/intent/tweet?";
-            const hostUrl       = "https://shuichang2019.github.io/2021/09/20/%E8%B0%9C%E4%B9%8B%E6%B8%85%E9%86%92%E6%A2%A6%E6%B5%8B%E8%AF%95%E7%AC%94%E8%AE%B0/";
-            const title         = "「谜之清醒梦测试笔记」";
-            const excerpt       = `尝试练习做清醒梦。通过Stephen LaBerge &amp; Howard Rheingold所著《Exploring the World of Lucid Dreaming》学习怎么做这个梦。
-WILDS(Wake-Initia...`;
+            const hostUrl       = "https://shuichang2019.github.io/2022/10/30/Cypher%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/";
+            const title         = "「Cypher语言学习笔记」";
+            const excerpt       = `Cypher语言学习基本Cypher感觉很像SQL+SPARQL的组合，故当了解了SQL和SPARQL后，就只用记住Cypher的一些特色的东西了，但Cypher特色的东西也不少。
+节点、关系和模式Cypher提供了一个很直观的方式匹...`;
             let _URL;
             switch (dest) {
                 case "qq"       : _URL = qqBase+"url="+hostUrl+"&title="+title+"&desc=&summary="+excerpt+"&site=cxpy";     break;
@@ -295,10 +359,10 @@ WILDS(Wake-Initia...`;
             <div class="footer-tag clearfix">
                 <div class="pull-left">
                 <i class="fa fa-tags"></i>
-                    <a class="tag-none-link" href="/tags/%E5%81%9A%E6%A2%A6/" rel="tag">做梦</a>
+                    <a class="tag-none-link" href="/tags/%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AD%A6%E4%B9%A0%E5%92%8C%E5%BA%94%E7%94%A8/" rel="tag">图数据库学习和应用</a>
                 </div>
                 <div class="pull-date">
-                    <time datetime="2022-10-30T13:37:00.782Z" itemprop="dateModified">最后编辑：2022-10-30</time>
+                    <time datetime="2022-10-30T15:49:01.531Z" itemprop="dateModified">最后编辑：2022-10-30</time>
                 </div>
             </div>
         </footer>
@@ -307,13 +371,9 @@ WILDS(Wake-Initia...`;
         <nav class="navigation post-navigation clearfix" role="navigation">
             
             <div class="nav-previous clearfix">
-                <a title=" Python爬虫小应用之爬取Pixiv指定画师的插画" href="/2021/08/19/Python爬虫小应用之爬取Pixiv指定画师的插画/">&lt; 上一篇</a>
+                <a title=" Neo4J导入数据笔记" href="/2022/10/30/Neo4J导入数据笔记/">&lt; 上一篇</a>
             </div>
             
-            
-            <div class="nav-next clearfix">
-                <a title=" 谜之清醒梦测试-MILD方法" href="/2021/09/22/谜之清醒梦测试-MILD方法/">下一篇 &gt;</a>
-            </div>
             
         </nav>
     

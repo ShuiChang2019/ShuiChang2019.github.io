@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <link rel="icon" href="https://gcore.jsdelivr.net/gh/ShuiChang2019/PicPic/img/favicon.png">
   
-  <title>谜之清醒梦测试笔记 | 好吃</title>
+  <title>鸭器学习的一些笔记 | 好吃</title>
   <meta name="author" content="ShuiChang" />
   <meta http-equiv="Cache-Control" content="no-transform" />
   <meta http-equiv="Cache-Control" content="no-siteapp" />
@@ -14,22 +14,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <meta name="format-detection" content="telphone=no, email=no" />
   
-    <meta name="keywords" content="做梦" />
+    <meta name="keywords" content="机器学习" />
   
-  <meta name="description" content="尝试练习做清醒梦。通过Stephen LaBerge &amp; Howard Rheingold所著《Exploring the World of Lucid Dreaming》学习怎么做这个梦。 WILDS(Wake-Initiated Lucid Dreams)方法​	对于WILDS最常用的方法是：在陷入睡眠时注意着眼前的“睡梦前的景色”（Attention to Hypnagogic Im">
+  <meta name="description" content="小技巧可以通过Random Forest算法来获得特征重要度在scikit-learn所包含的随机森林算法中，收集了特征重要度的值，可直接通过这个参数来获取 1feature_importances_ 这个参数可以在fit完 1RandomForestClassifier 后获取。书中给的案例是用500个树来排序13个特征。 特征降维的几种方法PCA-用于非监督数据压缩（在投影到低维时忽视标签）L">
 <meta property="og:type" content="article">
-<meta property="og:title" content="谜之清醒梦测试笔记">
-<meta property="og:url" content="https://shuichang2019.github.io/2021/09/20/%E8%B0%9C%E4%B9%8B%E6%B8%85%E9%86%92%E6%A2%A6%E6%B5%8B%E8%AF%95%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:title" content="鸭器学习的一些笔记">
+<meta property="og:url" content="https://shuichang2019.github.io/2022/10/30/%E9%B8%AD%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%AC%94%E8%AE%B0/index.html">
 <meta property="og:site_name" content="好吃">
-<meta property="og:description" content="尝试练习做清醒梦。通过Stephen LaBerge &amp; Howard Rheingold所著《Exploring the World of Lucid Dreaming》学习怎么做这个梦。 WILDS(Wake-Initiated Lucid Dreams)方法​	对于WILDS最常用的方法是：在陷入睡眠时注意着眼前的“睡梦前的景色”（Attention to Hypnagogic Im">
+<meta property="og:description" content="小技巧可以通过Random Forest算法来获得特征重要度在scikit-learn所包含的随机森林算法中，收集了特征重要度的值，可直接通过这个参数来获取 1feature_importances_ 这个参数可以在fit完 1RandomForestClassifier 后获取。书中给的案例是用500个树来排序13个特征。 特征降维的几种方法PCA-用于非监督数据压缩（在投影到低维时忽视标签）L">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://shuichang2019.github.io/2021/09/20/%E8%B0%9C%E4%B9%8B%E6%B8%85%E9%86%92%E6%A2%A6%E6%B5%8B%E8%AF%95%E7%AC%94%E8%AE%B0/https:/gcore.jsdelivr.net/gh/ShuiChang2019/PicPic@master/bkg/art1.jpg">
-<meta property="article:published_time" content="2021-09-20T15:49:12.000Z">
-<meta property="article:modified_time" content="2022-10-30T13:37:00.782Z">
+<meta property="og:image" content="https://shuichang2019.github.io/2022/10/30/%E9%B8%AD%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%AC%94%E8%AE%B0/https:/gcore.jsdelivr.net/gh/ShuiChang2019/PicPic@master/bkg/art1.jpg">
+<meta property="article:published_time" content="2022-10-30T15:43:09.000Z">
+<meta property="article:modified_time" content="2022-10-30T15:45:57.266Z">
 <meta property="article:author" content="ShuiChang">
-<meta property="article:tag" content="做梦">
+<meta property="article:tag" content="机器学习">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://shuichang2019.github.io/2021/09/20/%E8%B0%9C%E4%B9%8B%E6%B8%85%E9%86%92%E6%A2%A6%E6%B5%8B%E8%AF%95%E7%AC%94%E8%AE%B0/https:/gcore.jsdelivr.net/gh/ShuiChang2019/PicPic@master/bkg/art1.jpg">
+<meta name="twitter:image" content="https://shuichang2019.github.io/2022/10/30/%E9%B8%AD%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%AC%94%E8%AE%B0/https:/gcore.jsdelivr.net/gh/ShuiChang2019/PicPic@master/bkg/art1.jpg">
   
   <!-- 站点验证相关 -->
   
@@ -169,15 +169,15 @@
 
             <article itemscope itemtype="https://schema.org/Article">
     
-    <link itemprop="mainEntityOfPage" href="https://shuichang2019.github.io/2021/09/20/%E8%B0%9C%E4%B9%8B%E6%B8%85%E9%86%92%E6%A2%A6%E6%B5%8B%E8%AF%95%E7%AC%94%E8%AE%B0/">
+    <link itemprop="mainEntityOfPage" href="https://shuichang2019.github.io/2022/10/30/%E9%B8%AD%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%AC%94%E8%AE%B0/">
     <div class="kratos-hentry kratos-post-inner clearfix">
         <header class="kratos-entry-header">
             
-                <h1 class="kratos-entry-title text-center" itemprop="name headline">谜之清醒梦测试笔记</h1>
+                <h1 class="kratos-entry-title text-center" itemprop="name headline">鸭器学习的一些笔记</h1>
             
             
             <ul class="kratos-post-meta text-center">
-                <li><time datetime="2021-09-20T15:49:12.000Z" itemprop="datePublished"><i class="fa fa-calendar"></i> 2021-09-20</time></li>
+                <li><time datetime="2022-10-30T15:43:09.000Z" itemprop="datePublished"><i class="fa fa-calendar"></i> 2022-10-30</time></li>
                 <li itemprop="author" itemscope itemtype="https://schema.org/Person">
                     <i class="fa fa-user"></i> 作者 <span itemprop="name">ShuiChang</span>
                 </li>
@@ -185,7 +185,7 @@
                     <i class="fa fa-edit"></i> 
                     
                     
-                        593
+                        ~1.75K
                     
                     字
                 </li>
@@ -196,19 +196,33 @@
             
             <div id="expire-alert" class="alert alert-warning hidden" role="alert">
                 <div class="icon"><i class="fa fa-warning"></i></div>
-                <div class="text"><p>本文最后编辑于 <time datetime="1667137020782"></time> 前，其中的内容可能需要更新。</p></div>
+                <div class="text"><p>本文最后编辑于 <time datetime="1667144757266"></time> 前，其中的内容可能需要更新。</p></div>
             </div>
             
             
             
             <hr />
-            <div itemprop="articleBody"><p>尝试练习做清醒梦。通过Stephen LaBerge &amp; Howard Rheingold所著《Exploring the World of Lucid Dreaming》学习怎么做这个梦。</p>
-<h2 id="WILDS-Wake-Initiated-Lucid-Dreams-方法"><a href="#WILDS-Wake-Initiated-Lucid-Dreams-方法" class="headerlink" title="WILDS(Wake-Initiated Lucid Dreams)方法"></a>WILDS(Wake-Initiated Lucid Dreams)方法</h2><p>​	对于WILDS最常用的方法是：<strong>在陷入睡眠时注意着眼前的“睡梦前的景色”</strong>（Attention to Hypnagogic Imagery）。一开始可能是一些简单的图象、闪光或几何图案，之后便会变得更为复杂。</p>
-<p>​	完成以上的方法，可以通过：</p>
-<p>​	<strong>1.彻底放松</strong>——闭上眼睛，放松所有肌肉和精神的紧张感，直到精神如同西湖一般平静。若无法彻底放松，可通过”渐进式放松练习”(progressive relaxation exercise)或”61点放松练习”(61-point relaxation exercise)来更深层次地放松。</p>
-<p>​	<strong>2.观察眼前出现的图象</strong>——慢慢集中注意力到“眼前”的图象上。观察地细一些，但是不要尝试盯住它们不放。仅仅观察即可，不需要尝试做什么动作。眼前的景象会从简单到复杂。</p>
-<p>​	<strong>3.入梦</strong>——当眼前的象变得逐渐生动，成为场景时，可以让自己被动地沉浸在梦的世界中。不能主动进入梦的景象，要尝试对这些想象无感，让与梦自然的交互将自己拉入梦中。<strong>不能太沉浸于梦而丧失注意力，不能忘了自己是在做梦。</strong></p>
-</div>
+            <div itemprop="articleBody"><h1 id="小技巧"><a href="#小技巧" class="headerlink" title="小技巧"></a><strong>小技巧</strong></h1><h2 id="可以通过Random-Forest算法来获得特征重要度"><a href="#可以通过Random-Forest算法来获得特征重要度" class="headerlink" title="可以通过Random Forest算法来获得特征重要度"></a>可以通过Random Forest算法来获得特征重要度</h2><p>在scikit-learn所包含的随机森林算法中，收集了特征重要度的值，可直接通过这个参数来获取</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">feature_importances_</span><br></pre></td></tr></table></figure>
+<p>这个参数可以在fit完</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RandomForestClassifier</span><br></pre></td></tr></table></figure>
+<p>后获取。书中给的案例是用500个树来排序13个特征。<br></p>
+<h2 id="特征降维的几种方法"><a href="#特征降维的几种方法" class="headerlink" title="特征降维的几种方法"></a>特征降维的几种方法</h2><p>PCA-用于非监督数据压缩（在投影到低维时忽视标签）<br><br>LDA-用于监督特征降维（在线性特征空间中考虑标签，尝试最大化类可分）<br><br>KPCA-用于非线性特征降维（将非线性特征压缩到低维子空间至线性可分）<br></p>
+<h2 id="scikit-learn中的Pipeline方法"><a href="#scikit-learn中的Pipeline方法" class="headerlink" title="scikit-learn中的Pipeline方法"></a>scikit-learn中的Pipeline方法</h2><p>pipeline是一个wrapper工具，可将多步fit和transform操作连接起来。</p>
+<h3 id="make-pipeline函数"><a href="#make-pipeline函数" class="headerlink" title="make_pipeline函数"></a>make_pipeline函数</h3><p>make_pipeline函数接受任意的scikit-learn transformer（接受fit和transform作为输入）和scikit-learn estimator（应用fit和predict方法）。<br><br>以两个transformer（StandardScaler和PCA）和一个estimator（LogisticRegression）为例</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> StandardScaler</span><br><span class="line"><span class="keyword">from</span> sklearn.decomposition <span class="keyword">import</span> PCA</span><br><span class="line"><span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> LogisticRegression</span><br><span class="line"><span class="keyword">from</span> sklearn.pipeline <span class="keyword">import</span> make_pipeline</span><br><span class="line">pipe_lr = make_pipeline(StandardScaler(),</span><br><span class="line">                        PCA(n_components=<span class="number">2</span>),</span><br><span class="line">                        LogisticRegression(random_state=<span class="number">1</span>,</span><br><span class="line">                        solver=<span class="string">&#x27;lbfgs&#x27;</span>))</span><br><span class="line">pipe_lr.fit(X_train, y_train)</span><br><span class="line">y_pred = pipe_lr.predict(X_test)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Test Accuracy: %.3f&#x27;</span> % pipe_lr.score(X_test, y_test))</span><br></pre></td></tr></table></figure>
+<p>当执行**pipe_lr.fit()**时，StandardScaler首先执行fit和transform，之后处理好的数据被传给PCA，PCA在fit和transform后把处理好的数据传给estimator，即LogisticRegression。<br><br></p>
+<p>pipeline的最后一个元素必须是estimator。<br><br></p>
+<p>在**pipe_lr.predict()**时，数据通过pipeline。此时是调用transform。在最后一步时，estimator返回一个对transformer转换好的数据的预测。</p>
+<h2 id="K-fold交叉验证"><a href="#K-fold交叉验证" class="headerlink" title="K-fold交叉验证"></a>K-fold交叉验证</h2><p>传统的分法是 训练（train）测试（test）和验证评估（validation）<br><br>K-fold为随机把训练集分为k部分；k-1用于模型训练，剩下的一部分用于评估。这个过程会重复k遍，所以会获得k个模型和效果评价。<br><br>一般用K-fold方法调参</p>
+<h2 id="处理不平衡数据集"><a href="#处理不平衡数据集" class="headerlink" title="处理不平衡数据集"></a>处理不平衡数据集</h2><ul>
+<li>例：90%为label1，10%为label2。当以准确度为标准时，可以轻易达到90%准确度，因为label1占90%。可以转用recall率、ROC曲线来作为标准。</li>
+<li>可在模型fit的时候加一个更大的错误惩罚。在scikit-learn中可以通过设置<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">class_weight = <span class="string">&#x27;balanced&#x27;</span></span><br></pre></td></tr></table></figure>
+$~~~~$来实现。</li>
+<li>可以上采样少的部分，下采样多的部分。可通过scikit-learn中的resample函数实现。</li>
+</ul>
+<h2 id="用随机森林来解决回归问题"><a href="#用随机森林来解决回归问题" class="headerlink" title="用随机森林来解决回归问题"></a>用随机森林来解决回归问题</h2><p>众所周知，在监督学习中，如果预测的变量是离散的，就叫<strong>分类</strong>；如果预测的变量是连续的，就叫<strong>回归</strong>。<br><br>回归不仅可以用回归方程（一次、多次），还可以用随机森林。</p>
+<h2 id="聚类"><a href="#聚类" class="headerlink" title="聚类"></a>聚类</h2></div>
         </div>
         
             <div class="kratos-copyright text-center clearfix">
@@ -261,7 +275,7 @@
     <script type="text/javascript">
         $(()=>{
             new QRCode("wechat-qr", {
-                text: "https://shuichang2019.github.io/2021/09/20/%E8%B0%9C%E4%B9%8B%E6%B8%85%E9%86%92%E6%A2%A6%E6%B5%8B%E8%AF%95%E7%AC%94%E8%AE%B0/",
+                text: "https://shuichang2019.github.io/2022/10/30/%E9%B8%AD%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%AC%94%E8%AE%B0/",
                 width: 150,
                 height: 150,
                 correctLevel : QRCode.CorrectLevel.H
@@ -273,10 +287,12 @@
             const qzoneBase     = "https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?";
             const facebookBase  = "https://www.facebook.com/sharer/sharer.php?";
             const twitterBase   = "https://twitter.com/intent/tweet?";
-            const hostUrl       = "https://shuichang2019.github.io/2021/09/20/%E8%B0%9C%E4%B9%8B%E6%B8%85%E9%86%92%E6%A2%A6%E6%B5%8B%E8%AF%95%E7%AC%94%E8%AE%B0/";
-            const title         = "「谜之清醒梦测试笔记」";
-            const excerpt       = `尝试练习做清醒梦。通过Stephen LaBerge &amp; Howard Rheingold所著《Exploring the World of Lucid Dreaming》学习怎么做这个梦。
-WILDS(Wake-Initia...`;
+            const hostUrl       = "https://shuichang2019.github.io/2022/10/30/%E9%B8%AD%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%AC%94%E8%AE%B0/";
+            const title         = "「鸭器学习的一些笔记」";
+            const excerpt       = `小技巧可以通过Random Forest算法来获得特征重要度在scikit-learn所包含的随机森林算法中，收集了特征重要度的值，可直接通过这个参数来获取
+1feature_importances_
+这个参数可以在fit完
+1Ran...`;
             let _URL;
             switch (dest) {
                 case "qq"       : _URL = qqBase+"url="+hostUrl+"&title="+title+"&desc=&summary="+excerpt+"&site=cxpy";     break;
@@ -295,10 +311,10 @@ WILDS(Wake-Initia...`;
             <div class="footer-tag clearfix">
                 <div class="pull-left">
                 <i class="fa fa-tags"></i>
-                    <a class="tag-none-link" href="/tags/%E5%81%9A%E6%A2%A6/" rel="tag">做梦</a>
+                    <a class="tag-none-link" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag">机器学习</a>
                 </div>
                 <div class="pull-date">
-                    <time datetime="2022-10-30T13:37:00.782Z" itemprop="dateModified">最后编辑：2022-10-30</time>
+                    <time datetime="2022-10-30T15:45:57.266Z" itemprop="dateModified">最后编辑：2022-10-30</time>
                 </div>
             </div>
         </footer>
@@ -307,12 +323,12 @@ WILDS(Wake-Initia...`;
         <nav class="navigation post-navigation clearfix" role="navigation">
             
             <div class="nav-previous clearfix">
-                <a title=" Python爬虫小应用之爬取Pixiv指定画师的插画" href="/2021/08/19/Python爬虫小应用之爬取Pixiv指定画师的插画/">&lt; 上一篇</a>
+                <a title=" 谜之清醒梦测试-MILD方法" href="/2021/09/22/谜之清醒梦测试-MILD方法/">&lt; 上一篇</a>
             </div>
             
             
             <div class="nav-next clearfix">
-                <a title=" 谜之清醒梦测试-MILD方法" href="/2021/09/22/谜之清醒梦测试-MILD方法/">下一篇 &gt;</a>
+                <a title=" Neo4J导入数据笔记" href="/2022/10/30/Neo4J导入数据笔记/">下一篇 &gt;</a>
             </div>
             
         </nav>
