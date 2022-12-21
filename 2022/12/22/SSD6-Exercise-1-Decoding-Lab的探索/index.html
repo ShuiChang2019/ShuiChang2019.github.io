@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+  <!-- 元数据 -->
+  <meta charset="utf-8">
+  <link rel="icon" href="https://gcore.jsdelivr.net/gh/ShuiChang2019/PicPic/img/favicon.png">
+  
+  <title>SSD6 Exercise 1: Decoding Lab的探索 | 好吃</title>
+  <meta name="author" content="ShuiChang" />
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="robots" content="index,follow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta name="format-detection" content="telphone=no, email=no" />
+  
+    <meta name="keywords" content="学习杂记" />
+  
+  <meta name="description" content="尝试做了下SSD6 Exercise 1: Decoding Lab。跟着很多题解，花了巨量时间，学到了不少，稍微写了下过程。 VScode运行C程序也是第一次尝试、GDB也是第一次用，感觉会出现很多错误，后面慢慢改罢。 初看和初调编译源文件，用gdb调试。 12gcc lab1.c -g -o out.outgdb out.out  由题是先解出key1和key2，再解出3和4。 当输入两个参数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SSD6 Exercise 1: Decoding Lab的探索">
+<meta property="og:url" content="https://shuichang2019.github.io/2022/12/22/SSD6-Exercise-1-Decoding-Lab%E7%9A%84%E6%8E%A2%E7%B4%A2/index.html">
+<meta property="og:site_name" content="好吃">
+<meta property="og:description" content="尝试做了下SSD6 Exercise 1: Decoding Lab。跟着很多题解，花了巨量时间，学到了不少，稍微写了下过程。 VScode运行C程序也是第一次尝试、GDB也是第一次用，感觉会出现很多错误，后面慢慢改罢。 初看和初调编译源文件，用gdb调试。 12gcc lab1.c -g -o out.outgdb out.out  由题是先解出key1和key2，再解出3和4。 当输入两个参数">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://shuichang2019.github.io/2022/12/22/SSD6-Exercise-1-Decoding-Lab%E7%9A%84%E6%8E%A2%E7%B4%A2/https:/gcore.jsdelivr.net/gh/ShuiChang2019/PicPic@master/bkg/art1.jpg">
+<meta property="article:published_time" content="2022-12-21T17:17:26.000Z">
+<meta property="article:modified_time" content="2022-12-21T17:18:52.272Z">
+<meta property="article:author" content="ShuiChang">
+<meta property="article:tag" content="学习杂记">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://shuichang2019.github.io/2022/12/22/SSD6-Exercise-1-Decoding-Lab%E7%9A%84%E6%8E%A2%E7%B4%A2/https:/gcore.jsdelivr.net/gh/ShuiChang2019/PicPic@master/bkg/art1.jpg">
+  
+  <!-- 站点验证相关 -->
+  
+    
+    
+    
+  
+  <!-- 样式表文件 -->
+  <link rel="stylesheet" id="kratos-css" href="/css/kratosr.min.css" media="all"></script>
+  
+    <link rel="stylesheet" id="darkmode-css" href="/css/kr-color-dark.min.css" media="(prefers-color-scheme: dark)"></script>
+    <script src="/js/kr-dark.min.js"></script>
+  
+  
+    <link rel="stylesheet" id="highlight-css" href="/css/highlight/night-eighties.min.css" media="all"></script>
+  
+  
+  <link rel="stylesheet" id="fontawe-css" href="/vendors/font-awesome@4.7.0/css/font-awesome.min.css" media="all"></script>
+  <link rel="stylesheet" id="nprogress-css" href="/vendors/nprogress@0.2.0/nprogress.css" media="all"></script>
+  
+  
+    <link rel="stylesheet" href="/vendors/aplayer@1.10.1/dist/APlayer.min.css"></script>
+  
+  
+    <link rel="stylesheet" href="/vendors/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css"></script>
+  
+  <!-- 不得不预先加载的一些JS文件 -->
+  <script src="/vendors/jquery@3.6.0/dist/jquery.min.js"></script>
+  
+    <script src="/vendors/qrcode_js@1.0.0/qrcode.min.js"></script>
+  
+  
+  <style>
+    
+      .kratos-cover.kratos-cover-2 {
+        background-image: url('https://gcore.jsdelivr.net/gh/ShuiChang2019/PicPic/bkg/bannerpink1.png');
+      }
+    
+    
+      @media(min-width:768px) {
+        body.custom-background {
+          background-image: url('https://gcore.jsdelivr.net/gh/ShuiChang2019/PicPic/bkg/bg1.jpg');
+        }
+      }
+    
+  </style>
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+    <body class="custom-background">
+        <div id="kratos-wrapper">
+    <div id="kratos-page">
+        <div id="kratos-header">
+            <header id="kratos-desktop-topnav" class="kratos-topnav">
+                <div class="container">
+                    <div class="nav-header">
+                        <nav id="kratos-menu-wrap">
+                            <ul id="kratos-primary-menu" class="sf-menu">
+                                
+                                    
+                                        <li>
+                                            
+                                                <a href="/">
+                                            
+                                                
+                                                    <i class="fa fa-home"></i>
+                                                
+                                                首页
+                                            </a>
+                                            
+                                        </li>
+                                    
+                                        <li>
+                                            
+                                                <a href="/archives/">
+                                            
+                                                
+                                                    <i class="fa fa-file"></i>
+                                                
+                                                所有东西
+                                            </a>
+                                            
+                                        </li>
+                                    
+                                        <li>
+                                            
+                                                <a href="/friends/">
+                                            
+                                                
+                                                    <i class="fa fa-paw"></i>
+                                                
+                                                神秘链接
+                                            </a>
+                                            
+                                        </li>
+                                    
+                                
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </header>
+            <header id="kratos-mobile-topnav" class="kratos-topnav">
+                <div class="container">
+                    <div class="color-logo"><a href="/">好吃</a></div>
+                    <div class="nav-toggle">
+                        <a class="kratos-nav-toggle js-kratos-nav-toggle">
+                            <i></i>
+                        </a>
+                    </div>
+                </div>
+            </header>
+        </div>
+        <div class="kratos-start kratos-hero-2">
+            <!-- <div class="kratos-overlay"></div> -->
+            <div class="kratos-cover kratos-cover-2 text-center">
+                <div class="desc desc2 animate-box">
+                    <a href="/">
+                        <h2>好吃</h2> <br />
+                        <span>HaoChi</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="kratos-blog-post">
+            <div class="container">
+                <div id="main" class="row">
+                    
+
+        
+
+            <section class="col-md-8">
+
+        
+
+            <article itemscope itemtype="https://schema.org/Article">
+    
+    <link itemprop="mainEntityOfPage" href="https://shuichang2019.github.io/2022/12/22/SSD6-Exercise-1-Decoding-Lab%E7%9A%84%E6%8E%A2%E7%B4%A2/">
+    <div class="kratos-hentry kratos-post-inner clearfix">
+        <header class="kratos-entry-header">
+            
+                <h1 class="kratos-entry-title text-center" itemprop="name headline">SSD6 Exercise 1: Decoding Lab的探索</h1>
+            
+            
+            <ul class="kratos-post-meta text-center">
+                <li><time datetime="2022-12-21T17:17:26.000Z" itemprop="datePublished"><i class="fa fa-calendar"></i> 2022-12-22</time></li>
+                <li itemprop="author" itemscope itemtype="https://schema.org/Person">
+                    <i class="fa fa-user"></i> 作者 <span itemprop="name">ShuiChang</span>
+                </li>
+                <li>
+                    <i class="fa fa-edit"></i> 
+                    
+                    
+                        ~9.63K
+                    
+                    字
+                </li>
+                
+            </ul>
+        </header>
+        <div class="kratos-post-content">
+            
+            <div id="expire-alert" class="alert alert-warning hidden" role="alert">
+                <div class="icon"><i class="fa fa-warning"></i></div>
+                <div class="text"><p>本文最后编辑于 <time datetime="1671643132272"></time> 前，其中的内容可能需要更新。</p></div>
+            </div>
+            
+            
+            
+            <hr />
+            <div itemprop="articleBody"><h1 id="尝试做了下SSD6-Exercise-1-Decoding-Lab。"><a href="#尝试做了下SSD6-Exercise-1-Decoding-Lab。" class="headerlink" title="尝试做了下SSD6 Exercise 1: Decoding Lab。"></a>尝试做了下SSD6 Exercise 1: Decoding Lab。</h1><p>跟着很多题解，花了巨量时间，学到了不少，稍微写了下过程。</p>
+<p>VScode运行C程序也是第一次尝试、GDB也是第一次用，感觉会出现很多错误，后面慢慢改罢。</p>
+<h2 id="初看和初调"><a href="#初看和初调" class="headerlink" title="初看和初调"></a>初看和初调</h2><p>编译源文件，用gdb调试。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gcc lab1.c -g -o out.out</span><br><span class="line">gdb out.out</span><br></pre></td></tr></table></figure>
+
+<p>由题是先解出key1和key2，再解出3和4。</p>
+<p>当输入两个参数时和输入四个参数时是不一样的。解出key1和key2仅需要输入两个参数。所以先解出key1和key2.</p>
+<h2 id="解出key1和key2"><a href="#解出key1和key2" class="headerlink" title="解出key1和key2"></a>解出key1和key2</h2><p>仅有两个参数时main函数是这样的。（直接参考了<a target="_blank" rel="noopener" href="https://blog.csdn.net/pngfiwang/article/details/49644501">这个博客</a>）</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> dummy = <span class="number">1</span>;</span><br><span class="line">    <span class="type">int</span> start, stride;</span><br><span class="line">    <span class="type">int</span> key1, key2, key3, key4;</span><br><span class="line">    <span class="type">char</span> * msg1, *msg2;</span><br><span class="line">    key1 = strtol(argv[<span class="number">1</span>], <span class="literal">NULL</span>, <span class="number">0</span>);</span><br><span class="line">    key2 = strtol(argv[<span class="number">2</span>], <span class="literal">NULL</span>, <span class="number">0</span>);</span><br><span class="line">    process_keys12(&amp;key1, &amp;key2);</span><br><span class="line">    start = (<span class="type">int</span>)(*(((<span class="type">char</span> *)&amp;dummy)));</span><br><span class="line">    stride = (<span class="type">int</span>)(*(((<span class="type">char</span> *)&amp;dummy) + <span class="number">1</span>));</span><br><span class="line">    msg1 = extract_message1(start, stride);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, msg1);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>首先先进行process_keys12()，然后再取start和stride，之后运行extract_message1()后输出msg1。</p>
+<h3 id="理解extract-message1"><a href="#理解extract-message1" class="headerlink" title="理解extract_message1()"></a>理解extract_message1()</h3><p>start和stride是什么呢：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">start = (<span class="type">int</span>)(*(((<span class="type">char</span> *) &amp;dummy)));</span><br><span class="line">stride = (<span class="type">int</span>)(*(((<span class="type">char</span> *) &amp;dummy) + <span class="number">1</span>));</span><br></pre></td></tr></table></figure>
+
+<p>取地址-&gt;类型转换-&gt;取值-&gt;类型转换<br>start是dummy的第一个字节的值，stride是dummy的第二个字节的值</p>
+<p>而extract_message1()是这样的：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">char</span> * <span class="title function_">extract_message1</span><span class="params">(<span class="type">int</span> start, <span class="type">int</span> stride)</span> &#123;</span><br><span class="line">	<span class="type">int</span> i, j, k;</span><br><span class="line">	<span class="type">int</span> done = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>, j = start + <span class="number">1</span>; ! done; j++) &#123;</span><br><span class="line">		<span class="keyword">for</span> (k = <span class="number">1</span>; k &lt; stride; k++, j++, i++) &#123;</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span> (*(((<span class="type">char</span> *) data) + j) == <span class="string">&#x27;\0&#x27;</span>) &#123;</span><br><span class="line">				done = <span class="number">1</span>;</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			&#125;</span><br><span class="line">							 </span><br><span class="line">			message[i] = *(((<span class="type">char</span> *) data) + j);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	message[i] = <span class="string">&#x27;\0&#x27;</span>;</span><br><span class="line">	<span class="keyword">return</span> message;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>参考<a target="_blank" rel="noopener" href="https://blog.csdn.net/pngfiwang/article/details/49644501">这个博客</a>和<a target="_blank" rel="noopener" href="https://blog.csdn.net/maiowu1001/article/details/76100463">这个博客</a>，这些代码的作用如下：<br><strong>函数的作用：</strong><br>把一个int型的数组中的每一个int数值转换为4个字符，最终从得到的char数组中读取部分字符放入数组message中，当读到‘\0’字符时结束，然后返回message数组。<br><strong>参数的作用：</strong><br>start：从data[start+1]开始读取<br>stride:当stride&gt;1时，每读取stride-1个字符（内循环），隔一个不读(外循环的j++)，这样循环下去；当stride&#x3D;1时候就什么也不读取了<br>就如<a target="_blank" rel="noopener" href="https://blog.acheing.com/index.php/archives/858/">这个博客</a>,“从start+1开始连续赋值stride-1个，再跳过1个，再赋值stride-1个一直到有个’\0’为止”。</p>
+<h3 id="理解process-keys12"><a href="#理解process-keys12" class="headerlink" title="理解process_keys12()"></a>理解process_keys12()</h3><p>process_keys12()是什么呢：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">process_keys12</span> <span class="params">(<span class="type">int</span> * key1, <span class="type">int</span> * key2)</span> &#123;</span><br><span class="line">	</span><br><span class="line">	*((<span class="type">int</span> *) (key1 + *key1)) = *key2;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>由题干，</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">In breaking the first two keys, realize that the function process_keys12 must be somehow changing the value of the dummy variable. This must be so, because the variables start and stride control the extraction of the message, and they are calculated from the value of dummy. </span><br></pre></td></tr></table></figure>
+
+<p>该函数肯定是改变了dummy的值的。那么这个函数跟dummy是什么关系呢？</p>
+<p>在调用process_keys12()时，传入的是key1和key2的地址。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">process_keys12(&amp;key1, &amp;key2);</span><br></pre></td></tr></table></figure>
+
+<p>那么，函数process_keys12()中的key1就为key1的地址；*key1就为main()函数中key1的值。</p>
+<p>那么，process_keys12()函数的作用可以简单概括为：<strong>将key2的值存放于key1地址向下偏移（key1值*4）个字节的位置。</strong></p>
+<p>那么，该函数修改dummy值的方法即为修改dummy的内存地址：(int *)(key1 + *key1)。</p>
+<p>那么，如何确定key1的值呢？</p>
+<h3 id="解出key1"><a href="#解出key1" class="headerlink" title="解出key1"></a>解出key1</h3><p>由题干的提示，</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">The activation records for each function call are all together in memory, and they are organized in a stack that grows downwards and shrinks upwards on function calls and returns respectively. </span><br></pre></td></tr></table></figure>
+
+<p>声明的变量在内存中是相对固定的。</p>
+<p>在main()中，变量声明是如下的：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> dummy = <span class="number">1</span>;</span><br><span class="line"><span class="type">int</span> start, stride;</span><br><span class="line"><span class="type">int</span> key1, key2, key3, key4;</span><br></pre></td></tr></table></figure>
+
+<p>那么，就可以通过dummy和key1的地址差来求出key1的值。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">(gdb) p &amp;dummy</span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">1 = (int *) 0x61fe04</span></span><br><span class="line"></span><br><span class="line">(gdb) p &amp;key1</span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">2 = (int *) 0x61fe00</span></span><br></pre></td></tr></table></figure>
+
+<p>由process_keys12()函数的作用，key1&#x3D;(0x61fe04-0x61fe00)&#x2F;4<br>，即为1。</p>
+<h3 id="解出key2"><a href="#解出key2" class="headerlink" title="解出key2"></a>解出key2</h3><p>由process_keys12()函数的作用，key2的值即为dummy的值。而dummy的值需要解出start和stride的值。</p>
+<p>由题干，</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a message that starts with From: will appear.</span><br></pre></td></tr></table></figure>
+
+<p>那么，只需让data[]怎么通过start和stride转化后变成“From:”开头即可。</p>
+<p>直接进行一个extract_message1()的直接解：</p>
+<ul>
+<li>data数组长度为44，所以for终止条件为i达到44*4（int为4字节）；</li>
+<li>遍历data数组直接输出结果，倒推start和stride的可能值。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># <span class="keyword">include</span><span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">int</span> data [] = &#123;</span><br><span class="line">        <span class="number">0x63636363</span>, <span class="number">0x63636363</span>, <span class="number">0x72464663</span>, <span class="number">0x6F6D6F72</span>,</span><br><span class="line">            <span class="number">0x466D203A</span>, <span class="number">0x65693A72</span>, <span class="number">0x43646E20</span>, <span class="number">0x6F54540A</span>,</span><br><span class="line">            <span class="number">0x5920453A</span>, <span class="number">0x54756F0A</span>, <span class="number">0x6F6F470A</span>, <span class="number">0x21643A6F</span>,</span><br><span class="line">            <span class="number">0x594E2020</span>, <span class="number">0x206F776F</span>, <span class="number">0x79727574</span>, <span class="number">0x4563200A</span>,</span><br><span class="line">            <span class="number">0x6F786F68</span>, <span class="number">0x6E696373</span>, <span class="number">0x6C206765</span>, <span class="number">0x796C656B</span>,</span><br><span class="line">            <span class="number">0x2C336573</span>, <span class="number">0x7420346E</span>, <span class="number">0x20216F74</span>, <span class="number">0x726F5966</span>,</span><br><span class="line">            <span class="number">0x7565636F</span>, <span class="number">0x20206120</span>, <span class="number">0x6C616763</span>, <span class="number">0x74206C6F</span>,</span><br><span class="line">            <span class="number">0x20206F74</span>, <span class="number">0x74786565</span>, <span class="number">0x65617276</span>, <span class="number">0x32727463</span>,</span><br><span class="line">            <span class="number">0x6E617920</span>, <span class="number">0x680A6474</span>, <span class="number">0x6F697661</span>, <span class="number">0x20646E69</span>,</span><br><span class="line">            <span class="number">0x21687467</span>, <span class="number">0x63002065</span>, <span class="number">0x6C6C7861</span>, <span class="number">0x78742078</span>,</span><br><span class="line">            <span class="number">0x6578206F</span>, <span class="number">0x72747878</span>, <span class="number">0x78636178</span>, <span class="number">0x00783174</span></span><br><span class="line">    &#125;;</span><br><span class="line">	<span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">	</span><br><span class="line">    <span class="keyword">for</span> (; i&lt;<span class="number">44</span>*<span class="number">4</span>; i++)&#123;</span><br><span class="line">        <span class="type">char</span> a = *(((<span class="type">char</span> *)(data))+i);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%c&quot;</span>,a);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gcc scrach1.c -o out1.out</span><br><span class="line">out1.out</span><br></pre></td></tr></table></figure>
+
+<p>结果为</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cccccccccFFrromo: mFr:ie ndC</span><br><span class="line">TTo:E Y</span><br><span class="line">ouT</span><br><span class="line">Gooo:d!  NYowo tury</span><br><span class="line"> cEhoxoscineg lkelyse3,n4 tto! fYoroceu a  cgalol tto  eextvraectr2 yantd</span><br><span class="line">havioind gth!e caxllx txo xexxtrxacxt1x</span><br></pre></td></tr></table></figure>
+
+<p>start为从第x个地方开始。F开始的字符位置为9，故start为9；</p>
+<p>stride为每读取stride-1个字符就略过一个字符，F读完，读r；r读完了，读o……故分析stride为3。</p>
+<p>而start是dummy的第一个字节的值，stride是dummy的第二个字节的值。</p>
+<p>int在大端小端储存时字节顺序是不同的，故需要检测一下。直接取个小点的int转换char然后取第一个地址看是不是原值即可。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">int</span> a = <span class="number">1</span>;</span><br><span class="line">	<span class="type">char</span> i = *(<span class="type">char</span>*)&amp;a;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span>(i == <span class="number">1</span>)</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;little endian\n&quot;</span>);</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;big endian\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gcc scrach2.c -o out2</span><br><span class="line">out2</span><br></pre></td></tr></table></figure>
+
+<p>检查结果如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">little endian</span><br></pre></td></tr></table></figure>
+
+<p>故dummy最后两个字节满足03 09即可。小端的话就是这么排一下。</p>
+<p>xx xx 03 09</p>
+<p>这样的数可以是777（00 00 03 09）。</p>
+<p>将key1&#x3D;1，key2&#x3D;777为参数检测一下。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 777From: Friend</span><br><span class="line">To: You</span><br><span class="line">Good! Now try choosing keys3,4 to force a call to extract2 andavoid the call to extract1</span><br></pre></td></tr></table></figure>
+
+<p>成功破解key1和key2。</p>
+<h2 id="破解key3和key4"><a href="#破解key3和key4" class="headerlink" title="破解key3和key4"></a>破解key3和key4</h2><p>main()中和key3、key4相关的代码是</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (key3 != <span class="number">0</span> &amp;&amp; key4 != <span class="number">0</span>) &#123;</span><br><span class="line">	process_keys34(&amp;key3, &amp;key4);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">msg1 = extract_message1(start, stride);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (*msg1 == <span class="string">&#x27;\0&#x27;</span>) &#123;</span><br><span class="line">	process_keys34(&amp;key3, &amp;key4);</span><br><span class="line">	msg2 = extract_message2(start, stride);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, msg2);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, msg1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>首先，判断输入参数中是否存在key3和key4；如若都存在，运行process_keys34()；然后如若msg1的第一个值为空（’\0’），则再运行process_keys34()；然后运行extract_message2(start, stride)，将其结果打印出来。</p>
+<p>分析extract_message2()，看看这里的start和stride是怎么变的。</p>
+<h3 id="初步分析extract-message2"><a href="#初步分析extract-message2" class="headerlink" title="初步分析extract_message2()"></a>初步分析extract_message2()</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">char</span> * <span class="title function_">extract_message2</span><span class="params">(<span class="type">int</span> start, <span class="type">int</span> stride)</span> &#123;</span><br><span class="line">	<span class="type">int</span> i, j;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>, j = start; </span><br><span class="line">		 *(((<span class="type">char</span> *) data) + j) != <span class="string">&#x27;\0&#x27;</span>;</span><br><span class="line">		 i++, j += stride) </span><br><span class="line">		 &#123;</span><br><span class="line">			 message[i] = *(((<span class="type">char</span> *) data) + j);</span><br><span class="line">		 &#125;</span><br><span class="line">	message[i] = <span class="string">&#x27;\0&#x27;</span>;</span><br><span class="line">	<span class="keyword">return</span> message;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>函数作用</strong><br>从data[start]开始，将data[]中的每个int数值转换为4个字符，读取部分字符(每隔stride-1个字符读取一个)。</p>
+<p><strong>参数作用</strong><br>start：从data[start]开始；<br>stride：控制j，每隔stride-1个字符读取一个。</p>
+<p>想让extract_message2()执行，msg1的第一个值必须为空（’\0’）。而msg1在执行完extract_message1()后是“From:”那堆话。<strong>那么，process_keys34()就必然改变了msg1的值。</strong></p>
+<p>接下来分析下process_keys34()，看看是什么让msg1的值改变了。</p>
+<h3 id="初步分析process-keys34"><a href="#初步分析process-keys34" class="headerlink" title="初步分析process_keys34()"></a>初步分析process_keys34()</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">process_keys34</span> <span class="params">(<span class="type">int</span> * key3, <span class="type">int</span> * key4)</span> &#123;</span><br><span class="line"></span><br><span class="line">	*(((<span class="type">int</span> *)&amp;key3) + *key3) += *key4;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>直接看，该函数完成了key3取地址-&gt;转换类型-&gt;加上偏移量-&gt;取值-&gt;修改该值（+*key4）。</p>
+<p>与process_keys12()类似，传入的值为&amp;key3, &amp;key4，即为输入key3和key4的地址。</p>
+<h3 id="解出key3"><a href="#解出key3" class="headerlink" title="解出key3"></a>解出key3</h3><p>那么，如若需要让extract_message2()执行，那么msg1的第一个字符就需要为0x00（’\0’），进而推出data[start]就得为0x00（’\0’）。</p>
+<p>看看data[]的内容</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> data [] = &#123;</span><br><span class="line">	<span class="number">0x63636363</span>, <span class="number">0x63636363</span>, <span class="number">0x72464663</span>, <span class="number">0x6F6D6F72</span>,</span><br><span class="line">      	<span class="number">0x466D203A</span>, <span class="number">0x65693A72</span>, <span class="number">0x43646E20</span>, <span class="number">0x6F54540A</span>,</span><br><span class="line">      	<span class="number">0x5920453A</span>, <span class="number">0x54756F0A</span>, <span class="number">0x6F6F470A</span>, <span class="number">0x21643A6F</span>,</span><br><span class="line">      	<span class="number">0x594E2020</span>, <span class="number">0x206F776F</span>, <span class="number">0x79727574</span>, <span class="number">0x4563200A</span>,</span><br><span class="line">      	<span class="number">0x6F786F68</span>, <span class="number">0x6E696373</span>, <span class="number">0x6C206765</span>, <span class="number">0x796C656B</span>,</span><br><span class="line">      	<span class="number">0x2C336573</span>, <span class="number">0x7420346E</span>, <span class="number">0x20216F74</span>, <span class="number">0x726F5966</span>,</span><br><span class="line">      	<span class="number">0x7565636F</span>, <span class="number">0x20206120</span>, <span class="number">0x6C616763</span>, <span class="number">0x74206C6F</span>,</span><br><span class="line">      	<span class="number">0x20206F74</span>, <span class="number">0x74786565</span>, <span class="number">0x65617276</span>, <span class="number">0x32727463</span>,</span><br><span class="line">      	<span class="number">0x6E617920</span>, <span class="number">0x680A6474</span>, <span class="number">0x6F697661</span>, <span class="number">0x20646E69</span>,</span><br><span class="line">      	<span class="number">0x21687467</span>, <span class="number">0x63002065</span>, <span class="number">0x6C6C7861</span>, <span class="number">0x78742078</span>,</span><br><span class="line">      	<span class="number">0x6578206F</span>, <span class="number">0x72747878</span>, <span class="number">0x78636178</span>, <span class="number">0x00783174</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>啊哦，仅在最后一个元素中发现了0x00。那么，如若stride&gt;1，msg2肯定是不会有东西的。</p>
+<p>题干提示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">The compiler can be strong-armed into interpreting integers as characters, or even as instructions, and vice versa. </span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">The activation records for each function call are all together in memory, and they are organized in a stack that grows downwards and shrinks upwards on function calls and returns respectively. </span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">The return address of one function as well as the addresses of all of its local variables are allocated within one activation record. </span><br></pre></td></tr></table></figure>
+
+<p>可推测，process_keys34()修改了函数的返回地址，从而修改了执行顺序。</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/RabitMountain/article/details/78436750">这篇博客</a>推荐了这篇文章：<a target="_blank" rel="noopener" href="https://blog.51cto.com/u_5412097/1641374">如何获得C语言函数起始地址和返回地址</a>。</p>
+<p><em>在call函数的时候，首先将ebp压入栈，然后将esp的内容写入ebp。</em></p>
+<p>函数调用的栈帧结构可见<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/ea9fc7d2393d">这篇博客</a>的第一张图。</p>
+<table>
+<tr>
+    <td>参数n</td>
+</tr>
+<tr>
+    <td>...</td>
+</tr>
+<tr>
+    <td>参数1</td>
+</tr>
+<tr>
+    <td>返回地址</td>
+</tr>
+<tr>
+    <td>被保存的ebp</td>
+</tr>
+</table>
+
+<p>在process_keys34()中，首先将key3、key4压入栈中保存。根据栈的结构，要使key3修改到返回地址，那么其需要往下偏移一个地址，则key3&#x3D;-1。</p>
+<h3 id="解出key4"><a href="#解出key4" class="headerlink" title="解出key4"></a>解出key4</h3><p>在process_keys34()中，当key3&#x3D;-1时，即为修改返回地址的值，使其加上key4的量。</p>
+<p>这里我换用了Visual Studio，因为VS反编译窗口更方便。</p>
+<p>但是需要注意：(<a target="_blank" rel="noopener" href="https://blog.csdn.net/pngfiwang/article/details/49644501">这篇博客</a>也有提到）</p>
+<p><strong>用VS调试时，main()函数那几个连续声明的int变量的内存地址非连续！！在这个情况下，需要重新计算key1的值，即(&amp;dummy-&amp;key1)</strong></p>
+<p>在这个情况下，key1&#x3D;9。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">	if (key3 != 0 &amp;&amp; key4 != 0) &#123;</span><br><span class="line">00531C21  cmp         dword ptr [key3],0  </span><br><span class="line">00531C25  je          __$EncStackInitStart+131h (0531C3Dh)  </span><br><span class="line">00531C27  cmp         dword ptr [key4],0  </span><br><span class="line">00531C2B  je          __$EncStackInitStart+131h (0531C3Dh)  </span><br><span class="line">		process_keys34(&amp;key3, &amp;key4);</span><br><span class="line">00531C2D  lea         eax,[key4]  </span><br><span class="line">00531C30  push        eax  </span><br><span class="line">00531C31  lea         ecx,[key3]  </span><br><span class="line">00531C34  push        ecx  </span><br><span class="line">00531C35  call        _process_keys34 (0531217h)  </span><br><span class="line">00531C3A  add         esp,8  </span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	msg1 = extract_message1(start, stride);</span><br><span class="line">00531C3D  mov         eax,dword ptr [stride]  </span><br><span class="line">00531C40  push        eax  </span><br><span class="line">00531C41  mov         ecx,dword ptr [start]  </span><br><span class="line">00531C44  push        ecx  </span><br><span class="line">00531C45  call        _extract_message1 (053136Bh)  </span><br><span class="line">00531C4A  add         esp,8  </span><br><span class="line">00531C4D  mov         dword ptr [msg1],eax  </span><br><span class="line"></span><br><span class="line">	if (*msg1 == &#x27;\0&#x27;) &#123;</span><br><span class="line">00531C50  mov         eax,dword ptr [msg1]  </span><br><span class="line">00531C53  movsx       ecx,byte ptr [eax]  </span><br><span class="line">00531C56  test        ecx,ecx  </span><br><span class="line">00531C58  jne         __$EncStackInitStart+184h (0531C90h)  </span><br><span class="line">		process_keys34(&amp;key3, &amp;key4);</span><br><span class="line">00531C5A  lea         eax,[key4]  </span><br><span class="line">00531C5D  push        eax  </span><br><span class="line">00531C5E  lea         ecx,[key3]  </span><br><span class="line">00531C61  push        ecx  </span><br><span class="line">00531C62  call        _process_keys34 (0531217h)  </span><br><span class="line">00531C67  add         esp,8  </span><br></pre></td></tr></table></figure>
+
+<p>调整跳转的地址，key4 &#x3D; 00531C67-00531C3A &#x3D; 2D &#x3D; 45</p>
+<p>key4即为45。</p>
+<h2 id="输出结果"><a href="#输出结果" class="headerlink" title="输出结果"></a>输出结果</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">9 777From: CTE</span><br><span class="line">To: You</span><br><span class="line">Excellent!You got everything!</span><br></pre></td></tr></table></figure></div>
+        </div>
+        
+            <div class="kratos-copyright text-center clearfix">
+                <h5 itemprop="copyrightNotice">本作品采用 <a rel="license nofollow" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">知识共享署名-相同方式共享 4.0 国际许可协议</a> 进行许可</h5>
+            </div>
+        
+        <footer class="kratos-entry-footer clearfix">
+            
+                <div class="post-like-donate text-center clearfix" id="post-like-donate">
+                
+                
+                    <a class="share" href="javascript:;"><i class="fa fa-share-alt"></i> 分享</a>
+                    <div class="share-wrap" style="display: none;">
+    <div class="share-group">
+        <a href="javascript:;" class="share-plain qq" onclick="share('qq');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-qq"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain qzone" onclick="share('qzone');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-star"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain weixin pop style-plain" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-weixin"></i>
+            </div>
+            <div class="share-int">
+                <div class="qrcode" id="wechat-qr"></div>
+                <p>打开微信“扫一扫”，打开网页后点击屏幕右上角分享按钮</p>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain weibo" onclick="share('weibo');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-weibo"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain facebook style-plain" onclick="share('facebook');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-facebook"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain twitter style-plain" onclick="share('twitter');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-twitter"></i>
+            </div>
+        </a>
+    </div>
+    <script type="text/javascript">
+        $(()=>{
+            new QRCode("wechat-qr", {
+                text: "https://shuichang2019.github.io/2022/12/22/SSD6-Exercise-1-Decoding-Lab%E7%9A%84%E6%8E%A2%E7%B4%A2/",
+                width: 150,
+                height: 150,
+                correctLevel : QRCode.CorrectLevel.H
+            });
+        });
+        function share(dest) {
+            const qqBase        = "https://connect.qq.com/widget/shareqq/index.html?";
+            const weiboBase     = "https://service.weibo.com/share/share.php?";
+            const qzoneBase     = "https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?";
+            const facebookBase  = "https://www.facebook.com/sharer/sharer.php?";
+            const twitterBase   = "https://twitter.com/intent/tweet?";
+            const hostUrl       = "https://shuichang2019.github.io/2022/12/22/SSD6-Exercise-1-Decoding-Lab%E7%9A%84%E6%8E%A2%E7%B4%A2/";
+            const title         = "「SSD6 Exercise 1: Decoding Lab的探索」";
+            const excerpt       = `尝试做了下SSD6 Exercise 1: Decoding Lab。跟着很多题解，花了巨量时间，学到了不少，稍微写了下过程。
+VScode运行C程序也是第一次尝试、GDB也是第一次用，感觉会出现很多错误，后面慢慢改罢。
+初看和初调编...`;
+            let _URL;
+            switch (dest) {
+                case "qq"       : _URL = qqBase+"url="+hostUrl+"&title="+title+"&desc=&summary="+excerpt+"&site=cxpy";     break;
+                case "weibo"    : _URL = weiboBase+"url="+hostUrl+"&title="+title+excerpt;                                 break;
+                case "qzone"    : _URL = qzoneBase+"url="+hostUrl+"&title="+title+"&desc=&summary="+excerpt+"&site=cxpy";  break;
+                case "facebook" : _URL = facebookBase+"u="+hostUrl;                                                        break;
+                case "twitter"  : _URL = twitterBase+"text="+title+excerpt+"&url="+hostUrl;                                break;
+            }
+            window.open(_URL);
+        };
+    </script>
+</div>
+                
+                </div>
+            
+            <div class="footer-tag clearfix">
+                <div class="pull-left">
+                <i class="fa fa-tags"></i>
+                    <a class="tag-none-link" href="/tags/%E5%AD%A6%E4%B9%A0%E6%9D%82%E8%AE%B0/" rel="tag">学习杂记</a>
+                </div>
+                <div class="pull-date">
+                    <time datetime="2022-12-21T17:18:52.272Z" itemprop="dateModified">最后编辑：2022-12-22</time>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+        <nav class="navigation post-navigation clearfix" role="navigation">
+            
+            <div class="nav-previous clearfix">
+                <a title=" Cypher语言学习笔记" href="/2022/10/30/Cypher语言学习笔记/">&lt; 上一篇</a>
+            </div>
+            
+            
+        </nav>
+    
+    
+</article>
+
+        
+
+            </section>
+
+        
+
+                
+            
+
+<section id="kratos-widget-area" class="col-md-4 hidden-xs hidden-sm">
+    <!-- 文章和页面根据splitter来分割，没有的话就从头开始设置为sticky -->
+    
+    
+                <aside id="krw-about" class="widget widget-kratos-about clearfix">
+    <div class="photo-background"></div>
+    <div class="photo-wrapper clearfix">
+        <div class="photo-wrapper-tip text-center">
+            <img class="about-photo" src="https://gcore.jsdelivr.net/gh/ShuiChang2019/PicPic/bkg/avatar1.jpg" loading="lazy" decoding="auto" />
+        </div>
+    </div>
+    <div class="textwidget">
+        <p class="text-center">ShuiChang2019</p>
+    </div>
+    <div class="site-meta">
+        <a class="meta-item" href="/archives/">
+            <span class="title">
+                文章
+            </span>
+            <span class="count">
+                11
+            </span>
+        </a>
+        <a class="meta-item" href="/categories/">
+            <span class="title">
+                分类
+            </span>
+            <span class="count">
+                0
+            </span>
+        </a>
+        <a class="meta-item" href="/tags/">
+            <span class="title">
+                标签
+            </span>
+            <span class="count">
+                7
+            </span>
+        </a>
+    </div>
+</aside>
+            
+                    <div class="sticky-area">
+                
+                
+
+            
+                
+  <aside id="krw-tags" class="widget widget-kratos-tags clearfix">
+    <h4 class="widget-title"><i class="fa fa-tags"></i>标签聚合</h4>
+      <div class="tag-clouds">
+        <a href="/tags/TolietPaper/" style="font-size: 0.6em;">TolietPaper</a> <a href="/tags/useless/" style="font-size: 0.6em;">useless</a> <a href="/tags/%E5%81%9A%E6%A2%A6/" style="font-size: 0.7em;">做梦</a> <a href="/tags/%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AD%A6%E4%B9%A0%E5%92%8C%E5%BA%94%E7%94%A8/" style="font-size: 0.7em;">图数据库学习和应用</a> <a href="/tags/%E5%AD%A6%E4%B9%A0%E6%9D%82%E8%AE%B0/" style="font-size: 0.6em;">学习杂记</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" style="font-size: 0.6em;">机器学习</a> <a href="/tags/%E7%88%AC%E8%99%AB/" style="font-size: 0.8em;">爬虫</a>
+      </div>
+  </aside>
+
+            
+                
+  <aside id="krw-posts" class="widget widget-kratos-posts">
+  <h4 class="widget-title"><i class="fa fa-file"></i>最新文章</h4>
+  <div class="tab-content">
+      <ul class="list-group">
+        
+        
+          
+          
+            <a class="list-group-item" href="/2022/12/22/SSD6-Exercise-1-Decoding-Lab%E7%9A%84%E6%8E%A2%E7%B4%A2/"><i class="fa  fa-book"></i> SSD6 Exercise 1: Decoding Lab的探索</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2022/10/30/Cypher%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="fa  fa-book"></i> Cypher语言学习笔记</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2022/10/30/Neo4J%E5%AF%BC%E5%85%A5%E6%95%B0%E6%8D%AE%E7%AC%94%E8%AE%B0/"><i class="fa  fa-book"></i> Neo4J导入数据笔记</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2022/10/30/%E9%B8%AD%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%AC%94%E8%AE%B0/"><i class="fa  fa-book"></i> 鸭器学习的一些笔记</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/09/22/%E8%B0%9C%E4%B9%8B%E6%B8%85%E9%86%92%E6%A2%A6%E6%B5%8B%E8%AF%95-MILD%E6%96%B9%E6%B3%95/"><i class="fa  fa-book"></i> 谜之清醒梦测试-MILD方法</a>
+            
+          
+        
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+      </ul>
+  </div>
+  </aside>
+
+            
+    </div>
+</section>
+        
+        </div>
+    </div>
+</div>
+<footer>
+    <div id="footer"  class="ap-lrc"  >
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3 footer-list text-center">
+                    <ul class="kratos-social-icons">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <li><a target="_blank" rel="nofollow" href="https://github.com/ShuiChang2019"><i class="fa fa-github"></i></a></li>
+                        
+                    </ul>
+                    <ul class="kratos-copyright">
+                        <div>
+                            <li>&copy; 2022 好吃 版权所有.</li>
+                            <li>本站已运行<span id="span_dt">Loading...</span></li>
+                        </div>
+                        <div>
+                            <li>Theme <a href="https://github.com/Candinya/Kratos-Rebirth" target="_blank">Kratos:Rebirth</a></li>
+                            <li>Site built with&nbsp;<i class="fa fa-heart throb" style="color:#d43f57"></i>&nbsp;by ShuiChang.</li>
+                        </div>
+                        <div>
+                            <li>Powered by <a href="https://hexo.io" target="_blank" rel="nofollow">Hexo</a></li>
+                            <li>Hosted on <a href="https://github.io" target="_blank">Github Pages</a></li>
+                        </div>
+                        <div>
+                            
+                            
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="kr-tool text-center">
+            <div class="tool">
+                
+                    <div class="box search-box">
+                        <a href="/search/">
+                            <span class="fa fa-search"></span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="box theme-box" id="darkmode-switch">
+                        <span class="fa fa-adjust"></span>
+                    </div>
+                
+                
+            </div>
+            <div class="box gotop-box">
+                <span class="fa fa-chevron-up"></span>
+            </div>
+        </div>
+    </div>
+</footer>
+</div>
+</div>
+
+        <script defer src="/vendors/bootstrap@3.3.4/dist/js/bootstrap.min.js"></script>
+<script defer src="/vendors/nprogress@0.2.0/nprogress.js"></script>
+<script>
+    if (!window.kr) {
+        window.kr = {};
+    }
+    window.kr.notMobile = (!(navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)));
+    window.kr.siteRoot = "/";
+</script>
+
+    <div>
+        <canvas id="snow"></canvas>
+        <script async src="/js/snow.min.js"></script>
+    </div>
+
+
+    <script async src="/js/candy.min.js"></script>
+
+
+
+    <script defer src="/vendors/aplayer@1.10.1/dist/APlayer.min.js"></script>
+    
+    <script defer src="/vendors/meting@2.0.1/dist/Meting.min.js"></script>
+    <meting-js
+        server="netease"
+        type="playlist"
+        id="7706092008"
+        order="random"
+        fixed="true"
+    >
+    </meting-js>
+
+
+
+    <script defer src="/vendors/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+
+<script defer src="/vendors/clipboard@2.0.6/dist/clipboard.min.js"></script>
+<script defer src="/js/kratosr.min.js"></script>
+<script defer src="/js/pjax.min.js"></script>
+
+
+
+<!-- Extra support for third-party plguins  -->
+
+
+    </body>
+</html>
