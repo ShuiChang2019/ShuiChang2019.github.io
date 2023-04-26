@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+  <!-- 元数据 -->
+  <meta charset="utf-8">
+  <link rel="icon" href="https://gcore.jsdelivr.net/gh/ShuiChang2019/PicPic/img/favicon.png">
+  
+  <title>AutoGPT使用小记 | 好吃</title>
+  <meta name="author" content="ShuiChang" />
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="robots" content="index,follow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta name="format-detection" content="telphone=no, email=no" />
+  
+    <meta name="keywords" content="" />
+  
+  <meta name="description" content="Auto-GPT 使用小记肇始有个朋友给了我一个链接，说这玩意儿给劲儿，让我看看怎么用，能不能搭起来。 我点进去一看，很快啊！看到了里面可以直接docker搭建，因为才看过docker的用法，成为了docker中级大师，就下意识以为是两下命令就能解决。殊不知，由于个人的能力太差+经验严重不足，导致居然被其折磨了三天。 命运的4-174月17日，我收到了链接，直接开始搭建。 当时貌似还没有文档，我直">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AutoGPT使用小记">
+<meta property="og:url" content="https://shuichang2019.github.io/2023/04/26/AutoGPT%E4%BD%BF%E7%94%A8%E5%B0%8F%E8%AE%B0/index.html">
+<meta property="og:site_name" content="好吃">
+<meta property="og:description" content="Auto-GPT 使用小记肇始有个朋友给了我一个链接，说这玩意儿给劲儿，让我看看怎么用，能不能搭起来。 我点进去一看，很快啊！看到了里面可以直接docker搭建，因为才看过docker的用法，成为了docker中级大师，就下意识以为是两下命令就能解决。殊不知，由于个人的能力太差+经验严重不足，导致居然被其折磨了三天。 命运的4-174月17日，我收到了链接，直接开始搭建。 当时貌似还没有文档，我直">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gcore.jsdelivr.net/gh/ShuiChang2019/PicPic/img/favicon.png">
+<meta property="article:published_time" content="2023-04-26T08:26:45.000Z">
+<meta property="article:modified_time" content="2023-04-26T08:27:13.436Z">
+<meta property="article:author" content="ShuiChang">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gcore.jsdelivr.net/gh/ShuiChang2019/PicPic/img/favicon.png">
+  
+  <!-- 站点验证相关 -->
+  
+    
+    
+    
+  
+  <!-- 样式表文件 -->
+  <link rel="stylesheet" id="kratos-css" href="/css/kratosr.min.css" media="all"></script>
+  
+    <link rel="stylesheet" id="darkmode-css" href="/css/kr-color-dark.min.css" media="(prefers-color-scheme: dark)"></script>
+    <script src="/js/kr-dark.min.js"></script>
+  
+  
+    <link rel="stylesheet" id="highlight-css" href="/css/highlight/night-eighties.min.css" media="all"></script>
+  
+  
+  <link rel="stylesheet" id="fontawe-css" href="/vendors/font-awesome@4.7.0/css/font-awesome.min.css" media="all"></script>
+  <link rel="stylesheet" id="nprogress-css" href="/vendors/nprogress@0.2.0/nprogress.css" media="all"></script>
+  
+  
+    <link rel="stylesheet" href="/vendors/aplayer@1.10.1/dist/APlayer.min.css"></script>
+  
+  
+    <link rel="stylesheet" href="/vendors/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css"></script>
+  
+  <!-- 不得不预先加载的一些JS文件 -->
+  <script src="/vendors/jquery@3.6.0/dist/jquery.min.js"></script>
+  
+    <script src="/vendors/qrcode_js@1.0.0/qrcode.min.js"></script>
+  
+  
+  <style>
+    
+      .kratos-cover.kratos-cover-2 {
+        background-image: url('https://gcore.jsdelivr.net/gh/ShuiChang2019/PicPic/bkg/bannerpink1.png');
+      }
+    
+    
+      @media(min-width:768px) {
+        body.custom-background {
+          background-image: url('https://gcore.jsdelivr.net/gh/ShuiChang2019/PicPic/bkg/bg1.jpg');
+        }
+      }
+    
+  </style>
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+    <body class="custom-background">
+        <div id="kratos-wrapper">
+    <div id="kratos-page">
+        <div id="kratos-header">
+            <header id="kratos-desktop-topnav" class="kratos-topnav">
+                <div class="container">
+                    <div class="nav-header">
+                        <nav id="kratos-menu-wrap">
+                            <ul id="kratos-primary-menu" class="sf-menu">
+                                
+                                    
+                                        <li>
+                                            
+                                                <a href="/">
+                                            
+                                                
+                                                    <i class="fa fa-home"></i>
+                                                
+                                                首页
+                                            </a>
+                                            
+                                        </li>
+                                    
+                                        <li>
+                                            
+                                                <a href="/archives/">
+                                            
+                                                
+                                                    <i class="fa fa-file"></i>
+                                                
+                                                所有东西
+                                            </a>
+                                            
+                                        </li>
+                                    
+                                        <li>
+                                            
+                                                <a href="/friends/">
+                                            
+                                                
+                                                    <i class="fa fa-paw"></i>
+                                                
+                                                神秘链接
+                                            </a>
+                                            
+                                        </li>
+                                    
+                                
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </header>
+            <header id="kratos-mobile-topnav" class="kratos-topnav">
+                <div class="container">
+                    <div class="color-logo"><a href="/">好吃</a></div>
+                    <div class="nav-toggle">
+                        <a class="kratos-nav-toggle js-kratos-nav-toggle">
+                            <i></i>
+                        </a>
+                    </div>
+                </div>
+            </header>
+        </div>
+        <div class="kratos-start kratos-hero-2">
+            <!-- <div class="kratos-overlay"></div> -->
+            <div class="kratos-cover kratos-cover-2 text-center">
+                <div class="desc desc2 animate-box">
+                    <a href="/">
+                        <h2>好吃</h2> <br />
+                        <span>HaoChi</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="kratos-blog-post">
+            <div class="container">
+                <div id="main" class="row">
+                    
+
+        
+
+            <section class="col-md-8">
+
+        
+
+            <article itemscope itemtype="https://schema.org/Article">
+    
+    <link itemprop="mainEntityOfPage" href="https://shuichang2019.github.io/2023/04/26/AutoGPT%E4%BD%BF%E7%94%A8%E5%B0%8F%E8%AE%B0/">
+    <div class="kratos-hentry kratos-post-inner clearfix">
+        <header class="kratos-entry-header">
+            
+                <h1 class="kratos-entry-title text-center" itemprop="name headline">AutoGPT使用小记</h1>
+            
+            
+            <ul class="kratos-post-meta text-center">
+                <li><time datetime="2023-04-26T08:26:45.000Z" itemprop="datePublished"><i class="fa fa-calendar"></i> 2023-04-26</time></li>
+                <li itemprop="author" itemscope itemtype="https://schema.org/Person">
+                    <i class="fa fa-user"></i> 作者 <span itemprop="name">ShuiChang</span>
+                </li>
+                <li>
+                    <i class="fa fa-edit"></i> 
+                    
+                    
+                        ~9.87K
+                    
+                    字
+                </li>
+                
+            </ul>
+        </header>
+        <div class="kratos-post-content">
+            
+            <div id="expire-alert" class="alert alert-warning hidden" role="alert">
+                <div class="icon"><i class="fa fa-warning"></i></div>
+                <div class="text"><p>本文最后编辑于 <time datetime="1682497633436"></time> 前，其中的内容可能需要更新。</p></div>
+            </div>
+            
+            
+            
+            <hr />
+            <div itemprop="articleBody"><h1 id="Auto-GPT-使用小记"><a href="#Auto-GPT-使用小记" class="headerlink" title="Auto-GPT 使用小记"></a>Auto-GPT 使用小记</h1><h2 id="肇始"><a href="#肇始" class="headerlink" title="肇始"></a>肇始</h2><p>有个朋友给了我一个<a target="_blank" rel="noopener" href="https://github.com/Significant-Gravitas/Auto-GPT">链接</a>，说这玩意儿给劲儿，让我看看怎么用，能不能搭起来。</p>
+<p>我点进去一看，很快啊！看到了里面可以直接docker搭建，因为才看过docker的用法，成为了docker中级大师，就下意识以为是两下命令就能解决。殊不知，由于个人的能力太差+经验严重不足，导致居然被其折磨了三天。</p>
+<h2 id="命运的4-17"><a href="#命运的4-17" class="headerlink" title="命运的4-17"></a>命运的4-17</h2><p>4月17日，我收到了链接，直接开始搭建。</p>
+<p>当时貌似还没有文档，我直接照着仓库readme一个docker-compose</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker-compose build auto-gpt</span><br><span class="line">docker-compose run --rm auto-gpt</span><br></pre></td></tr></table></figure>
+
+<p>然后就提示我没有.env。爬issues发现可以把.env.template改一下做.env。ubuntu上<strong>默认不显示隐藏文件</strong>，我一开始还一直</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls -a</span><br></pre></td></tr></table></figure>
+
+<p>后面乱点看见可以直接在图形界面显示隐藏文件。我直接图形界面操作。</p>
+<p>镜像装好之后，我直接运行实例。首先先用我的账号（免费账号）生成了OpenAI-API KEY。然而，出现了无限Thinking。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Thinking...\</span><br></pre></td></tr></table></figure>
+
+<p>遂爬issues。发现有这个问题的朋友们都是因为没有设置付款方案。于是，我去看有没有预付款之类的做法，可以让我体验个五块十块的。然而没有。</p>
+<p>因为没有可用的KEY，于是当天放弃。</p>
+<h2 id="峰回路转的4-24：夺命docker和地狱proxy"><a href="#峰回路转的4-24：夺命docker和地狱proxy" class="headerlink" title="峰回路转的4-24：夺命docker和地狱proxy"></a>峰回路转的4-24：夺命docker和地狱proxy</h2><h3 id="1-docker尝试"><a href="#1-docker尝试" class="headerlink" title="1. docker尝试"></a>1. docker尝试</h3><p>在获取可用的API KEY后，尝试第二波搭建。</p>
+<p>首先，还是用4-17那天的操作。docker-compose。然而巨慢。遂采用稍稍繁琐一些的手法：docker-build。build完后挂载到当前目录的&#x2F;app路径下。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker build -t auto-gpt .</span><br><span class="line">docker run -it --env-file=.env -v $PWD:/app auto-gpt</span><br></pre></td></tr></table></figure>
+
+<p>然而还是巨慢。光是docker装镜像就花了4小时。最后pip报一个连接错误超时的错。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt;</span><span class="language-bash">&gt;&gt; RUN pip install --no-cache-dir -r requirements.txt</span></span><br></pre></td></tr></table></figure>
+
+<p>太磨人心性了。遂改DockerFile中的pip源。</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">RUN</span><span class="language-bash"> pip install --no-cache-dir -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt</span></span><br></pre></td></tr></table></figure>
+
+<p>然而还是太慢太慢。总是错误。我不清楚，为什么同样的命令，直接在shell中安装的那么快，在docker里运行的那么慢。没有心性继续改了。故直接安装。</p>
+<h3 id="2-直接安装尝试"><a href="#2-直接安装尝试" class="headerlink" title="2. 直接安装尝试"></a>2. 直接安装尝试</h3><p>进行一个anaconda的安装。直接执行从官网上下载的sh文件，安装完以后让它自动配置系统变量。然后进行一个新环境的安装。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda create -n autog python==3.10</span><br></pre></td></tr></table></figure>
+
+<p>为什么是3.10版本呢？因为之前爬issues的时候有人提到必须得用python 3.10，不然会有很多奇怪的问题。</p>
+<p>之后，发现Auto-GPT居然提供了一键部署脚本！</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">./run.sh (Linux/macOS)</span><br><span class="line">.\run.bat (Windows) </span><br></pre></td></tr></table></figure>
+
+<p>直接安装。非常方便。然后尝试进行运行。加上仅用gpt3.5的参数和debug参数。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -m autogpt --gpt3only --debug</span><br></pre></td></tr></table></figure>
+
+<p>然后报SSL错误，眼前一黑。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openai.error.APIConnectionError: Error communicating with OpenAI: HTTPSConnectionPool(host=&#x27;api.openai.com&#x27;, port=443): Max retries exceeded with url: /v1/chat/completions (Caused by SSLError(SSLError(1, &#x27;[SSL: SSLV3_ALERT_HANDSHAKE_FAILURE] sslv3 alert handshake failure (_ssl.c:1007)&#x27;)))</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-疯狂的SSL"><a href="#3-疯狂的SSL" class="headerlink" title="3. 疯狂的SSL"></a>3. 疯狂的SSL</h3><p>我进行了巨量的资料查找和issues攀爬和尝试，总结了以下三条解决方法。</p>
+<p>一、是urllib3的新版本：1.26.x的问题。<a target="_blank" rel="noopener" href="https://github.com/Significant-Gravitas/Auto-GPT/issues/1278">解决方式</a>是回退到1.25.11</p>
+<p>二、是shell环境变量的问题。传统的clash、v2r等没法对shell的流量进行一个proxy。需要进行一定的配置。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">//linux</span><br><span class="line">export http_proxy=http://proxyAddress:port</span><br><span class="line">export https_proxy=http://proxyAddress:port</span><br><span class="line">//windows</span><br><span class="line">set HTTP_PROXY=http://proxyAddress:port</span><br><span class="line">set HTTPS_PROXY=http://proxyAddress:port</span><br></pre></td></tr></table></figure>
+
+<p>这种配置只改变当前shell，不对系统变量做影响，所以非常方便。</p>
+<p>三、问题本质和二相同，亦为proxy问题，但该<a target="_blank" rel="noopener" href="https://github.com/Significant-Gravitas/Auto-GPT/issues/1275">解决方法</a>是修改源码。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/Significant-Gravitas/Auto-GPT/issues/1275">解决方法1</a>：直接改库函数，对openai包中的api_requestor.py进行修改。</p>
+<p>解决方法2：改主函数的环境变量，本质上应该是和二相同。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line">os.environ[<span class="string">&quot;http_proxy&quot;</span>] = <span class="string">&quot;http://proxyAddress:port/&quot;</span></span><br><span class="line">os.environ[<span class="string">&quot;https_proxy&quot;</span>] = <span class="string">&quot;http://proxyAddress:port0/&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>我都做了一遍！还组合着做了一遍！！</strong></p>
+<p><strong>しかし、没有任何作用！还是报这个错！一点脾气都没有！</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openai.error.APIConnectionError: Error communicating with OpenAI: HTTPSConnectionPool(host=&#x27;api.openai.com&#x27;, port=443): Max retries exceeded with url: /v1/chat/completions (Caused by SSLError(SSLError(1, &#x27;[SSL: SSLV3_ALERT_HANDSHAKE_FAILURE] sslv3 alert handshake failure (_ssl.c:1007)&#x27;)))</span><br></pre></td></tr></table></figure>
+
+<h2 id="柳暗花明的4-25：Curl初级大师"><a href="#柳暗花明的4-25：Curl初级大师" class="headerlink" title="柳暗花明的4-25：Curl初级大师"></a>柳暗花明的4-25：Curl初级大师</h2><p>到了4-25。突然反应过来可能是连不上。之前在看能不能连上openai的时候，都是用curl来连**<a target="_blank" rel="noopener" href="https://chat.openai.com/">https://chat.openai.com</a>**。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">curl -I https://chat.openai.com</span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">HTTP/1.1 200 Connection established</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">...</span></span><br></pre></td></tr></table></figure>
+
+<p>然而，这不是连的<strong>api.openai.com</strong>吗？虽然都是openai，但是子域名不同。尝试curl了一下api.openai.com。果然连不上！</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">curl -I https://api.openai.com</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">&gt;</span><span class="language-bash">HTTP/1.1 200 Connection established</span></span><br><span class="line"><span class="meta prompt_">&gt;</span><span class="language-bash">curl: (35) schannel: next InitializeSecurityContext failed: SEC_E_ILLEGAL_MESSAGE (0x80090326) - This error usually occurs when a fatal SSL/TLS alert is received (e.g. handshake failed). More detail may be available <span class="keyword">in</span> the Windows System event <span class="built_in">log</span>.</span></span><br></pre></td></tr></table></figure>
+
+<p>终于找到罪魁祸首了。居然会有同一个域名下的子域名连接结果不同的情况。之后切换网络状态，重新试了几遍，最后终于用上了。</p>
+<h2 id="尾声"><a href="#尾声" class="headerlink" title="尾声"></a>尾声</h2><p>那么，请欣赏auto-gpt gpt3.5生成 “800字”的“爱伦坡风格”的“古典小说”罢</p>
+<p>In a small village nestled in the countryside, a young woman named [insert name] dreams of a life beyond the confines of her humble home. But when a wealthy and mysterious stranger arrives in town, she finds herself drawn into a web of secrets and intrigue that threatens to upend everything she thought she knew about herself and the world around her. As she navigates this treacherous new landscape, she must confront the darkest parts of herself and make a choice that will determine the course of her life.</p>
+<hr>
+<p>In the small village of Willowdale, nestled in the rolling hills of the English countryside, a young woman named Elizabeth dreamed of a life beyond the confines of her humble home. She spent her days tending to her family’s farm and caring for her younger siblings, but her mind was always wandering to far-off places and grand adventures. She longed to see the world beyond the village, to experience the thrill of the unknown and the excitement of the unexpected. But as the days turned into weeks and the weeks turned into months, Elizabeth began to fear that her dreams would remain just that - dreams. Until one day, a stranger arrived in town and everything changed.</p>
+<p>The stranger was a tall, dark-haired man with piercing blue eyes and a commanding presence that seemed to fill the entire village. He arrived on horseback, dressed in fine clothes and carrying a leather satchel that he kept close to his side. Elizabeth watched from a distance as he made his way through the village, stopping to speak with the locals and inquire about the town’s history and customs. She couldn’t help but feel drawn to him, despite her reservations about his wealth and status. As the days passed, the stranger’s presence in the village became more and more pronounced, and Elizabeth found herself unable to resist his charm and charisma.</p>
+<p>As Elizabeth spent more time with the stranger, she began to uncover the secrets that he had been hiding. She learned that he was a wealthy merchant from a far-off land, seeking new opportunities for trade and commerce. But she also discovered that he had a dark past, filled with secrets and betrayals that threatened to destroy everything he had built. Despite her reservations, Elizabeth found herself drawn deeper into the stranger’s world, unable to resist the allure of adventure and excitement that he promised. But as she delved deeper into his secrets, she began to realize that the price of his companionship might be higher than she ever could have imagined.</p>
+<p>As Elizabeth struggled to come to terms with the stranger’s past, she found herself caught in a web of intrigue and danger that threatened to consume her. She knew that she should walk away, that she should return to her simple life on the farm and forget about the stranger and his secrets. But she couldn’t shake the feeling that there was something more to him, something worth fighting for. And so, she made a choice that would change the course of her life forever. She decided to stand by the stranger, to help him confront his past and build a new future together. But as they set out on their journey, Elizabeth couldn’t help but wonder if she was making a terrible mistake.</p>
+<p>Elizabeth and the stranger rode for days, their horses carrying them across the rugged terrain of the countryside. They spoke little, each lost in their own thoughts and fears. Elizabeth couldn’t help but wonder what lay ahead, what dangers they would face and what secrets they would uncover. But she also knew that she was not alone, that the stranger was by her side, ready to face whatever lay ahead. And so, she rode on, her heart filled with hope and determination, ready to face whatever lay ahead.</p>
+<p>Together, Elizabeth and the stranger embarked on a perilous journey across the countryside, facing danger at every turn. They encountered bandits and thieves, navigated treacherous terrain, and battled their own inner demons. But through it all, they remained steadfast in their commitment to each other, determined to overcome any obstacle that stood in their way. As they drew closer to their destination, Elizabeth began to realize that the stranger had become more than just a companion to her. He had become a friend, a confidant, and perhaps even something more. But as they approached the final leg of their journey, she knew that their future was far from certain.</p>
+<p>As they approached their destination, Elizabeth and the stranger were ambushed by a group of bandits. The stranger fought valiantly, but he was outnumbered and outmatched. Elizabeth watched in horror as he was struck down, his body falling to the ground. She rushed to his side, cradling his head in her lap as he took his last breath. In that moment, Elizabeth knew that her life would never be the same. She had lost the only person who had ever truly understood her, the only person who had ever made her feel alive. And as she wept over his lifeless body, she vowed to avenge his death and bring his killers to justice.</p>
+<p>As she stood up, wiping the tears from her eyes, Elizabeth knew what she had to do. She would track down the bandits who had killed the stranger and make them pay for what they had done. She would not rest until justice had been served. And so, she set out on a journey of her own, determined to avenge the stranger’s death and honor his memory. But as she traveled deeper into the heart of the countryside, Elizabeth began to realize that the stranger’s death was just the beginning of a much larger conspiracy, one that threatened to tear apart the very fabric of society. And she knew that she was the only one who could stop it.</p>
+<p>As they arrived at their destination, Elizabeth and the stranger were met with a scene of chaos and destruction. The town was in flames, and the people were fleeing in terror. The stranger’s past had caught up with him, and he knew that he had to face his demons once and for all. Elizabeth stood by his side, her heart pounding with fear and uncertainty. But as the stranger stepped forward to confront his enemies, she knew that she had made the right choice. She had found something worth fighting for, something that had given her life new meaning and purpose. And as the stranger emerged victorious, Elizabeth knew that their journey was far from over. They had faced their fears and overcome their obstacles, but there was still so much more to discover, so much more to explore.</p>
+</div>
+        </div>
+        
+            <div class="kratos-copyright text-center clearfix">
+                <h5 itemprop="copyrightNotice">本作品采用 <a rel="license nofollow" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">知识共享署名-相同方式共享 4.0 国际许可协议</a> 进行许可</h5>
+            </div>
+        
+        <footer class="kratos-entry-footer clearfix">
+            
+                <div class="post-like-donate text-center clearfix" id="post-like-donate">
+                
+                
+                    <a class="share" href="javascript:;"><i class="fa fa-share-alt"></i> 分享</a>
+                    <div class="share-wrap" style="display: none;">
+    <div class="share-group">
+        <a href="javascript:;" class="share-plain qq" onclick="share('qq');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-qq"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain qzone" onclick="share('qzone');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-star"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain weixin pop style-plain" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-weixin"></i>
+            </div>
+            <div class="share-int">
+                <div class="qrcode" id="wechat-qr"></div>
+                <p>打开微信“扫一扫”，打开网页后点击屏幕右上角分享按钮</p>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain weibo" onclick="share('weibo');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-weibo"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain facebook style-plain" onclick="share('facebook');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-facebook"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain twitter style-plain" onclick="share('twitter');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-twitter"></i>
+            </div>
+        </a>
+    </div>
+    <script type="text/javascript">
+        $(()=>{
+            new QRCode("wechat-qr", {
+                text: "https://shuichang2019.github.io/2023/04/26/AutoGPT%E4%BD%BF%E7%94%A8%E5%B0%8F%E8%AE%B0/",
+                width: 150,
+                height: 150,
+                correctLevel : QRCode.CorrectLevel.H
+            });
+        });
+        function share(dest) {
+            const qqBase        = "https://connect.qq.com/widget/shareqq/index.html?";
+            const weiboBase     = "https://service.weibo.com/share/share.php?";
+            const qzoneBase     = "https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?";
+            const facebookBase  = "https://www.facebook.com/sharer/sharer.php?";
+            const twitterBase   = "https://twitter.com/intent/tweet?";
+            const hostUrl       = "https://shuichang2019.github.io/2023/04/26/AutoGPT%E4%BD%BF%E7%94%A8%E5%B0%8F%E8%AE%B0/";
+            const title         = "「AutoGPT使用小记」";
+            const excerpt       = `Auto-GPT 使用小记肇始有个朋友给了我一个链接，说这玩意儿给劲儿，让我看看怎么用，能不能搭起来。
+我点进去一看，很快啊！看到了里面可以直接docker搭建，因为才看过docker的用法，成为了docker中级大师，就下意识以为是...`;
+            let _URL;
+            switch (dest) {
+                case "qq"       : _URL = qqBase+"url="+hostUrl+"&title="+title+"&desc=&summary="+excerpt+"&site=cxpy";     break;
+                case "weibo"    : _URL = weiboBase+"url="+hostUrl+"&title="+title+excerpt;                                 break;
+                case "qzone"    : _URL = qzoneBase+"url="+hostUrl+"&title="+title+"&desc=&summary="+excerpt+"&site=cxpy";  break;
+                case "facebook" : _URL = facebookBase+"u="+hostUrl;                                                        break;
+                case "twitter"  : _URL = twitterBase+"text="+title+excerpt+"&url="+hostUrl;                                break;
+            }
+            window.open(_URL);
+        };
+    </script>
+</div>
+                
+                </div>
+            
+            <div class="footer-tag clearfix">
+                <div class="pull-left">
+                <i class="fa fa-tags"></i>
+                    
+                </div>
+                <div class="pull-date">
+                    <time datetime="2023-04-26T08:27:13.436Z" itemprop="dateModified">最后编辑：2023-04-26</time>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+        <nav class="navigation post-navigation clearfix" role="navigation">
+            
+            <div class="nav-previous clearfix">
+                <a title=" SSD6 Exercise 1: Decoding Lab的探索" href="/2022/12/22/SSD6-Exercise-1-Decoding-Lab的探索/">&lt; 上一篇</a>
+            </div>
+            
+            
+        </nav>
+    
+    
+</article>
+
+        
+
+            </section>
+
+        
+
+                
+            
+
+<section id="kratos-widget-area" class="col-md-4 hidden-xs hidden-sm">
+    <!-- 文章和页面根据splitter来分割，没有的话就从头开始设置为sticky -->
+    
+    
+                <aside id="krw-about" class="widget widget-kratos-about clearfix">
+    <div class="photo-background"></div>
+    <div class="photo-wrapper clearfix">
+        <div class="photo-wrapper-tip text-center">
+            <img class="about-photo" src="https://gcore.jsdelivr.net/gh/ShuiChang2019/PicPic/bkg/avatar1.jpg" loading="lazy" decoding="auto" />
+        </div>
+    </div>
+    <div class="textwidget">
+        <p class="text-center">ShuiChang2019</p>
+    </div>
+    <div class="site-meta">
+        <a class="meta-item" href="/archives/">
+            <span class="title">
+                文章
+            </span>
+            <span class="count">
+                12
+            </span>
+        </a>
+        <a class="meta-item" href="/categories/">
+            <span class="title">
+                分类
+            </span>
+            <span class="count">
+                0
+            </span>
+        </a>
+        <a class="meta-item" href="/tags/">
+            <span class="title">
+                标签
+            </span>
+            <span class="count">
+                7
+            </span>
+        </a>
+    </div>
+</aside>
+            
+                    <div class="sticky-area">
+                
+                
+
+            
+                
+  <aside id="krw-tags" class="widget widget-kratos-tags clearfix">
+    <h4 class="widget-title"><i class="fa fa-tags"></i>标签聚合</h4>
+      <div class="tag-clouds">
+        <a href="/tags/TolietPaper/" style="font-size: 0.6em;">TolietPaper</a> <a href="/tags/useless/" style="font-size: 0.6em;">useless</a> <a href="/tags/%E5%81%9A%E6%A2%A6/" style="font-size: 0.7em;">做梦</a> <a href="/tags/%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AD%A6%E4%B9%A0%E5%92%8C%E5%BA%94%E7%94%A8/" style="font-size: 0.7em;">图数据库学习和应用</a> <a href="/tags/%E5%AD%A6%E4%B9%A0%E6%9D%82%E8%AE%B0/" style="font-size: 0.6em;">学习杂记</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" style="font-size: 0.6em;">机器学习</a> <a href="/tags/%E7%88%AC%E8%99%AB/" style="font-size: 0.8em;">爬虫</a>
+      </div>
+  </aside>
+
+            
+                
+  <aside id="krw-posts" class="widget widget-kratos-posts">
+  <h4 class="widget-title"><i class="fa fa-file"></i>最新文章</h4>
+  <div class="tab-content">
+      <ul class="list-group">
+        
+        
+          
+          
+            <a class="list-group-item" href="/2023/04/26/AutoGPT%E4%BD%BF%E7%94%A8%E5%B0%8F%E8%AE%B0/"><i class="fa  fa-book"></i> AutoGPT使用小记</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2022/12/22/SSD6-Exercise-1-Decoding-Lab%E7%9A%84%E6%8E%A2%E7%B4%A2/"><i class="fa  fa-book"></i> SSD6 Exercise 1: Decoding Lab的探索</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2022/10/30/Cypher%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="fa  fa-book"></i> Cypher语言学习笔记</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2022/10/30/Neo4J%E5%AF%BC%E5%85%A5%E6%95%B0%E6%8D%AE%E7%AC%94%E8%AE%B0/"><i class="fa  fa-book"></i> Neo4J导入数据笔记</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2022/10/30/%E9%B8%AD%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%AC%94%E8%AE%B0/"><i class="fa  fa-book"></i> 鸭器学习的一些笔记</a>
+            
+          
+        
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+      </ul>
+  </div>
+  </aside>
+
+            
+    </div>
+</section>
+        
+        </div>
+    </div>
+</div>
+<footer>
+    <div id="footer"  class="ap-lrc"  >
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3 footer-list text-center">
+                    <ul class="kratos-social-icons">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <li><a target="_blank" rel="nofollow" href="https://github.com/ShuiChang2019"><i class="fa fa-github"></i></a></li>
+                        
+                    </ul>
+                    <ul class="kratos-copyright">
+                        <div>
+                            <li>&copy; 2023 好吃 版权所有.</li>
+                            <li>本站已运行<span id="span_dt">Loading...</span></li>
+                        </div>
+                        <div>
+                            <li>Theme <a href="https://github.com/Candinya/Kratos-Rebirth" target="_blank">Kratos:Rebirth</a></li>
+                            <li>Site built with&nbsp;<i class="fa fa-heart throb" style="color:#d43f57"></i>&nbsp;by ShuiChang.</li>
+                        </div>
+                        <div>
+                            <li>Powered by <a href="https://hexo.io" target="_blank" rel="nofollow">Hexo</a></li>
+                            <li>Hosted on <a href="https://github.io" target="_blank">Github Pages</a></li>
+                        </div>
+                        <div>
+                            
+                            
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="kr-tool text-center">
+            <div class="tool">
+                
+                    <div class="box search-box">
+                        <a href="/search/">
+                            <span class="fa fa-search"></span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="box theme-box" id="darkmode-switch">
+                        <span class="fa fa-adjust"></span>
+                    </div>
+                
+                
+            </div>
+            <div class="box gotop-box">
+                <span class="fa fa-chevron-up"></span>
+            </div>
+        </div>
+    </div>
+</footer>
+</div>
+</div>
+
+        <script defer src="/vendors/bootstrap@3.3.4/dist/js/bootstrap.min.js"></script>
+<script defer src="/vendors/nprogress@0.2.0/nprogress.js"></script>
+<script>
+    if (!window.kr) {
+        window.kr = {};
+    }
+    window.kr.notMobile = (!(navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)));
+    window.kr.siteRoot = "/";
+</script>
+
+    <div>
+        <canvas id="snow"></canvas>
+        <script async src="/js/snow.min.js"></script>
+    </div>
+
+
+    <script async src="/js/candy.min.js"></script>
+
+
+
+    <script defer src="/vendors/aplayer@1.10.1/dist/APlayer.min.js"></script>
+    
+    <script defer src="/vendors/meting@2.0.1/dist/Meting.min.js"></script>
+    <meting-js
+        server="netease"
+        type="playlist"
+        id="7706092008"
+        order="random"
+        fixed="true"
+    >
+    </meting-js>
+
+
+
+    <script defer src="/vendors/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+
+<script defer src="/vendors/clipboard@2.0.6/dist/clipboard.min.js"></script>
+<script defer src="/js/kratosr.min.js"></script>
+<script defer src="/js/pjax.min.js"></script>
+
+
+
+<!-- Extra support for third-party plguins  -->
+
+
+    </body>
+</html>
