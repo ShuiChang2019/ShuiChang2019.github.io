@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="修改环境变量可以用来显示环境变量的命令 12printenvenv  可以修改环境变量的命令：两个Bash的内部命令 12exportunset  从父进程传递环境变量到子进程在 Unix 中，fork() 函数通过复制调用进程来创建一个新进程。新进程称为子进程，是调用进程的精确副本，这个调用进程被称为父进程；但是，子进程没有继承父进程的一些内容（请参见 fork() 的手册，方法是键入以下命令：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PWN第一点三步_seedlabs_setuid_env">
+<meta property="og:url" content="http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%B8%89%E6%AD%A5-seedlabs-setuid-env/index.html">
+<meta property="og:site_name" content="ShuiChang厕纸博客站">
+<meta property="og:description" content="修改环境变量可以用来显示环境变量的命令 12printenvenv  可以修改环境变量的命令：两个Bash的内部命令 12exportunset  从父进程传递环境变量到子进程在 Unix 中，fork() 函数通过复制调用进程来创建一个新进程。新进程称为子进程，是调用进程的精确副本，这个调用进程被称为父进程；但是，子进程没有继承父进程的一些内容（请参见 fork() 的手册，方法是键入以下命令：">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2023-11-05T15:21:35.000Z">
+<meta property="article:modified_time" content="2023-11-05T15:22:20.215Z">
+<meta property="article:author" content="ShuiChang">
+<meta property="article:tag" content="也许是PWN学习">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>PWN第一点三步_seedlabs_setuid_env</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/friends/">friends</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2023/11/05/OpenStack%E7%9A%84%E5%AE%89%E8%A3%85%E5%92%8C%E4%BD%BF%E7%94%A8-An-Devstack-Approach/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%BA%8C%E6%AD%A5-seedlabs-shellcode/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%B8%89%E6%AD%A5-seedlabs-setuid-env/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%B8%89%E6%AD%A5-seedlabs-setuid-env/&text=PWN第一点三步_seedlabs_setuid_env"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%B8%89%E6%AD%A5-seedlabs-setuid-env/&title=PWN第一点三步_seedlabs_setuid_env"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%B8%89%E6%AD%A5-seedlabs-setuid-env/&is_video=false&description=PWN第一点三步_seedlabs_setuid_env"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=PWN第一点三步_seedlabs_setuid_env&body=Check out this article: http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%B8%89%E6%AD%A5-seedlabs-setuid-env/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%B8%89%E6%AD%A5-seedlabs-setuid-env/&title=PWN第一点三步_seedlabs_setuid_env"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%B8%89%E6%AD%A5-seedlabs-setuid-env/&title=PWN第一点三步_seedlabs_setuid_env"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%B8%89%E6%AD%A5-seedlabs-setuid-env/&title=PWN第一点三步_seedlabs_setuid_env"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%B8%89%E6%AD%A5-seedlabs-setuid-env/&title=PWN第一点三步_seedlabs_setuid_env"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%B8%89%E6%AD%A5-seedlabs-setuid-env/&name=PWN第一点三步_seedlabs_setuid_env&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%B8%89%E6%AD%A5-seedlabs-setuid-env/&t=PWN第一点三步_seedlabs_setuid_env"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-number">1.</span> <span class="toc-text">修改环境变量</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%8E%E7%88%B6%E8%BF%9B%E7%A8%8B%E4%BC%A0%E9%80%92%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E5%88%B0%E5%AD%90%E8%BF%9B%E7%A8%8B"><span class="toc-number">2.</span> <span class="toc-text">从父进程传递环境变量到子进程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#execve-%E5%92%8C%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-number">3.</span> <span class="toc-text">execve()和环境变量</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#system-%E5%92%8C%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-number">4.</span> <span class="toc-text">system()和环境变量</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E5%92%8Cset-uid%E7%A8%8B%E5%BA%8F"><span class="toc-number">5.</span> <span class="toc-text">环境变量和set-uid程序</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#PATH%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E5%92%8Cset-uid%E7%A8%8B%E5%BA%8F"><span class="toc-number">6.</span> <span class="toc-text">PATH环境变量和set-uid程序</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%9D%E8%AF%95%E7%94%A8set-uid%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C%E8%87%AA%E5%B7%B1%E7%9A%84%E4%BB%A3%E7%A0%81"><span class="toc-number">6.1.</span> <span class="toc-text">尝试用set-uid程序运行自己的代码</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#LD-PRELOAD%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E5%92%8Cset-uid%E7%A8%8B%E5%BA%8F"><span class="toc-number">7.</span> <span class="toc-text">LD_PRELOAD环境变量和set-uid程序</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E6%98%AF%E5%A6%82%E4%BD%95%E5%9C%A8%E6%99%AE%E9%80%9A%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C%E6%97%B6%E5%BD%B1%E5%93%8D%E5%8A%A8%E6%80%81%E5%8A%A0%E8%BD%BD%E5%99%A8-%E9%93%BE%E6%8E%A5%E5%99%A8%E7%9A%84%E8%A1%8C%E4%B8%BA%E7%9A%84"><span class="toc-number">7.1.</span> <span class="toc-text">查看环境变量是如何在普通程序运行时影响动态加载器&#x2F;链接器的行为的</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%B0%83%E7%94%A8%E5%A4%96%E9%83%A8%E7%A8%8B%E5%BA%8F%EF%BC%9Asystem-%E5%92%8Cexecve"><span class="toc-number">8.</span> <span class="toc-text">调用外部程序：system()和execve()</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%E8%BF%99%E4%B8%AA%E7%A8%8B%E5%BA%8F%E6%9D%A5%E6%94%BB%E5%87%BB%EF%BC%9F%E5%A6%82%EF%BC%8C%E5%88%A0%E6%8E%89%E4%B8%80%E4%B8%AA%E6%97%A0%E6%9D%83%E9%99%90%E5%86%99%E7%9A%84%E6%96%87%E4%BB%B6%EF%BC%9F"><span class="toc-number">8.1.</span> <span class="toc-text">如何使用这个程序来攻击？如，删掉一个无权限写的文件？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8D%A2%E6%88%90execve-%E5%86%8D%E8%AF%95%E4%B8%80%E6%AC%A1"><span class="toc-number">8.2.</span> <span class="toc-text">换成execve()再试一次</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9D%83%E9%99%90%E6%B3%84%E9%9C%B2"><span class="toc-number">9.</span> <span class="toc-text">权限泄露</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        PWN第一点三步_seedlabs_setuid_env
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">ShuiChang</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2023-11-05T15:21:35.000Z" class="dt-published" itemprop="datePublished">2023-11-05</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E4%B9%9F%E8%AE%B8%E6%98%AFPWN%E5%AD%A6%E4%B9%A0/" rel="tag">也许是PWN学习</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h1 id="修改环境变量"><a href="#修改环境变量" class="headerlink" title="修改环境变量"></a>修改环境变量</h1><p>可以用来显示环境变量的命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">printenv</span></span><br><span class="line"><span class="built_in">env</span></span><br></pre></td></tr></table></figure>
+
+<p>可以修改环境变量的命令：两个Bash的内部命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span></span><br><span class="line"><span class="built_in">unset</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="从父进程传递环境变量到子进程"><a href="#从父进程传递环境变量到子进程" class="headerlink" title="从父进程传递环境变量到子进程"></a>从父进程传递环境变量到子进程</h1><p>在 Unix 中，fork() 函数通过复制调用进程来创建一个新进程。新进程称为子进程，是调用进程的精确副本，这个调用进程被称为父进程；但是，子进程没有继承父进程的一些内容（请参见 fork() 的手册，方法是键入以下命令：man fork）</p>
+<p>先编译，然后输出子进程环境变量；</p>
+<p>然后将子进程的printenv();注释掉，然后取消注释父进程的printenv()，再编译，再输出父进程环境变量；</p>
+<p>直接用diff比较两个输出内容，发现一样。</p>
+<h1 id="execve-和环境变量"><a href="#execve-和环境变量" class="headerlink" title="execve()和环境变量"></a>execve()和环境变量</h1><p><a target="_blank" rel="noopener" href="https://www.man7.org/linux/man-pages/man2/execve.2.html">execve() 是一个 Unix 系统调用，用于执行指定路径的程序。它会将当前进程替换为新程序，新程序的堆、栈和数据段都会被初始化。execve() 函数有三个参数：第一个参数是要执行的程序的路径名，第二个参数是传递给新程序的命令行参数，第三个参数是传递给新程序的环境变量。当 execve() 函数执行成功时，它不会返回任何值，而是直接开始执行新程序。如果 execve() 函数执行失败，则会返回 -1。</a></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">extern</span> <span class="type">char</span> **environ;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">char</span> *argv[<span class="number">2</span>];</span><br><span class="line"></span><br><span class="line">  argv[<span class="number">0</span>] = <span class="string">&quot;/usr/bin/env&quot;</span>;</span><br><span class="line">  argv[<span class="number">1</span>] = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">  execve(<span class="string">&quot;/usr/bin/env&quot;</span>, argv, <span class="literal">NULL</span>);  </span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span> ;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>这段 C 代码使用 execve() 函数来执行 &#x2F;usr&#x2F;bin&#x2F;env 程序。execve() 函数会将当前进程替换为新程序，新程序的堆、栈和数据段都会被初始化。在这个例子中，argv[0] 被设置为 &#x2F;usr&#x2F;bin&#x2F;env，argv[1] 被设置为 NULL，因此 &#x2F;usr&#x2F;bin&#x2F;env 程序将被执行。由于第三个参数 envp 被设置为 NULL，因此新程序将继承当前进程的环境变量。如果 execve() 函数执行成功，则不会返回任何值，而是直接开始执行新程序。如果 execve() 函数执行失败，则会返回 -1 。</p>
+</blockquote>
+<p>接下来，修改execve()的参数，将其转为</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">execve(<span class="string">&quot;/usr/bin/env&quot;</span>, argv, environ);</span><br></pre></td></tr></table></figure>
+
+<p>即能获取当前环境变量表。</p>
+<p><em>为什么能获取环境变量？</em><br><em>因为execve()第三个参数是输入环境变量。而</em></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">extern</span> <span class="type">char</span> **environ;</span><br></pre></td></tr></table></figure>
+<p><em>在Unix中是环境变量表。</em></p>
+<h1 id="system-和环境变量"><a href="#system-和环境变量" class="headerlink" title="system()和环境变量"></a>system()和环境变量</h1><blockquote>
+<p>system() 函数用于执行命令，但与 execve() 直接执行命令不同，system() 实际上执行的是 “&#x2F;bin&#x2F;sh -c command”，即它执行 &#x2F;bin&#x2F;sh，并要求 shell 执行命令。如果您查看 system() 函数的实现，您会发现它使用 execl() 来执行 &#x2F;bin&#x2F;sh；execl() 调用 execve()，并将环境变量数组传递给它。因此，使用 system()，调用进程的环境变量被传递给新程序 &#x2F;bin&#x2F;sh。</p>
+</blockquote>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    system(<span class="string">&quot;/usr/bin/env&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span> ;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>这段代码使用了 system 函数来执行 &#x2F;usr&#x2F;bin&#x2F;env 程序，该程序会打印出当前环境变量的值。system 函数会在一个子进程中执行命令，并等待命令执行完毕后返回。在这个程序中，&#x2F;usr&#x2F;bin&#x2F;env 是一个可执行文件，它会输出当前环境变量的值。</p>
+</blockquote>
+<h1 id="环境变量和set-uid程序"><a href="#环境变量和set-uid程序" class="headerlink" title="环境变量和set-uid程序"></a>环境变量和set-uid程序</h1><p><em>什么是set-uid程序？</em></p>
+<blockquote>
+<p>set-uid 程序是一种特殊类型的程序，它在执行过程中可以将其有效用户ID修改为文件的所有者的用户ID。这样做有两个主要目的：一是为了在文件的所有者权限下执行程序，而不是以当前用户的权限执行；二是为了让普通用户拥有权限用户的权限。</p>
+</blockquote>
+<ol>
+<li>写一个可以输出当前进程环境变量的程序</li>
+</ol>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="keyword">extern</span> <span class="type">char</span> **environ;</span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (environ[i] != <span class="literal">NULL</span>) &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, environ[i]);</span><br><span class="line">    i++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><p>编译，将其所有者切为root</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo <span class="built_in">chown</span> root setuid.o</span><br><span class="line">sudo <span class="built_in">chmod</span> 4755 setuid.o</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在普通用户的shell进程中设置环境变量，然后在shell中运行第2步中的Set-UID程序。在shell中键入程序名称后，shell会分叉一个子进程，并使用该子进程来运行程序。</p>
+</li>
+</ol>
+<p>用于实验的、在普通用户shell中设置的环境变量有：</p>
+<ul>
+<li>PATH</li>
+<li>LD_LIBRARY_PATH</li>
+<li>任意自己起的环境变量名</li>
+</ul>
+<p>可以发现，PATH变量和自创变量都成功查找， 而 LD_LIBRARY_PATH 环境变量查找失败。这是因为EUID和RUID不同时，它会忽略LD_PRELOAD和LD_LIBRARY_PATH环境变量。</p>
+<h1 id="PATH环境变量和set-uid程序"><a href="#PATH环境变量和set-uid程序" class="headerlink" title="PATH环境变量和set-uid程序"></a>PATH环境变量和set-uid程序</h1><blockquote>
+<p>因为调用了shell程序，所以在Set-UID程序中调用system()是非常危险的。这是因为shell程序的实际行为可能会受到环境变量（例如PATH）的影响；这些环境变量由用户提供，而用户可能是恶意的。通过更改这些变量，恶意用户可以控制Set-UID程序的行为。</p>
+</blockquote>
+<p>在bash中，可以通过下面这种命令来修改PATH环境变量。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PATH=/home/nihao:<span class="variable">$PATH</span></span><br></pre></td></tr></table></figure>
+
+<p>这行命令在PATH环境变量前加了&#x2F;home&#x2F;nihao。</p>
+<h2 id="尝试用set-uid程序运行自己的代码"><a href="#尝试用set-uid程序运行自己的代码" class="headerlink" title="尝试用set-uid程序运行自己的代码"></a>尝试用set-uid程序运行自己的代码</h2><p>编写代码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    system(<span class="string">&quot;ls&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>编译运行，程序正常执行ls命令。<br>将自己编译的文件代替&#x2F;bin&#x2F;ls的一种可行方式就是提高该文件的搜索路径优先级，提高到&#x2F;bin&#x2F;ls前。将&#x2F;tmp路径加入PATH的最高优先搜索路径，并将&#x2F;bin&#x2F;sh替换为&#x2F;bin&#x2F;zsh降低其优先级，并将其命名为ls。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PATH=/tmp:<span class="variable">$PATH</span></span><br><span class="line">sudo <span class="built_in">rm</span> /bin/sh</span><br><span class="line">sudo <span class="built_in">ln</span> -s /bin/zsh /bin/sh</span><br><span class="line"><span class="built_in">cp</span> /bin/sh /tmp/ls</span><br></pre></td></tr></table></figure>
+
+<p>首先，“export PATH&#x3D;&#x2F;tmp:$PATH”将&#x2F;tmp放在PATH环境变量刚开始的地方，这样当命令执行时，系统会首先在&#x2F;bin路径下找，然后再去其他的路径下找。</p>
+<p>然后，“sudo rm &#x2F;bin&#x2F;sh”将&#x2F;bin&#x2F;sh删了。</p>
+<p>然后，“sudo ln -s &#x2F;bin&#x2F;zsh &#x2F;bin&#x2F;sh”设置了从&#x2F;bin&#x2F;sh的软连接更改为&#x2F;bin&#x2F;zsh。</p>
+<blockquote>
+<p>软连接（符号链接）是一种特殊类型的文件，它指向另一个文件或目录。在本例中，它使 &#x2F;bin&#x2F;sh 指向 &#x2F;bin&#x2F;zsh，后者是另一个 shell 程序。</p>
+</blockquote>
+<p>最后，”cp &#x2F;bin&#x2F;sh &#x2F;tmp&#x2F;ls”将&#x2F;bin&#x2F;sh拷到&#x2F;tmp下，并改名为“ls”。</p>
+<p>再运行那个运行ls的文件，成功获得一个root的shell。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">seed@VM:~/.../Labsetup$<span class="variable">$pathsetuid</span>.o </span><br><span class="line">VM<span class="comment"># whoami</span></span><br><span class="line">root</span><br></pre></td></tr></table></figure>
+
+<p>seed给出了这样的提示：</p>
+<blockquote>
+<p>system(cmd)函数首先执行&#x2F;bin&#x2F;sh程序，然后请求该shell程序运行cmd命令。在Ubuntu 20.04（以及之前的几个版本）中，&#x2F;bin&#x2F;sh实际上是指向&#x2F;bin&#x2F;dash的符号链接。这个shell程序有一种对抗措施，可以防止它在Set-UID进程中被执行。基本上，如果dash检测到它在Set-UID进程中被执行，它会立即将有效用户ID更改为进程的实际用户ID，从而降低权限。由于我们的受害者程序是Set-UID程序，因此&#x2F;bin&#x2F;dash中的对抗措施可以防止我们的攻击。为了看到我们的攻击如何在没有这种对抗措施的情况下工作，我们将&#x2F;bin&#x2F;sh链接到另一个没有这种对抗措施的shell。我们在Ubuntu 20.04 VM中安装了一个名为zsh的shell程序。我们使用以下命令将&#x2F;bin&#x2F;sh链接到&#x2F;bin&#x2F;zsh：</p>
+</blockquote>
+<p>那么，就可以这样直接改软连接了</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PATH=/tmp:<span class="variable">$PATH</span></span><br><span class="line">sudo <span class="built_in">ln</span> -sf /bin/zsh /bin/sh</span><br><span class="line"><span class="built_in">cp</span> /bin/sh /tmp/ls</span><br></pre></td></tr></table></figure>
+
+<p><em>为什么-sf参数可以不用移除&#x2F;bin&#x2F;sh？</em></p>
+<blockquote>
+<p>The difference between sudo ln -sf &#x2F;bin&#x2F;zsh &#x2F;bin&#x2F;sh and sudo ln -s &#x2F;bin&#x2F;zsh &#x2F;bin&#x2F;sh is that the former command will force the creation of the symbolic link &#x2F;bin&#x2F;sh to point to &#x2F;bin&#x2F;zsh, even if &#x2F;bin&#x2F;sh already exists. This means that if &#x2F;bin&#x2F;sh is already a symbolic link, it will be replaced by the new link. On the other hand, the latter command will create a symbolic link only if &#x2F;bin&#x2F;sh does not already exist. If &#x2F;bin&#x2F;sh already exists, it will not be replaced .</p>
+</blockquote>
+<h1 id="LD-PRELOAD环境变量和set-uid程序"><a href="#LD-PRELOAD环境变量和set-uid程序" class="headerlink" title="LD_PRELOAD环境变量和set-uid程序"></a>LD_PRELOAD环境变量和set-uid程序</h1><blockquote>
+<p>LD PRELOAD、LD LIBRARY PATH和其他LD *，会影响动态加载器&#x2F;链接器的行为。动态加载器&#x2F;链接器是操作系统(OS)的一部分，它在运行时从持久存储加载并链接可执行文件所需的共享库。在Linux中，ld.so或ld-linux.so是动态加载器&#x2F;链接器(每个二进制文件类型都有不同的)。在影响它们行为的环境变量中，LD LIBRARY PATH和LD PRELOAD是我们在本实验室中关注的两个变量。在Linux中，LD LIBRARY PATH是一个由冒号分隔的目录集合，其中应该首先搜索库，然后才是标准目录集合。LD PRELOAD指定了一个附加的、用户指定的共享库列表，在所有其他库之前加载。在这个任务中，我们只研究LD PRELOAD。</p>
+</blockquote>
+<blockquote>
+<p>LD_LIBRARY_PATH是Linux系统下的环境变量名，类似于PATH（设置可执行文件的搜索路径）。它的作用是用于指定查找共享库（动态链接库）时除了默认路径（.&#x2F;lib和.&#x2F;usr&#x2F;lib）之外的其他路径。在Linux中，ld.so或ld-linux.so是动态加载器&#x2F;链接器（每个二进制文件类型都有不同的）。在影响它们行为的环境变量中，LD_LIBRARY_PATH是其中一个变量。它用于运行时链接共享库。如果LD_LIBRARY_PATH包含库目录而LIBRARY_PATH不包含，那么在编译时可以正常链接到库，但在运行时可能无法找到库文件</p>
+</blockquote>
+<h2 id="查看环境变量是如何在普通程序运行时影响动态加载器-链接器的行为的"><a href="#查看环境变量是如何在普通程序运行时影响动态加载器-链接器的行为的" class="headerlink" title="查看环境变量是如何在普通程序运行时影响动态加载器&#x2F;链接器的行为的"></a>查看环境变量是如何在普通程序运行时影响动态加载器&#x2F;链接器的行为的</h2><ol>
+<li><p>搭建一个动态链接库。建立如下程序，重载sleep()这一库函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="type">void</span> <span class="title function_">sleep</span> <span class="params">(<span class="type">int</span> s)</span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Invoke overrided sleep function&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>编译程序</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gcc -fPIC -g -c mylib.c</span><br><span class="line">gcc -shared -o libmylib.so.1.0.1 mylib.o -lc</span><br></pre></td></tr></table></figure></li>
+</ol>
+<blockquote>
+<p>这两行命令的作用是编译和链接一个共享库。第一行命令使用gcc编译mylib.c文件并生成一个目标文件mylib.o。其中，-fPIC选项表示生成位置无关代码，-g选项表示在目标文件中包含调试信息，-c选项表示只编译源文件而不进行链接。第二行命令使用gcc将目标文件链接到一个共享库中。其中，-shared选项表示生成共享库，-o libmylib.so.1.0.1选项指定生成的共享库的名称，mylib.o是要链接的目标文件，而-lc选项表示在链接时使用C标准库。生成的共享库将被命名为libmylib.so.1.0.1。</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">在这个例子中，-o选项指定了共享库的名称为libmylib.so.1.0.1。这个名称的格式是lib&lt;name&gt;.so.&lt;major&gt;.&lt;minor&gt;.&lt;patch&gt;，其中：</span><br><span class="line"></span><br><span class="line">&lt;name&gt;是共享库的名称。</span><br><span class="line">&lt;major&gt;是主版本号，它在向后不兼容的更改时增加。</span><br><span class="line">&lt;minor&gt;是次版本号，它在向后兼容的更改时增加。</span><br><span class="line">&lt;patch&gt;是修订号，它在进行向后兼容的错误修复时增加。</span><br><span class="line"></span><br><span class="line">*请注意，这只是一种命名约定，并不是强制性的。开发人员可以根据自己的需要选择其他命名方案*</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li><p>设置LD_PRELOAD环境变量</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> LD_PRELOAD=./libmylib.so.1.0.1</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>最后，编译如下的程序，放到动态链接库的同一个目录下。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    sleep(<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>运行一下，果然被重载了。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">seed@VM:~/.../Labsetup$ mli.o</span><br><span class="line">Invoke overrided <span class="built_in">sleep</span> <span class="keyword">function</span></span><br></pre></td></tr></table></figure>
+
+<p>尝试在不同情况下运行的结果：</p>
+<ol>
+<li>以普通用户运行 - 正常sleep一秒钟</li>
+<li>以普通用户运行set-uid程序 - 正常sleep一秒钟</li>
+<li>在root下运行LD_PRELOAD环境变量，并在原普通用户下运行set-uid程序 - 正常sleep一秒钟</li>
+<li>将程序化为一个set-uid user1程序，并在另一个非root用户export环境变量LD_PRELOAD运行 - 正常sleep一秒钟</li>
+<li>在另一个非root用户下export环境变量LD_PRELOAD运行 - 正常sleep一秒钟</li>
+<li>将文件所有者改为本用户，将程序改为非set-uid模式，载入环境变量LD_PRELOAD运行 - 函数被重载</li>
+<li>将文件所有者改为root，将程序改为非set-uid模式，载入环境变量LD_PRELOAD运行 - 函数被重载</li>
+<li>将文件所有者改为root，将程序改为set-uid模式，载入环境变量LD_PRELOAD运行 - 正常sleep一秒钟</li>
+</ol>
+<p>当程序设置了setuid若不是该程序的拥有用，则会略过由拥有该程序的用户设置的LD_PRELOAD，即为直接执行sleep()。当程序不是setuid时，无论执行用户是谁，都会执行新的、所设置的LD_PRELOAD。该实验体现了对于环境变量的保护策略。</p>
+<h1 id="调用外部程序：system-和execve"><a href="#调用外部程序：system-和execve" class="headerlink" title="调用外部程序：system()和execve()"></a>调用外部程序：system()和execve()</h1><blockquote>
+<p>虽然system()和execve()都可以用于运行新程序，但如果在权限程序（例如Set-UID程序）中使用system()，那么它就非常危险。我们已经看到了PATH环境变量如何影响system()的行为，因为该变量会影响shell的工作方式。execve()没有这个问题，因为它不会调用shell。调用shell会带来另一个危险的后果，而这一次与环境变量无关。让我们看看以下情况。Bob在审计机构工作，他需要调查一家涉嫌欺诈的公司。为了调查目的，Bob需要能够读取公司Unix系统中的所有文件；另一方面，为了保护系统的完整性，Bob不应该能够修改任何文件。为了实现这个目标，系统的超级用户Vince编写了一个特殊的set-root-uid程序（见下文），然后将可执行权限授予Bob。这个程序要求Bob在命令行上输入文件名，然后它将运行&#x2F;bin&#x2F;cat来显示指定的文件。由于该程序正在以root身份运行，因此它可以显示任何Bob指定的文件。但是这个程序没有写权限，所以Vince确定Bob不能用这个特殊的程序修改任何文件。</p>
+</blockquote>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">char</span> *v[<span class="number">3</span>];</span><br><span class="line">  <span class="type">char</span> *command;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(argc &lt; <span class="number">2</span>) &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Please type a file name.\n&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  v[<span class="number">0</span>] = <span class="string">&quot;/bin/cat&quot;</span>; v[<span class="number">1</span>] = argv[<span class="number">1</span>]; v[<span class="number">2</span>] = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">  command = <span class="built_in">malloc</span>(<span class="built_in">strlen</span>(v[<span class="number">0</span>]) + <span class="built_in">strlen</span>(v[<span class="number">1</span>]) + <span class="number">2</span>);</span><br><span class="line">  <span class="built_in">sprintf</span>(command, <span class="string">&quot;%s %s&quot;</span>, v[<span class="number">0</span>], v[<span class="number">1</span>]);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Use only one of the followings.</span></span><br><span class="line">  system(command);</span><br><span class="line">  <span class="comment">// execve(v[0], v, NULL);</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span> ;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>这段代码是一个简单的C程序，它的主要功能是读取命令行参数中指定的文件并将其内容输出到标准输出。该程序使用了系统调用&#x2F;bin&#x2F;cat来实现这个功能。如果没有命令行参数，程序将输出一条错误消息并返回1。如果命令行参数不足，则程序将输出一条提示消息并返回1。该程序使用了动态内存分配来创建一个字符串，该字符串包含要执行的命令及其参数。最后，该程序使用system()函数来执行该命令。如果您想使用execve()函数来代替system()函数，您可以注释掉system()函数并取消注释execve()函数。</p>
+</blockquote>
+<h2 id="如何使用这个程序来攻击？如，删掉一个无权限写的文件？"><a href="#如何使用这个程序来攻击？如，删掉一个无权限写的文件？" class="headerlink" title="如何使用这个程序来攻击？如，删掉一个无权限写的文件？"></a>如何使用这个程序来攻击？如，删掉一个无权限写的文件？</h2><ol>
+<li><p>编译文件，使其所有者变为root，并让其变为一个set-uid程序</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">gcc catall.c -o catall.o</span><br><span class="line">sudo <span class="built_in">chown</span> root catall.o</span><br><span class="line">udo <span class="built_in">chmod</span> 4755 catall.o</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建一个只读文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">touch</span> ro.file</span><br><span class="line"><span class="built_in">chmod</span> 444 ro.file</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>利用set-uid程序删除该文件：命令截断</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./catall.o <span class="string">&quot;./ro.file;rm ./ro.file&quot;</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>system()在执行时相当于调用了一个shell来执行命令。上面构造的命令相当于两个进程同时进行，一个是&#x2F;bin&#x2F;cat .&#x2F;ro.file 另一个是rm .&#x2F;ro.file。这两个进程全部有root权限，所以删除了只读文件。</p>
+<h2 id="换成execve-再试一次"><a href="#换成execve-再试一次" class="headerlink" title="换成execve()再试一次"></a>换成execve()再试一次</h2><p>当然是删除失败。因为execve()不调用shell，相当于传一个字符串。也就是cat“.&#x2F;ro.file;rm .&#x2F;ro.file”这个文件，当然无法执行了。</p>
+<p>在权限程序中调用外部程序时，使用execve()更加安全。</p>
+<h1 id="权限泄露"><a href="#权限泄露" class="headerlink" title="权限泄露"></a>权限泄露</h1><blockquote>
+<p>为了遵循最小权限原则，如果不再需要这些权限，Set-UID程序通常会永久放弃其root权限。此外，有时程序需要将其控制权交给用户；在这种情况下，必须撤销root权限。setuid()系统调用可用于撤销权限。根据手册，“setuid()设置调用进程的有效用户ID。如果调用者的有效UID是root，则还设置了实际UID和保存的设置用户ID”。因此，如果具有有效UID 0的Set-UID程序调用setuid(n)，则该进程将变为普通进程，其所有UID都设置为n。</p>
+</blockquote>
+<blockquote>
+<p>在撤销权限时，常见的错误之一是功能泄漏。当进程仍然具有权限时，可能已经获得了一些权限功能；当权限被降级时，如果程序没有清除这些功能，则非权限进程仍然可以访问这些功能。换句话说，尽管进程的有效用户ID变为非权限用户，但该进程仍然具有权限，因为它拥有权限功能。</p>
+</blockquote>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">  <span class="type">int</span> fd;</span><br><span class="line">  <span class="type">char</span> *v[<span class="number">2</span>];</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* Assume that /etc/zzz is an important system file,</span></span><br><span class="line"><span class="comment">   * and it is owned by root with permission 0644.</span></span><br><span class="line"><span class="comment">   * Before running this program, you should create</span></span><br><span class="line"><span class="comment">   * the file /etc/zzz first. */</span></span><br><span class="line">  fd = open(<span class="string">&quot;/etc/zzz&quot;</span>, O_RDWR | O_APPEND);        </span><br><span class="line">  <span class="keyword">if</span> (fd == <span class="number">-1</span>) &#123;</span><br><span class="line">     <span class="built_in">printf</span>(<span class="string">&quot;Cannot open /etc/zzz\n&quot;</span>);</span><br><span class="line">     <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Print out the file descriptor value</span></span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;fd is %d\n&quot;</span>, fd);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Permanently disable the privilege by making the</span></span><br><span class="line">  <span class="comment">// effective uid the same as the real uid</span></span><br><span class="line">  setuid(getuid());                                </span><br><span class="line"></span><br><span class="line">  <span class="comment">// Execute /bin/sh</span></span><br><span class="line">  v[<span class="number">0</span>] = <span class="string">&quot;/bin/sh&quot;</span>; v[<span class="number">1</span>] = <span class="number">0</span>;</span><br><span class="line">  execve(v[<span class="number">0</span>], v, <span class="number">0</span>);                             </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用root权限下打开的文件，当结束root权限并降权后，应该立即关闭以避免权限泄露。否则，使用root权限打开的文件，在降为普通用户权限后，root权限的能力并未移除，仍能使用root权限来操作该文件。</p>
+
+  </div>
+</article>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/tags/">tags</a></li>
+        
+          <li><a href="/friends/">friends</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-number">1.</span> <span class="toc-text">修改环境变量</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%8E%E7%88%B6%E8%BF%9B%E7%A8%8B%E4%BC%A0%E9%80%92%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E5%88%B0%E5%AD%90%E8%BF%9B%E7%A8%8B"><span class="toc-number">2.</span> <span class="toc-text">从父进程传递环境变量到子进程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#execve-%E5%92%8C%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-number">3.</span> <span class="toc-text">execve()和环境变量</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#system-%E5%92%8C%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-number">4.</span> <span class="toc-text">system()和环境变量</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E5%92%8Cset-uid%E7%A8%8B%E5%BA%8F"><span class="toc-number">5.</span> <span class="toc-text">环境变量和set-uid程序</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#PATH%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E5%92%8Cset-uid%E7%A8%8B%E5%BA%8F"><span class="toc-number">6.</span> <span class="toc-text">PATH环境变量和set-uid程序</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%9D%E8%AF%95%E7%94%A8set-uid%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C%E8%87%AA%E5%B7%B1%E7%9A%84%E4%BB%A3%E7%A0%81"><span class="toc-number">6.1.</span> <span class="toc-text">尝试用set-uid程序运行自己的代码</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#LD-PRELOAD%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E5%92%8Cset-uid%E7%A8%8B%E5%BA%8F"><span class="toc-number">7.</span> <span class="toc-text">LD_PRELOAD环境变量和set-uid程序</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E6%98%AF%E5%A6%82%E4%BD%95%E5%9C%A8%E6%99%AE%E9%80%9A%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C%E6%97%B6%E5%BD%B1%E5%93%8D%E5%8A%A8%E6%80%81%E5%8A%A0%E8%BD%BD%E5%99%A8-%E9%93%BE%E6%8E%A5%E5%99%A8%E7%9A%84%E8%A1%8C%E4%B8%BA%E7%9A%84"><span class="toc-number">7.1.</span> <span class="toc-text">查看环境变量是如何在普通程序运行时影响动态加载器&#x2F;链接器的行为的</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%B0%83%E7%94%A8%E5%A4%96%E9%83%A8%E7%A8%8B%E5%BA%8F%EF%BC%9Asystem-%E5%92%8Cexecve"><span class="toc-number">8.</span> <span class="toc-text">调用外部程序：system()和execve()</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%E8%BF%99%E4%B8%AA%E7%A8%8B%E5%BA%8F%E6%9D%A5%E6%94%BB%E5%87%BB%EF%BC%9F%E5%A6%82%EF%BC%8C%E5%88%A0%E6%8E%89%E4%B8%80%E4%B8%AA%E6%97%A0%E6%9D%83%E9%99%90%E5%86%99%E7%9A%84%E6%96%87%E4%BB%B6%EF%BC%9F"><span class="toc-number">8.1.</span> <span class="toc-text">如何使用这个程序来攻击？如，删掉一个无权限写的文件？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8D%A2%E6%88%90execve-%E5%86%8D%E8%AF%95%E4%B8%80%E6%AC%A1"><span class="toc-number">8.2.</span> <span class="toc-text">换成execve()再试一次</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9D%83%E9%99%90%E6%B3%84%E9%9C%B2"><span class="toc-number">9.</span> <span class="toc-text">权限泄露</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%B8%89%E6%AD%A5-seedlabs-setuid-env/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%B8%89%E6%AD%A5-seedlabs-setuid-env/&text=PWN第一点三步_seedlabs_setuid_env"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%B8%89%E6%AD%A5-seedlabs-setuid-env/&title=PWN第一点三步_seedlabs_setuid_env"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%B8%89%E6%AD%A5-seedlabs-setuid-env/&is_video=false&description=PWN第一点三步_seedlabs_setuid_env"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=PWN第一点三步_seedlabs_setuid_env&body=Check out this article: http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%B8%89%E6%AD%A5-seedlabs-setuid-env/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%B8%89%E6%AD%A5-seedlabs-setuid-env/&title=PWN第一点三步_seedlabs_setuid_env"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%B8%89%E6%AD%A5-seedlabs-setuid-env/&title=PWN第一点三步_seedlabs_setuid_env"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%B8%89%E6%AD%A5-seedlabs-setuid-env/&title=PWN第一点三步_seedlabs_setuid_env"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%B8%89%E6%AD%A5-seedlabs-setuid-env/&title=PWN第一点三步_seedlabs_setuid_env"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%B8%89%E6%AD%A5-seedlabs-setuid-env/&name=PWN第一点三步_seedlabs_setuid_env&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%B8%89%E6%AD%A5-seedlabs-setuid-env/&t=PWN第一点三步_seedlabs_setuid_env"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2021-2023
+    ShuiChang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/friends/">friends</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+    <script type="text/javascript">
+      var utterances_repo = 'ShuiChang2019/Utterance_comments_try';
+      var utterances_issue_term = 'pathname';
+      var utterances_label = 'Comment';
+      var utterances_theme = 'github-dark';
+
+      (function(){
+          var script = document.createElement('script');
+
+          script.src = 'https://utteranc.es/client.js';
+          script.setAttribute('repo', utterances_repo);
+          script.setAttribute('issue-term', 'pathname');
+          script.setAttribute('label', utterances_label);
+          script.setAttribute('theme', utterances_theme);
+          script.setAttribute('crossorigin', 'anonymous');
+          script.async = true;
+          (document.getElementById('utterances_thread')).appendChild(script);
+      }());
+  </script>
+
+</body>
+</html>

