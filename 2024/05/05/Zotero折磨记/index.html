@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="Zotero - word完成报告引用文献一切的开始学校让用个蜜汁网站做毕业报告的格式检查，然后用尾注-参考文献的我就抓瞎了，格式错了一万个地方，不忍直视。 遂问舍友，其用Zotero。 遂搜Zotero，花了一万年。 什么是author-date numeric note？首先，GB&#x2F;T 7714-2015 规定了引用格式。而在Zotero的样式库中，出现了以下三种内容：  China">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Zotero折磨记">
+<meta property="og:url" content="http://example.com/2024/05/05/Zotero%E6%8A%98%E7%A3%A8%E8%AE%B0/index.html">
+<meta property="og:site_name" content="ShuiChang厕纸博客站">
+<meta property="og:description" content="Zotero - word完成报告引用文献一切的开始学校让用个蜜汁网站做毕业报告的格式检查，然后用尾注-参考文献的我就抓瞎了，格式错了一万个地方，不忍直视。 遂问舍友，其用Zotero。 遂搜Zotero，花了一万年。 什么是author-date numeric note？首先，GB&#x2F;T 7714-2015 规定了引用格式。而在Zotero的样式库中，出现了以下三种内容：  China">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-05-04T16:43:22.000Z">
+<meta property="article:modified_time" content="2024-05-04T16:43:53.688Z">
+<meta property="article:author" content="ShuiChang">
+<meta property="article:tag" content="软件用法">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Zotero折磨记</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/friends/">friends</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2024/05/05/Arm-Ubuntu%E6%8A%98%E7%A3%A8%E8%AE%B0/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2024/05/05/ctf-web%E4%B8%80%E4%BA%9B%E6%9D%82%E7%BB%83%EF%BC%8824-5%E4%B9%8B%E5%89%8D%EF%BC%89/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/05/05/Zotero%E6%8A%98%E7%A3%A8%E8%AE%B0/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/05/05/Zotero%E6%8A%98%E7%A3%A8%E8%AE%B0/&text=Zotero折磨记"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/05/05/Zotero%E6%8A%98%E7%A3%A8%E8%AE%B0/&title=Zotero折磨记"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/05/05/Zotero%E6%8A%98%E7%A3%A8%E8%AE%B0/&is_video=false&description=Zotero折磨记"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Zotero折磨记&body=Check out this article: http://example.com/2024/05/05/Zotero%E6%8A%98%E7%A3%A8%E8%AE%B0/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/05/05/Zotero%E6%8A%98%E7%A3%A8%E8%AE%B0/&title=Zotero折磨记"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/05/05/Zotero%E6%8A%98%E7%A3%A8%E8%AE%B0/&title=Zotero折磨记"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/05/05/Zotero%E6%8A%98%E7%A3%A8%E8%AE%B0/&title=Zotero折磨记"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/05/05/Zotero%E6%8A%98%E7%A3%A8%E8%AE%B0/&title=Zotero折磨记"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/05/05/Zotero%E6%8A%98%E7%A3%A8%E8%AE%B0/&name=Zotero折磨记&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/05/05/Zotero%E6%8A%98%E7%A3%A8%E8%AE%B0/&t=Zotero折磨记"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Zotero-word%E5%AE%8C%E6%88%90%E6%8A%A5%E5%91%8A%E5%BC%95%E7%94%A8%E6%96%87%E7%8C%AE"><span class="toc-number">1.</span> <span class="toc-text">Zotero - word完成报告引用文献</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E5%88%87%E7%9A%84%E5%BC%80%E5%A7%8B"><span class="toc-number">1.1.</span> <span class="toc-text">一切的开始</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFauthor-date-numeric-note%EF%BC%9F"><span class="toc-number">1.2.</span> <span class="toc-text">什么是author-date numeric note？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Zotero-%E6%A0%BC%E5%BC%8F%E7%9A%84%E9%80%89%E5%8F%96%E5%92%8C%E4%BD%BF%E7%94%A8"><span class="toc-number">1.3.</span> <span class="toc-text">Zotero 格式的选取和使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Zotero-%E6%B5%8F%E8%A7%88%E5%99%A8%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-number">1.4.</span> <span class="toc-text">Zotero 浏览器插件的使用</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Zotero折磨记
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">ShuiChang</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-05-04T16:43:22.000Z" class="dt-published" itemprop="datePublished">2024-05-05</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E8%BD%AF%E4%BB%B6%E7%94%A8%E6%B3%95/" rel="tag">软件用法</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h1 id="Zotero-word完成报告引用文献"><a href="#Zotero-word完成报告引用文献" class="headerlink" title="Zotero - word完成报告引用文献"></a>Zotero - word完成报告引用文献</h1><h2 id="一切的开始"><a href="#一切的开始" class="headerlink" title="一切的开始"></a>一切的开始</h2><p>学校让用个蜜汁网站做毕业报告的格式检查，然后用<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/107057609">尾注-参考文献</a>的我就抓瞎了，格式错了一万个地方，不忍直视。</p>
+<p>遂问舍友，其用Zotero。</p>
+<p>遂搜Zotero，花了一万年。</p>
+<h2 id="什么是author-date-numeric-note？"><a href="#什么是author-date-numeric-note？" class="headerlink" title="什么是author-date numeric note？"></a>什么是author-date numeric note？</h2><p>首先，GB&#x2F;T 7714-2015 规定了引用格式。而在Zotero的样式库中，出现了以下三种内容：</p>
+<ul>
+<li><p><a target="_blank" rel="noopener" href="https://www.zotero.org/styles/china-national-standard-gb-t-7714-2015-author-date">China National Standard GB&#x2F;T 7714-2015 (author-date, 中文)</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://www.zotero.org/styles/china-national-standard-gb-t-7714-2015-note">China National Standard GB&#x2F;T 7714-2015 (note, 中文)</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://www.zotero.org/styles/china-national-standard-gb-t-7714-2015-numeric">China National Standard GB&#x2F;T 7714-2015 (numeric, 中文)</a></p>
+</li>
+</ul>
+<p>其中，author-year是著者-出版年制。它和author-date的区别是什么呢？newbing这么说：</p>
+<p><em>author-date和author-year都是著者-出版年制的引用格式，其中author-date是指在引用时，将作者名和出版年放在括号内，如（Smith, 2000），而author-year是指在引用时，将作者名和出版年之间加上一个空格，如Smith 2000。两种格式的区别在于作者名和出版年之间是否有空格。</em></p>
+<p>note引用格式是指<em>在正文中引用参考文献时，按照脚注的方式标注，如在正文中标注一个数字，然后在页面底部或文章末尾列出参考文献，按照数字顺序列出 。</em></p>
+<p>numeric是顺序编码制。知乎是这样解释的：<em>顺序编码制是一种文后参考文献的标注体系，即引文采用序号标注，参考文献表按引文的序号排序。在论文中的引用处以右上标加方括号连续编码，视具体情况把序号作为上角或作为语句的组成部分进行标注，并在文后参考文献表中，各条文献按在论文中出现的文献序号顺序依次排列。</em></p>
+<h2 id="Zotero-格式的选取和使用"><a href="#Zotero-格式的选取和使用" class="headerlink" title="Zotero 格式的选取和使用"></a>Zotero 格式的选取和使用</h2><p>进行<a target="_blank" rel="noopener" href="https://github.com/redleafnew/Chinese-STD-GB-T-7714-related-csl">开源格式</a>的选用，这些格式经过了先辈的模改，应该能做到更好的效果。</p>
+<p>先选用 <a target="_blank" rel="noopener" href="https://github.com/redleafnew/Chinese-STD-GB-T-7714-related-csl/blob/main/000gb-t-7714-2015-numeric-bilingual.csl">000gb-t-7714-2015-numeric-bilingual.csl</a>。如果有情况，还能<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/581479488">修改.csl的内容</a>让其更好适应该文章的需要。</p>
+<p>将其<a target="_blank" rel="noopener" href="https://www.zotero.org/support/word_processor_plugin_installation">安装到word</a>。按理来说，安装好Zotero后就会自动安好word的插件，如若没有自动安装好即可手动安装。</p>
+<p>安装完后，即可在首选项-引用-“+”中导入.csl文件，进行使用了。</p>
+<h2 id="Zotero-浏览器插件的使用"><a href="#Zotero-浏览器插件的使用" class="headerlink" title="Zotero 浏览器插件的使用"></a>Zotero 浏览器插件的使用</h2><p>firefox、chrome等可安装Zotero插件。该插件在激活状态下可以智能搜索页面中是否存在可引用内容，然后可点击直接加入Zotero文库中，还能识别学位论文、会议、网页和其快照等等，非常方便。然而需要注意以下几点。</p>
+<ul>
+<li><p>需等网页加载完成后再导入，不然可能仅识别到网页，导入的就是网页快照</p>
+</li>
+<li><p>对于一些如google scholar的网站，存在着一定的频率限制。到这个限制后，可能Zotero就会添加失败。<del>邪道一些的解决方法就是换个IP</del>。</p>
+</li>
+</ul>
+
+  </div>
+</article>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/tags/">tags</a></li>
+        
+          <li><a href="/friends/">friends</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Zotero-word%E5%AE%8C%E6%88%90%E6%8A%A5%E5%91%8A%E5%BC%95%E7%94%A8%E6%96%87%E7%8C%AE"><span class="toc-number">1.</span> <span class="toc-text">Zotero - word完成报告引用文献</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E5%88%87%E7%9A%84%E5%BC%80%E5%A7%8B"><span class="toc-number">1.1.</span> <span class="toc-text">一切的开始</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFauthor-date-numeric-note%EF%BC%9F"><span class="toc-number">1.2.</span> <span class="toc-text">什么是author-date numeric note？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Zotero-%E6%A0%BC%E5%BC%8F%E7%9A%84%E9%80%89%E5%8F%96%E5%92%8C%E4%BD%BF%E7%94%A8"><span class="toc-number">1.3.</span> <span class="toc-text">Zotero 格式的选取和使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Zotero-%E6%B5%8F%E8%A7%88%E5%99%A8%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-number">1.4.</span> <span class="toc-text">Zotero 浏览器插件的使用</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/05/05/Zotero%E6%8A%98%E7%A3%A8%E8%AE%B0/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/05/05/Zotero%E6%8A%98%E7%A3%A8%E8%AE%B0/&text=Zotero折磨记"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/05/05/Zotero%E6%8A%98%E7%A3%A8%E8%AE%B0/&title=Zotero折磨记"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/05/05/Zotero%E6%8A%98%E7%A3%A8%E8%AE%B0/&is_video=false&description=Zotero折磨记"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Zotero折磨记&body=Check out this article: http://example.com/2024/05/05/Zotero%E6%8A%98%E7%A3%A8%E8%AE%B0/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/05/05/Zotero%E6%8A%98%E7%A3%A8%E8%AE%B0/&title=Zotero折磨记"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/05/05/Zotero%E6%8A%98%E7%A3%A8%E8%AE%B0/&title=Zotero折磨记"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/05/05/Zotero%E6%8A%98%E7%A3%A8%E8%AE%B0/&title=Zotero折磨记"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/05/05/Zotero%E6%8A%98%E7%A3%A8%E8%AE%B0/&title=Zotero折磨记"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/05/05/Zotero%E6%8A%98%E7%A3%A8%E8%AE%B0/&name=Zotero折磨记&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/05/05/Zotero%E6%8A%98%E7%A3%A8%E8%AE%B0/&t=Zotero折磨记"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2021-2024
+    ShuiChang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/friends/">friends</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+    <script type="text/javascript">
+      var utterances_repo = 'ShuiChang2019/Utterance_comments_try';
+      var utterances_issue_term = 'pathname';
+      var utterances_label = 'Comment';
+      var utterances_theme = 'github-dark';
+
+      (function(){
+          var script = document.createElement('script');
+
+          script.src = 'https://utteranc.es/client.js';
+          script.setAttribute('repo', utterances_repo);
+          script.setAttribute('issue-term', 'pathname');
+          script.setAttribute('label', utterances_label);
+          script.setAttribute('theme', utterances_theme);
+          script.setAttribute('crossorigin', 'anonymous');
+          script.async = true;
+          (document.getElementById('utterances_thread')).appendChild(script);
+      }());
+  </script>
+
+</body>
+</html>
