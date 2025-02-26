@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="问题记录为什么在有无密码root权限执行的文件中需要完整路径在一些系统中，sudo 可以被配置为允许特定用户在特定命令上不需要密码。例如，&#x2F;etc&#x2F;sudoers 文件中可能包含类似以下的行： 1nibbler ALL&#x3D;(ALL) NOPASSWD: &#x2F;home&#x2F;nibbler&#x2F;personal&#x2F;stuff&#x2F;monitor.sh  这种配置允许用户 nibbler 在执行指定的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HTB渗透学习-问题记录">
+<meta property="og:url" content="http://example.com/2024/09/23/HTB-%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/index.html">
+<meta property="og:site_name" content="ShuiChang厕纸博客站">
+<meta property="og:description" content="问题记录为什么在有无密码root权限执行的文件中需要完整路径在一些系统中，sudo 可以被配置为允许特定用户在特定命令上不需要密码。例如，&#x2F;etc&#x2F;sudoers 文件中可能包含类似以下的行： 1nibbler ALL&#x3D;(ALL) NOPASSWD: &#x2F;home&#x2F;nibbler&#x2F;personal&#x2F;stuff&#x2F;monitor.sh  这种配置允许用户 nibbler 在执行指定的">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-09-22T16:16:33.000Z">
+<meta property="article:modified_time" content="2025-02-26T15:57:48.850Z">
+<meta property="article:author" content="ShuiChang">
+<meta property="article:tag" content="渗透测试学习">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>HTB渗透学习-问题记录</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/friends/">friends</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2024/09/23/HTB-22-WEBATTACKS/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2024/09/18/%E9%85%B7%E6%96%B9%E6%B3%95/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/09/23/HTB-%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/09/23/HTB-%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/&text=HTB渗透学习-问题记录"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/09/23/HTB-%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/&title=HTB渗透学习-问题记录"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/09/23/HTB-%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/&is_video=false&description=HTB渗透学习-问题记录"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=HTB渗透学习-问题记录&body=Check out this article: http://example.com/2024/09/23/HTB-%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/09/23/HTB-%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/&title=HTB渗透学习-问题记录"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/09/23/HTB-%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/&title=HTB渗透学习-问题记录"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/09/23/HTB-%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/&title=HTB渗透学习-问题记录"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/09/23/HTB-%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/&title=HTB渗透学习-问题记录"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/09/23/HTB-%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/&name=HTB渗透学习-问题记录&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/09/23/HTB-%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/&t=HTB渗透学习-问题记录"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95"><span class="toc-number">1.</span> <span class="toc-text">问题记录</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%9C%A8%E6%9C%89%E6%97%A0%E5%AF%86%E7%A0%81root%E6%9D%83%E9%99%90%E6%89%A7%E8%A1%8C%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E9%9C%80%E8%A6%81%E5%AE%8C%E6%95%B4%E8%B7%AF%E5%BE%84"><span class="toc-number">1.1.</span> <span class="toc-text">为什么在有无密码root权限执行的文件中需要完整路径</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#NMAP"><span class="toc-number">2.</span> <span class="toc-text">NMAP</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E9%80%9A%E8%BF%87NMAP-ICMP%E5%88%A4%E6%96%AD%E7%9B%AE%E6%A0%87%E7%B3%BB%E7%BB%9F%EF%BC%9F"><span class="toc-number">2.1.</span> <span class="toc-text">如何通过NMAP ICMP判断目标系统？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%BF%9B%E8%A1%8C%E7%AE%80%E5%8D%95%E6%89%AB%E6%8F%8F%EF%BC%9F"><span class="toc-number">2.2.</span> <span class="toc-text">如何进行简单扫描？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Nmap-NSE"><span class="toc-number">2.3.</span> <span class="toc-text">Nmap NSE</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        HTB渗透学习-问题记录
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">ShuiChang</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-09-22T16:16:33.000Z" class="dt-published" itemprop="datePublished">2024-09-23</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%AD%A6%E4%B9%A0/" rel="tag">渗透测试学习</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h1 id="问题记录"><a href="#问题记录" class="headerlink" title="问题记录"></a>问题记录</h1><h2 id="为什么在有无密码root权限执行的文件中需要完整路径"><a href="#为什么在有无密码root权限执行的文件中需要完整路径" class="headerlink" title="为什么在有无密码root权限执行的文件中需要完整路径"></a>为什么在有无密码root权限执行的文件中需要完整路径</h2><p>在一些系统中，sudo 可以被配置为允许特定用户在特定命令上不需要密码。例如，&#x2F;etc&#x2F;sudoers 文件中可能包含类似以下的行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nibbler ALL=(ALL) NOPASSWD: /home/nibbler/personal/stuff/monitor.sh</span><br></pre></td></tr></table></figure>
+
+<p>这种配置允许用户 nibbler 在执行指定的脚本时不需要输入密码。</p>
+<p>如果直接执行脚本时，系统没有通过 sudo 来执行，可能会要求更高的权限（如 root 权限），因此需要输入密码。</p>
+<h1 id="NMAP"><a href="#NMAP" class="headerlink" title="NMAP"></a>NMAP</h1><h2 id="如何通过NMAP-ICMP判断目标系统？"><a href="#如何通过NMAP-ICMP判断目标系统？" class="headerlink" title="如何通过NMAP ICMP判断目标系统？"></a>如何通过NMAP ICMP判断目标系统？</h2><p>可以通过观察接收到的 ICMP Echo Reply（回显应答）数据包中的 TTL 值来推断目标机器的操作系统。</p>
+<ul>
+<li>Windows 操作系统的默认 TTL 值通常为 128。</li>
+<li>Linux&#x2F;Unix 系列操作系统的默认 TTL 值通常为 64。</li>
+<li>Cisco 设备的默认 TTL 值通常为 255。</li>
+</ul>
+<p>如，<code>RCVD (0.0152s) ICMP [10.129.2.18 &gt; 10.10.14.2 Echo reply (type=0/code=0) id=13607 seq=0] IP [ttl=128 id=40622 iplen=28 ]</code> 的TTL为128，目标就为Windows系统。</p>
+<h2 id="如何进行简单扫描？"><a href="#如何进行简单扫描？" class="headerlink" title="如何进行简单扫描？"></a>如何进行简单扫描？</h2><ul>
+<li>TCP SYN 扫描（-sS），需要root权限</li>
+<li>TCP扫描（-sT）</li>
+<li>扫描全部端口（-p-）</li>
+<li>端口选择（-p 22,25或-p 22-445），或（–top-ports&#x3D;10）选取前N个最多端口</li>
+<li>侵略性扫描（-A），能多出不少结果，比如计算机名</li>
+</ul>
+<p>输出结果：</p>
+<ul>
+<li>oN 一般输出</li>
+<li>oG Grepable输出</li>
+<li>oX XML输出</li>
+<li>oA 全部存一遍</li>
+</ul>
+<p>让输出结果更加易读：使用xsltproc对xml输出进行处理<code>xsltproc target.xml -o target.html</code></p>
+<p>加速扫描：</p>
+<ul>
+<li>T0 T1 T2 T3 T4 T5：默认是T3，如果需要加速可以<code>-T4</code>或<code>-T5</code></li>
+<li>多线程：<code>--min-parallelism 100</code></li>
+</ul>
+<h2 id="Nmap-NSE"><a href="#Nmap-NSE" class="headerlink" title="Nmap NSE"></a>Nmap NSE</h2><p>Nmap可以用Lua写的脚本来扩展功能。如</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo nmap 10.129.2.28 -p 25 --script banner,smtp-commands</span><br></pre></td></tr></table></figure>
+
+<p>检查了Linux的发行版，并且扫了SMTP的指令</p>
+
+  </div>
+</article>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/tags/">tags</a></li>
+        
+          <li><a href="/friends/">friends</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95"><span class="toc-number">1.</span> <span class="toc-text">问题记录</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%9C%A8%E6%9C%89%E6%97%A0%E5%AF%86%E7%A0%81root%E6%9D%83%E9%99%90%E6%89%A7%E8%A1%8C%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E9%9C%80%E8%A6%81%E5%AE%8C%E6%95%B4%E8%B7%AF%E5%BE%84"><span class="toc-number">1.1.</span> <span class="toc-text">为什么在有无密码root权限执行的文件中需要完整路径</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#NMAP"><span class="toc-number">2.</span> <span class="toc-text">NMAP</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E9%80%9A%E8%BF%87NMAP-ICMP%E5%88%A4%E6%96%AD%E7%9B%AE%E6%A0%87%E7%B3%BB%E7%BB%9F%EF%BC%9F"><span class="toc-number">2.1.</span> <span class="toc-text">如何通过NMAP ICMP判断目标系统？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%BF%9B%E8%A1%8C%E7%AE%80%E5%8D%95%E6%89%AB%E6%8F%8F%EF%BC%9F"><span class="toc-number">2.2.</span> <span class="toc-text">如何进行简单扫描？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Nmap-NSE"><span class="toc-number">2.3.</span> <span class="toc-text">Nmap NSE</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/09/23/HTB-%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/09/23/HTB-%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/&text=HTB渗透学习-问题记录"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/09/23/HTB-%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/&title=HTB渗透学习-问题记录"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/09/23/HTB-%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/&is_video=false&description=HTB渗透学习-问题记录"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=HTB渗透学习-问题记录&body=Check out this article: http://example.com/2024/09/23/HTB-%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/09/23/HTB-%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/&title=HTB渗透学习-问题记录"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/09/23/HTB-%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/&title=HTB渗透学习-问题记录"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/09/23/HTB-%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/&title=HTB渗透学习-问题记录"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/09/23/HTB-%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/&title=HTB渗透学习-问题记录"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/09/23/HTB-%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/&name=HTB渗透学习-问题记录&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/09/23/HTB-%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/&t=HTB渗透学习-问题记录"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2021-2025
+    ShuiChang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/friends/">friends</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+    <script type="text/javascript">
+      var utterances_repo = 'ShuiChang2019/Utterance_comments_try';
+      var utterances_issue_term = 'pathname';
+      var utterances_label = 'Comment';
+      var utterances_theme = 'github-dark';
+
+      (function(){
+          var script = document.createElement('script');
+
+          script.src = 'https://utteranc.es/client.js';
+          script.setAttribute('repo', utterances_repo);
+          script.setAttribute('issue-term', 'pathname');
+          script.setAttribute('label', utterances_label);
+          script.setAttribute('theme', utterances_theme);
+          script.setAttribute('crossorigin', 'anonymous');
+          script.async = true;
+          (document.getElementById('utterances_thread')).appendChild(script);
+      }());
+  </script>
+
+</body>
+</html>

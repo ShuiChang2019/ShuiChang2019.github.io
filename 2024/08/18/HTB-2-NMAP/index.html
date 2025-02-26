@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="NMAP（简单）防火墙和带有IDS&#x2F;IPS的防护：获知目标操作系统 这种情况下可以直接用一个script，通过SMB来探测  1nmap --script smb-os-discovery 10.129.2.80  1234567891011121314151617181920212223Nmap scan report for 10.129.2.80Host is up (0.71s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HTB渗透学习-NMAP">
+<meta property="og:url" content="http://example.com/2024/08/18/HTB-2-NMAP/index.html">
+<meta property="og:site_name" content="ShuiChang厕纸博客站">
+<meta property="og:description" content="NMAP（简单）防火墙和带有IDS&#x2F;IPS的防护：获知目标操作系统 这种情况下可以直接用一个script，通过SMB来探测  1nmap --script smb-os-discovery 10.129.2.80  1234567891011121314151617181920212223Nmap scan report for 10.129.2.80Host is up (0.71s">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-08-17T16:16:33.000Z">
+<meta property="article:modified_time" content="2025-02-26T15:55:36.916Z">
+<meta property="article:author" content="ShuiChang">
+<meta property="article:tag" content="渗透测试学习">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>HTB渗透学习-NMAP</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/friends/">friends</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2024/09/16/HTB-19-FILEINCLUSION/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2024/08/12/HTB-1-GETSTART/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/08/18/HTB-2-NMAP/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/08/18/HTB-2-NMAP/&text=HTB渗透学习-NMAP"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/08/18/HTB-2-NMAP/&title=HTB渗透学习-NMAP"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/08/18/HTB-2-NMAP/&is_video=false&description=HTB渗透学习-NMAP"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=HTB渗透学习-NMAP&body=Check out this article: http://example.com/2024/08/18/HTB-2-NMAP/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/08/18/HTB-2-NMAP/&title=HTB渗透学习-NMAP"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/08/18/HTB-2-NMAP/&title=HTB渗透学习-NMAP"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/08/18/HTB-2-NMAP/&title=HTB渗透学习-NMAP"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/08/18/HTB-2-NMAP/&title=HTB渗透学习-NMAP"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/08/18/HTB-2-NMAP/&name=HTB渗透学习-NMAP&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/08/18/HTB-2-NMAP/&t=HTB渗透学习-NMAP"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#NMAP"><span class="toc-number">1.</span> <span class="toc-text">NMAP</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%EF%BC%88%E7%AE%80%E5%8D%95%EF%BC%89%E9%98%B2%E7%81%AB%E5%A2%99%E5%92%8C%E5%B8%A6%E6%9C%89IDS-IPS%E7%9A%84%E9%98%B2%E6%8A%A4%EF%BC%9A%E8%8E%B7%E7%9F%A5%E7%9B%AE%E6%A0%87%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.1.</span> <span class="toc-text">（简单）防火墙和带有IDS&#x2F;IPS的防护：获知目标操作系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%EF%BC%88%E4%B8%AD%E7%AD%89%EF%BC%89%E9%98%B2%E7%81%AB%E5%A2%99%E5%92%8C%E5%B8%A6%E6%9C%89IDS-IPS%E7%9A%84%E9%98%B2%E6%8A%A4%EF%BC%9A%E8%8E%B7%E7%9F%A5%E7%9B%AE%E6%A0%87DNS%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%89%88%E6%9C%AC"><span class="toc-number">1.2.</span> <span class="toc-text">（中等）防火墙和带有IDS&#x2F;IPS的防护：获知目标DNS服务器版本</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#WP1"><span class="toc-number">1.2.1.</span> <span class="toc-text">WP1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#WP2"><span class="toc-number">1.2.2.</span> <span class="toc-text">WP2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#WP3"><span class="toc-number">1.2.3.</span> <span class="toc-text">WP3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%8D%E7%8E%B0%E5%A4%B1%E8%B4%A5%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="toc-number">1.2.4.</span> <span class="toc-text">复现失败的原因</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%EF%BC%88%E5%9B%B0%E9%9A%BE%EF%BC%89%E9%98%B2%E7%81%AB%E5%A2%99%E5%92%8C%E5%B8%A6%E6%9C%89IDS-IPS%E7%9A%84%E9%98%B2%E6%8A%A4%EF%BC%9A%E8%8E%B7%E7%9F%A5%E7%9B%AE%E6%A0%87%E7%9A%84%E6%9C%8D%E5%8A%A1%E7%89%88%E6%9C%AC"><span class="toc-number">1.3.</span> <span class="toc-text">（困难）防火墙和带有IDS&#x2F;IPS的防护：获知目标的服务版本</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        HTB渗透学习-NMAP
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">ShuiChang</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-08-17T16:16:33.000Z" class="dt-published" itemprop="datePublished">2024-08-18</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%AD%A6%E4%B9%A0/" rel="tag">渗透测试学习</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h1 id="NMAP"><a href="#NMAP" class="headerlink" title="NMAP"></a>NMAP</h1><h2 id="（简单）防火墙和带有IDS-IPS的防护：获知目标操作系统"><a href="#（简单）防火墙和带有IDS-IPS的防护：获知目标操作系统" class="headerlink" title="（简单）防火墙和带有IDS&#x2F;IPS的防护：获知目标操作系统"></a>（简单）防火墙和带有IDS&#x2F;IPS的防护：获知目标操作系统</h2><ul>
+<li>这种情况下可以直接用一个script，通过SMB来探测</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap --script smb-os-discovery 10.129.2.80</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">Nmap scan report for 10.129.2.80</span><br><span class="line">Host is up (0.71s latency).</span><br><span class="line">Not shown: 992 closed tcp ports (conn-refused)</span><br><span class="line">PORT      STATE    SERVICE</span><br><span class="line">22/tcp    open     ssh</span><br><span class="line">80/tcp    open     http</span><br><span class="line">110/tcp   open     pop3</span><br><span class="line">139/tcp   open     netbios-ssn</span><br><span class="line">143/tcp   open     imap</span><br><span class="line">445/tcp   open     microsoft-ds</span><br><span class="line">787/tcp   filtered qsc</span><br><span class="line">10001/tcp open     scp-config</span><br><span class="line"></span><br><span class="line">Host script results:</span><br><span class="line">| smb-os-discovery: </span><br><span class="line">|   OS: Windows 6.1 (Samba 4.7.6-Ubuntu)</span><br><span class="line">|   Computer name: nix-nmap-easy</span><br><span class="line">|   NetBIOS computer name: NIX-NMAP-EASY\x00</span><br><span class="line">|   Domain name: \x00</span><br><span class="line">|   FQDN: nix-nmap-easy</span><br><span class="line">|_  System time: 2024-08-13T18:20:39+02:00</span><br><span class="line"></span><br><span class="line">Nmap done: 1 IP address (1 host up) scanned in 186.80 seconds</span><br></pre></td></tr></table></figure>
+
+<p>Ubuntu系统</p>
+<h2 id="（中等）防火墙和带有IDS-IPS的防护：获知目标DNS服务器版本"><a href="#（中等）防火墙和带有IDS-IPS的防护：获知目标DNS服务器版本" class="headerlink" title="（中等）防火墙和带有IDS&#x2F;IPS的防护：获知目标DNS服务器版本"></a>（中等）防火墙和带有IDS&#x2F;IPS的防护：获知目标DNS服务器版本</h2><p>防火墙的限制更为严格了。</p>
+<h3 id="WP1"><a href="#WP1" class="headerlink" title="WP1"></a>WP1</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -sSU -p 53 --script dns-nsid 10.129.2.48</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>U表示UDP scan</li>
+<li>-sS表示SYN scan</li>
+<li>-p代表扫描53端口</li>
+<li>dns-nsid脚本执行DNS命名服务器（NSID）的查询<blockquote>
+<p>NSID（Name Server Identifier）是DNS协议扩展的一部分，由RFC 5001定义。它允许DNS客户端在查询时向DNS服务器请求该服务器的标识符。这在调试和运维中非常有用，因为它可以帮助识别负责处理某个DNS查询的具体DNS服务器，特别是在负载均衡环境或多服务器部署中。</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="WP2"><a href="#WP2" class="headerlink" title="WP2"></a>WP2</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -T4 -A -v 10.129.67.225 -D RND:5 --stats-every=5s</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>-A 启用了高级扫描选项</li>
+<li>-D RND:5 使用“分身”扫描，这是一种通过伪装扫描源地址的方法，用于规避防火墙和入侵检测系统。RND:5 表示使用5个随机生成的IP地址作为伪装扫描的来源地址，以混淆目标服务器的日志和防御系统。</li>
+</ul>
+<h3 id="WP3"><a href="#WP3" class="headerlink" title="WP3"></a>WP3</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo nmap -sU 10.129.185.38 -p 53 --disable-arp-ping -Pn -sV</span><br></pre></td></tr></table></figure>
+
+<h3 id="复现失败的原因"><a href="#复现失败的原因" class="headerlink" title="复现失败的原因"></a>复现失败的原因</h3><p>多半是因为VPN连接。直接使用HTB提供的VM就成功了。</p>
+<h2 id="（困难）防火墙和带有IDS-IPS的防护：获知目标的服务版本"><a href="#（困难）防火墙和带有IDS-IPS的防护：获知目标的服务版本" class="headerlink" title="（困难）防火墙和带有IDS&#x2F;IPS的防护：获知目标的服务版本"></a>（困难）防火墙和带有IDS&#x2F;IPS的防护：获知目标的服务版本</h2><p>首先扫描所有端口发现50000端口被filter了，说明可能是这个服务端口。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -nv -p 53 10.129.253.40 50000 </span><br></pre></td></tr></table></figure>
+
+<p>直接使用nc连接，<code>-nv</code>中的n指不使用DNS解析，将输入的IP直接用于连接；v指输出连接过程中的详细信息，<code>-p 53</code>指在本地主机上使用53端口作为源端口进行连接。</p>
+<p>53端口用于避开防火墙。</p>
+
+  </div>
+</article>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/tags/">tags</a></li>
+        
+          <li><a href="/friends/">friends</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#NMAP"><span class="toc-number">1.</span> <span class="toc-text">NMAP</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%EF%BC%88%E7%AE%80%E5%8D%95%EF%BC%89%E9%98%B2%E7%81%AB%E5%A2%99%E5%92%8C%E5%B8%A6%E6%9C%89IDS-IPS%E7%9A%84%E9%98%B2%E6%8A%A4%EF%BC%9A%E8%8E%B7%E7%9F%A5%E7%9B%AE%E6%A0%87%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.1.</span> <span class="toc-text">（简单）防火墙和带有IDS&#x2F;IPS的防护：获知目标操作系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%EF%BC%88%E4%B8%AD%E7%AD%89%EF%BC%89%E9%98%B2%E7%81%AB%E5%A2%99%E5%92%8C%E5%B8%A6%E6%9C%89IDS-IPS%E7%9A%84%E9%98%B2%E6%8A%A4%EF%BC%9A%E8%8E%B7%E7%9F%A5%E7%9B%AE%E6%A0%87DNS%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%89%88%E6%9C%AC"><span class="toc-number">1.2.</span> <span class="toc-text">（中等）防火墙和带有IDS&#x2F;IPS的防护：获知目标DNS服务器版本</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#WP1"><span class="toc-number">1.2.1.</span> <span class="toc-text">WP1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#WP2"><span class="toc-number">1.2.2.</span> <span class="toc-text">WP2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#WP3"><span class="toc-number">1.2.3.</span> <span class="toc-text">WP3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%8D%E7%8E%B0%E5%A4%B1%E8%B4%A5%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="toc-number">1.2.4.</span> <span class="toc-text">复现失败的原因</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%EF%BC%88%E5%9B%B0%E9%9A%BE%EF%BC%89%E9%98%B2%E7%81%AB%E5%A2%99%E5%92%8C%E5%B8%A6%E6%9C%89IDS-IPS%E7%9A%84%E9%98%B2%E6%8A%A4%EF%BC%9A%E8%8E%B7%E7%9F%A5%E7%9B%AE%E6%A0%87%E7%9A%84%E6%9C%8D%E5%8A%A1%E7%89%88%E6%9C%AC"><span class="toc-number">1.3.</span> <span class="toc-text">（困难）防火墙和带有IDS&#x2F;IPS的防护：获知目标的服务版本</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/08/18/HTB-2-NMAP/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/08/18/HTB-2-NMAP/&text=HTB渗透学习-NMAP"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/08/18/HTB-2-NMAP/&title=HTB渗透学习-NMAP"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/08/18/HTB-2-NMAP/&is_video=false&description=HTB渗透学习-NMAP"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=HTB渗透学习-NMAP&body=Check out this article: http://example.com/2024/08/18/HTB-2-NMAP/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/08/18/HTB-2-NMAP/&title=HTB渗透学习-NMAP"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/08/18/HTB-2-NMAP/&title=HTB渗透学习-NMAP"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/08/18/HTB-2-NMAP/&title=HTB渗透学习-NMAP"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/08/18/HTB-2-NMAP/&title=HTB渗透学习-NMAP"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/08/18/HTB-2-NMAP/&name=HTB渗透学习-NMAP&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/08/18/HTB-2-NMAP/&t=HTB渗透学习-NMAP"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2021-2025
+    ShuiChang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/friends/">friends</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+    <script type="text/javascript">
+      var utterances_repo = 'ShuiChang2019/Utterance_comments_try';
+      var utterances_issue_term = 'pathname';
+      var utterances_label = 'Comment';
+      var utterances_theme = 'github-dark';
+
+      (function(){
+          var script = document.createElement('script');
+
+          script.src = 'https://utteranc.es/client.js';
+          script.setAttribute('repo', utterances_repo);
+          script.setAttribute('issue-term', 'pathname');
+          script.setAttribute('label', utterances_label);
+          script.setAttribute('theme', utterances_theme);
+          script.setAttribute('crossorigin', 'anonymous');
+          script.async = true;
+          (document.getElementById('utterances_thread')).appendChild(script);
+      }());
+  </script>
+
+</body>
+</html>

